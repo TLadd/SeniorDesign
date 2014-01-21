@@ -159,6 +159,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="FeatureProjector.cpp" />
+    <ClCompile Include="Forest.cpp" />
     <ClCompile Include="ITreeNode.cpp" />
     <ClCompile Include="NodeFactory.cpp" />
     <ClCompile Include="RandomFor.cpp" />

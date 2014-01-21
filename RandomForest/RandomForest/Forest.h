@@ -14,23 +14,41 @@ using namespace std;
 #ifndef FOREST_H_
 #define FOREST_H_
 
-
+#include "ITreeNode.h"
 
 class Forest
 {
 
 private:
-
-
+	vector<ITreeNode> trees;
+	int numTrees;
+	int numClasses;
+	int depth;
+	int numFeatures;
+	int numThresh; 
+	double subSampleRatio;
+	int minNumInNode; 
+	double backgroundPenalty; 
+	std::pair<double, double> featureRange;
+	std::pair<double, double> thresholdRange;
 
 
 public:
 
+	Forest(string fileName);
 
-	Forest(int numTrees, int numClasses, int depth,
+	Forest(int numClasses, int depth,
 			int numFeatures, int numThresh, double subSampleRatio,
-			int maxNumInLeaf, double backgroundPenalty, std::pair<double, double> featureRange,
-			std::pair<double, double> thresholdRange, vector<Mat> inputDepthImages, vector<Mat> inputClassifiedImages);
+			int minNumInNode, double backgroundPenalty, std::pair<double, double> featureRange,
+			std::pair<double, double> thresholdRange);
+
+	void makeTrees(vector<string> &inputDepthImages, vector<string> &inputClassifiedImages, int numImages, int numTrees);
+
+	Mat classifyImage(Mat &inputDepth);
+
+	void addTree(vector<Mat> inputDepthImages, vector<Mat> inputClassifiedImages);
+
+	void saveForest();
 };
 
 
