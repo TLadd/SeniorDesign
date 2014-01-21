@@ -24,6 +24,25 @@ double safeLog(int h) {
 	}
 }
 
+
+double sumHistogram(vector<double> histogram) {
+	
+	double retSum = 0;
+	for(double d : histogram) {
+		retSum = d + retSum;
+	}
+	return retSum;
+}
+
+int sumHistogram(vector<int> histogram) {
+	
+	int retSum = 0;
+	for(int d : histogram) {
+		retSum = d + retSum;
+	}
+	return retSum;
+}
+
 /*
  * Calculates a histogram for the class type of the pixels in the node
  */
@@ -37,6 +56,38 @@ vector<int> calcHistogram(vector<TripletWrapper> &relevantPixels, vector<Mat> &i
 
 	return histogram;
 
+}
+
+vector<double> normalizeHistogram(vector<int> histogram) {
+	int sum = sumHistogram(histogram);
+
+	vector<double> histogramNorm(histogram.size(), 0);
+	
+	int i;
+	for(i=0; i < histogram.size(); i++) {
+		histogramNorm.at(i) = histogram.at(i)/sum;
+	}
+
+	return histogramNorm;
+
+}
+
+double calcEntropy(int numClasses, vector<TripletWrapper> &pixels, vector<Mat> &inputClassifiedImages) {
+	vector<int> histogram = calcHistogram(pixels, inputClassifiedImages, numClasses);
+	int sum = sumHistogram(histogram);
+
+	vector<double> histogramNorm(numClasses, 0);
+	
+	int i;
+	for(i=0; i < numClasses; i++) {
+		histogramNorm.at(i) = histogram.at(i)/sum;
+	}
+
+	vector<double> hlogh(numClasses);
+	transform(histogramNorm.begin(), histogramNorm.end(), hlogh.begin(), safeLog); 
+	double hloghSum = -1 * sumHistogram(hlogh);
+
+	return hloghSum;
 }
 
 
@@ -58,6 +109,7 @@ ITreeNode NodeFactory::makeNode(int numClasses, int maxDepth, int currentDepth,
 
 		int countedClasses = 0;
 
+		// Check if all pixels fall into one class
 		for(int c : histogram) {
 			if(c > 0) {
 				countedClasses++;
@@ -69,32 +121,21 @@ ITreeNode NodeFactory::makeNode(int numClasses, int maxDepth, int currentDepth,
 		}
 	}
 
-
+	
 
 	// Normalize the histogram
 	int i;
-	int countedClasses = 0;
-	int sum=0;
-	for(i=0; i < numClasses; i++) {
-		sum += histogram.at(i);
-		if(histogram[i] > 0) {
-			countedClasses++;
-		}
-	}
+	int sum = sumHistogram(histogram);
 
 	vector<double> histogramNorm(numClasses, 0);
 	for(i=0; i < numClasses; i++) {
 		histogramNorm.at(i) = histogram.at(i)/sum;
 	}
 
-	// Check if terminal node due to max depth or all membership in one class
-	if(currentDepth == maxDepth || countedClasses <= 1) {
-		return TerminalNode(histogram);
-	}
-
+	// Calculate the Shannon Entropy for this node's histogram
 	vector<double> hlogh(numClasses);
 	transform(histogramNorm.begin(), histogramNorm.end(), hlogh.begin(), safeLog); 
-
+	double hloghSum = -1 * sumHistogram(hlogh);
 
 	int j, k, m;
 
@@ -102,7 +143,8 @@ ITreeNode NodeFactory::makeNode(int numClasses, int maxDepth, int currentDepth,
 
 	pair<pair<int,int>, pair<int,int>> bestFeature;
 	double bestThresh;
-	
+	vector<TripletWrapper> bestLeft, bestRight;
+	double maxScore = -1 * std::numeric_limits<double>::infinity();
 
 	pair<int,int> splitCounts(0,0);
 	FeatureProjector fProj = FeatureProjector();
@@ -112,11 +154,16 @@ ITreeNode NodeFactory::makeNode(int numClasses, int maxDepth, int currentDepth,
 	// Iterate through specified number of features
 	for(j = 0; j < numFeatures; j++) {
 
+		pair<pair<int,int>, pair<int,int>> feature = getRandFeature(featureRange.first, featureRange.second);
+
 		// Iterate through specified number of thresholds
 		for(k = 0; k < numThresh; k++) {
 
-			splitCounts.first = 0;
-			splitCounts.second = 0;
+			vector<TripletWrapper> leftPixels = vector<TripletWrapper>();
+			vector<TripletWrapper> rightPixels = vector<TripletWrapper>();;
+
+			// Threshold for this iteration. Step-size times the iteration count
+			double thresh = ((thresholdRange.first - thresholdRange.second) / (numThresh)) * k;
 
 			// Iterate through all pixels part of this node. Tally 
 			for(m = 0; m < relevantPixels.size(); m++) {
@@ -127,27 +174,36 @@ ITreeNode NodeFactory::makeNode(int numClasses, int maxDepth, int currentDepth,
 
 				pair<int,int> pixel = triplet.getPixelLoc();
 
-				// Threshold for this iteration. Step-size times the iteration count
-				double thresh = ((thresholdRange.first - thresholdRange.second) / (numThresh)) * k;
-
 				// Project pixel into feature space. Test which side of the threshold it lands and throw it into the appropriate vector
-				pair<pair<int,int>, pair<int,int>> feature = getRandFeature(featureRange.first, featureRange.second);
-
 				bool featureGreaterThanThresh = fProj.project(feature, image, pixel, backgroundPenalty, thresh);
 				
 
 				if(featureGreaterThanThresh) {
-					splitCounts.second++;
+					rightPixels.push_back(triplet);
 				}
 				else {
-					splitCounts.first++;
+					leftPixels.push_back(triplet);
 				}
 
 
 			}
 
-			// TODO: entropy calcs. May need to resort to storing everything as in old code
+			double leftEntropy = calcEntropy(numClasses, leftPixels, inputClassifiedImages);
+			double rightEntropy = calcEntropy(numClasses, rightPixels, inputClassifiedImages);
 
+			int leftSize = leftPixels.size();
+			int rightSize = rightPixels.size();
+			int totalSize = leftSize + rightSize;
+
+			double score = hloghSum - ((leftSize/totalSize) * leftEntropy) - ((rightSize/totalSize) * rightEntropy);
+			// TODO: entropy calcs. May need to resort to storing everything as in old code
+			if(score > maxScore) {
+				maxScore = score;
+				bestFeature = feature;
+				bestThresh = thresh;
+				bestLeft = leftPixels;
+				bestRight = rightPixels;
+			}
 			
 
 		}
@@ -158,11 +214,11 @@ ITreeNode NodeFactory::makeNode(int numClasses, int maxDepth, int currentDepth,
 
 	ITreeNode leftChild = recursiveFactory.makeNode(numClasses, maxDepth, currentDepth+1, numFeatures, numThresh, 
 		minNumInNode, backgroundPenalty, featureRange, thresholdRange, inputDepthImages, inputClassifiedImages, 
-		relevantPixels);
+		bestLeft);
 
 	ITreeNode rightChild = recursiveFactory.makeNode(numClasses, maxDepth, currentDepth+1, numFeatures, numThresh, 
 		minNumInNode, backgroundPenalty, featureRange, thresholdRange, inputDepthImages, inputClassifiedImages, 
-		relevantPixels);
+		bestRight);
 
 	TreeNode retNode = TreeNode(bestFeature, bestThresh, leftChild, rightChild, backgroundPenalty);
 
