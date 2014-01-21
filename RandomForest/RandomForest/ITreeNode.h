@@ -11,6 +11,6 @@ public:
 	ITreeNode(void) {}
 	~ITreeNode(void) {}
 
-	virtual void predict(Mat &depthImage, Mat &classifiedImage, vector<pair<int,int> > pixels);
+	virtual void predict(Mat &depthImage, vector<vector<vector<double>>> &classifiedImage, vector<pair<int,int> > pixels);
 };
 

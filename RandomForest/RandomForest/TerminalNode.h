@@ -10,16 +10,15 @@
 class TerminalNode : public ITreeNode {
 
 private:
-	int maxClass;
-	vector<int> histogram;
+	vector<double> histogram;
 
 public:
 
-	TerminalNode(vector<int> _histogram);
+	TerminalNode(vector<double> _histogram);
 
 	~TerminalNode();
 
-	void predict(Mat &depthImage, Mat &classifiedImage, vector< pair < int,int > > pixels);
+	void predict(Mat &depthImage, vector<vector<vector<double>>> &classifiedImage, vector<pair<int,int>> &pixels);
 };
 
 

@@ -107,28 +107,6 @@ ITreeNode NodeFactory::makeNode(int numClasses, int maxDepth, int currentDepth,
 	// Count how many of each class we have in this nodes' pixels
 	vector<int> histogram = calcHistogram(relevantPixels, inputClassifiedImages, numClasses);
 
-	// Check if pixels left are below the allowed amount
-	if(relevantPixels.size() < minNumInNode || currentDepth == maxDepth) {
-		return TerminalNode(histogram);
-	}
-	else {
-
-		int countedClasses = 0;
-
-		// Check if all pixels fall into one class
-		for(int c : histogram) {
-			if(c > 0) {
-				countedClasses++;
-				if(countedClasses > 1) {
-					return TerminalNode(histogram);
-				}
-			}
-
-		}
-	}
-
-	
-
 	// Normalize the histogram
 	int i;
 	int sum = sumHistogram(histogram);
@@ -137,6 +115,30 @@ ITreeNode NodeFactory::makeNode(int numClasses, int maxDepth, int currentDepth,
 	for(i=0; i < numClasses; i++) {
 		histogramNorm.at(i) = histogram.at(i)/sum;
 	}
+
+	// Check if pixels left are below the allowed amount or we are at the maximum depth
+	if(relevantPixels.size() < minNumInNode || currentDepth == maxDepth) {
+		return TerminalNode(histogramNorm);
+	}
+	else {
+
+		int countedClasses = 0;
+
+		// Check if all pixels fall into one class
+		for(int c : histogramNorm) {
+			if(c > 0) {
+				countedClasses++;
+				if(countedClasses > 1) {
+					return TerminalNode(histogramNorm);
+				}
+			}
+
+		}
+	}
+
+	
+
+	
 
 	// Calculate the Shannon Entropy for this node's histogram
 	vector<double> hlogh(numClasses);

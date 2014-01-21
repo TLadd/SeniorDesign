@@ -25,7 +25,7 @@ public:
 
 	~TreeNode();
 
-	void predict(Mat &depthImage, Mat &classifiedImage, vector< pair < int,int > > pixels);
+	void predict(Mat &depthImage, vector<vector<vector<double>>> &classifiedImage, vector< pair < int,int > > pixels);
 
 };
 
