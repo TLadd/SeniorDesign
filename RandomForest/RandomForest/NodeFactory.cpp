@@ -108,7 +108,7 @@ ITreeNode NodeFactory::makeNode(int numClasses, int maxDepth, int currentDepth,
 	vector<int> histogram = calcHistogram(relevantPixels, inputClassifiedImages, numClasses);
 
 	// Check if pixels left are below the allowed amount
-	if(relevantPixels.size() < minNumInNode) {
+	if(relevantPixels.size() < minNumInNode || currentDepth == maxDepth) {
 		return TerminalNode(histogram);
 	}
 	else {
