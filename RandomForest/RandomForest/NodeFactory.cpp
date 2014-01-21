@@ -16,6 +16,9 @@ NodeFactory::NodeFactory() {
 
 }
 
+/*
+ * Return hlogh usually. 0 if h is 0.
+ */
 double safeLog(int h) {
 	if (h == 0)
 		return 0;
@@ -72,6 +75,9 @@ vector<double> normalizeHistogram(vector<int> histogram) {
 
 }
 
+/*
+ * Calculates the histogram, normalizes it, and calculates Shannon Entropy.
+ */
 double calcEntropy(int numClasses, vector<TripletWrapper> &pixels, vector<Mat> &inputClassifiedImages) {
 	vector<int> histogram = calcHistogram(pixels, inputClassifiedImages, numClasses);
 	int sum = sumHistogram(histogram);
@@ -188,15 +194,19 @@ ITreeNode NodeFactory::makeNode(int numClasses, int maxDepth, int currentDepth,
 
 			}
 
+			// Calculates entropy for left and right node
 			double leftEntropy = calcEntropy(numClasses, leftPixels, inputClassifiedImages);
 			double rightEntropy = calcEntropy(numClasses, rightPixels, inputClassifiedImages);
 
+			// Number of pixels to be sent to each node
 			int leftSize = leftPixels.size();
 			int rightSize = rightPixels.size();
 			int totalSize = leftSize + rightSize;
 
+			// Actual score calculation
 			double score = hloghSum - ((leftSize/totalSize) * leftEntropy) - ((rightSize/totalSize) * rightEntropy);
-			// TODO: entropy calcs. May need to resort to storing everything as in old code
+			
+			// Update best pointers if we found a new best
 			if(score > maxScore) {
 				maxScore = score;
 				bestFeature = feature;
@@ -210,6 +220,7 @@ ITreeNode NodeFactory::makeNode(int numClasses, int maxDepth, int currentDepth,
 
 	}
 
+	// Create the left and right child nodes
 	NodeFactory recursiveFactory = NodeFactory();
 
 	ITreeNode leftChild = recursiveFactory.makeNode(numClasses, maxDepth, currentDepth+1, numFeatures, numThresh, 
@@ -220,6 +231,7 @@ ITreeNode NodeFactory::makeNode(int numClasses, int maxDepth, int currentDepth,
 		minNumInNode, backgroundPenalty, featureRange, thresholdRange, inputDepthImages, inputClassifiedImages, 
 		bestRight);
 
+	// Create a tree node for oursevles and return
 	TreeNode retNode = TreeNode(bestFeature, bestThresh, leftChild, rightChild, backgroundPenalty);
 
 	return retNode;
