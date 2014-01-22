@@ -43,6 +43,64 @@ vector<int> getRandVector(int n) {
 	return retVec;
 }
 
+/*
+ * Takes the vector of histogram matrices and averages them for each pixel, and then
+ * chooses the maximum count as the class for the pixel
+ */
+Mat Forest::computePrediction(vector<HistogramMatrix> matrices, int width, int height) {
+	
+	Mat classifiedImage = Mat(height, width, CV_8UC1);
+
+	// Initially set all predictions to -1
+	classifiedImage.setTo(-1);
+
+	// Iterate through every pixel
+	for(int i = 0; i < height; i++) {
+
+		for(int j = 0; j < width; j++) {
+
+			// Keep a sum of the histogram counts
+			vector<double> sum = vector<double>(numClasses, 0);
+			
+			// Iterate through each matrix of histograms
+			for(int k = 0; k < matrices.size(); k++) {
+
+				// Get the histogram for this pixel and histogram matrix
+				vector<double> hist = matrices.at(k).getHistogram(i, j);
+
+				// Sum up all the classes in the histogram
+				for(int m = 0; m < hist.size(); m++) {
+
+					sum.at(m) += hist.at(m);
+
+				}
+
+
+
+			}
+
+			// Compute the max class
+			double maxTally = -1;
+			int maxIndex = -1;
+
+			for(int n=0; n < numClasses; n++) {
+
+				if(sum.at(n) > maxTally) {
+					maxTally = sum.at(n);
+					maxIndex = n;
+				}
+
+			}
+
+			// Set the pixel to the max class
+			classifiedImage.at<int>(i,j) = maxIndex;
+
+
+		}
+
+	}
+}
+
 
 /*
  * Utility method to make making multiple trees at once easier. Makes numTrees trees by following this process: 
@@ -69,8 +127,44 @@ void Forest::makeTrees(vector<string> &allInputDepthImages, vector<string> &allI
 
 }
 
+/*
+ * Takes in an input depth image and outputs a Mat where each pixel corresponds to the classification
+ * of the corresponding pixel in the depth image
+ */
 Mat Forest::classifyImage(Mat &inputDepth) {
 	
+	int width = inputDepth.size().width;
+	int height = inputDepth.size().height;
+
+	int pixelCount = width*height;
+
+	vector<pair<int,int>> pixels = vector<pair<int,int>>(pixelCount);
+
+	// Linear collection of the pixel positions
+	for(int i = 0; i < width*height; i++) {
+		
+		pixels.at(i) = pair<int,int>(i/pixelCount, i%pixelCount);
+		
+	}
+
+	vector<HistogramMatrix> matrices = vector<HistogramMatrix>();
+
+	// Get a matrix of histograms for each tree
+	for(ITreeNode node : trees) {
+	
+		// Construct a container for the matrix of histograms
+		HistogramMatrix histMat = HistogramMatrix(width, height);
+
+		// Delegate to the tree. ClassifiedImage will have the results.
+		node.predict(inputDepth, histMat, pixels);
+
+		matrices.push_back(histMat);
+
+	}
+
+	Mat classifiedImage = computePrediction(matrices, width, height);
+
+	return classifiedImage;
 }
 
 /*

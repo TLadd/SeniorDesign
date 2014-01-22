@@ -150,6 +150,7 @@
     <ClInclude Include="..\..\ConsoleApplication1\ConsoleApplication1\stdafx.h" />
     <ClInclude Include="FeatureProjector.h" />
     <ClInclude Include="Forest.h" />
+    <ClInclude Include="HistogramMatrix.h" />
     <ClInclude Include="ITreeNode.h" />
     <ClInclude Include="NodeFactory.h" />
     <ClInclude Include="targetver.h" />
@@ -160,6 +161,7 @@
   <ItemGroup>
     <ClCompile Include="FeatureProjector.cpp" />
     <ClCompile Include="Forest.cpp" />
+    <ClCompile Include="HistogramMatrix.cpp" />
     <ClCompile Include="ITreeNode.cpp" />
     <ClCompile Include="NodeFactory.cpp" />
     <ClCompile Include="RandomFor.cpp" />

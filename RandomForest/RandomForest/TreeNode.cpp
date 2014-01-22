@@ -26,7 +26,7 @@ TreeNode::~TreeNode() {
  * Splits the given pixels and forwards them to the left or right child depending on which side of the
  * threshold each pixel falls when projected using the node feature
  */
-void TreeNode::predict(Mat &depthImage, vector<vector<vector<double>>> &classifiedImage, vector< pair < int,int > > pixels) {
+void TreeNode::predict(Mat &depthImage, HistogramMatrix &classifiedImage, vector< pair < int,int > > pixels) {
 
 	// Uses the trained feature and threshold to determine if a given pixel should travel left
 	// or right down the tree

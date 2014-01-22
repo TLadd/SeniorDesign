@@ -31,7 +31,7 @@ private:
 	double backgroundPenalty; 
 	std::pair<double, double> featureRange;
 	std::pair<double, double> thresholdRange;
-
+	Mat computePrediction(vector<HistogramMatrix> matrices, int width, int height);
 
 public:
 
@@ -43,6 +43,8 @@ public:
 			std::pair<double, double> thresholdRange);
 
 	void makeTrees(vector<string> &inputDepthImages, vector<string> &inputClassifiedImages, int numImages, int numTrees);
+
+	
 
 	Mat classifyImage(Mat &inputDepth);
 

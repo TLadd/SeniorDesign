@@ -18,7 +18,7 @@ public:
 
 	~TerminalNode();
 
-	void predict(Mat &depthImage, vector<vector<vector<double>>> &classifiedImage, vector<pair<int,int>> &pixels);
+	void predict(Mat &depthImage, HistogramMatrix &classifiedImage, vector<pair<int,int>> &pixels);
 };
 
 
