@@ -1,6 +1,6 @@
 
-#include "Forest.h";
-#include "NodeFactory.h";
+#include "Forest.h"
+#include "NodeFactory.h"
 
 
 /*
@@ -99,6 +99,9 @@ Mat Forest::computePrediction(vector<HistogramMatrix> matrices, int width, int h
 		}
 
 	}
+
+	return classifiedImage;
+
 }
 
 

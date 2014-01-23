@@ -66,8 +66,8 @@ vector<double> normalizeHistogram(vector<int> histogram) {
 
 	vector<double> histogramNorm(histogram.size(), 0);
 	
-	int i;
-	for(i=0; i < histogram.size(); i++) {
+
+	for(unsigned int i=0; i < histogram.size(); i++) {
 		histogramNorm.at(i) = histogram.at(i)/sum;
 	}
 
@@ -125,7 +125,7 @@ ITreeNode NodeFactory::makeNode(int numClasses, int maxDepth, int currentDepth,
 		int countedClasses = 0;
 
 		// Check if all pixels fall into one class
-		for(int c : histogramNorm) {
+		for(double c : histogramNorm) {
 			if(c > 0) {
 				countedClasses++;
 				if(countedClasses > 1) {

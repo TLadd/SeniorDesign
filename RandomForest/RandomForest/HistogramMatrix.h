@@ -1,6 +1,4 @@
-#pragma once
-
-#include "opencv.hpp";
+#include "opencv.hpp"
 
 using namespace std;
 using namespace cv;
