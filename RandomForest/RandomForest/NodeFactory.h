@@ -23,7 +23,7 @@ class NodeFactory {
 public:
 	NodeFactory();
 
-	ITreeNode makeNode(int numClasses, int maxDepth, int currentDepth,
+	ITreeNode *makeNode(int numClasses, int maxDepth, int currentDepth,
 			int numFeatures, int numThresh, int minNumInNode, int backgroundPenalty, 
 			std::pair<int, int> featureRange, std::pair<double, double> thresholdRange, 
 			vector<Mat> &inputDepthImages, vector<Mat> &inputClassifiedImages, vector<TripletWrapper> relevantPixels);

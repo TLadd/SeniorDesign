@@ -101,13 +101,14 @@
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>C:\opencv\build\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\Boost\include\boost-1_55;C:\opencv\build\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>C:\opencv\build\x64\vc11\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>C:\opencv\build\x64\vc11\lib;C:\Boost\lib\x64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalDependencies>opencv_core248d.lib;opencv_imgproc248d.lib;opencv_highgui248d.lib;opencv_ml248d.lib;opencv_video248d.lib;opencv_features2d248d.lib;opencv_calib3d248d.lib;opencv_objdetect248d.lib;opencv_contrib248d.lib;opencv_legacy248d.lib;opencv_flann248d.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <PerUserRedirection>true</PerUserRedirection>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -157,6 +158,7 @@
     <ClInclude Include="HistogramMatrix.h" />
     <ClInclude Include="ITreeNode.h" />
     <ClInclude Include="NodeFactory.h" />
+    <ClInclude Include="SerializeHelper.h" />
     <ClInclude Include="targetver.h" />
     <ClInclude Include="TerminalNode.h" />
     <ClInclude Include="TreeNode.h" />
@@ -166,9 +168,9 @@
     <ClCompile Include="FeatureProjector.cpp" />
     <ClCompile Include="Forest.cpp" />
     <ClCompile Include="HistogramMatrix.cpp" />
-    <ClCompile Include="ITreeNode.cpp" />
     <ClCompile Include="NodeFactory.cpp" />
     <ClCompile Include="RandomFor.cpp" />
+    <ClCompile Include="SerializeHelper.cpp" />
     <ClCompile Include="TerminalNode.cpp" />
     <ClCompile Include="TreeNode.cpp" />
     <ClCompile Include="TripletWrapper.cpp" />

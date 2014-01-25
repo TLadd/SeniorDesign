@@ -10,7 +10,7 @@
 /*
  * A Node which is not at the bottom of the tree
  */
-TreeNode::TreeNode(pair<pair<int,int>, pair<int,int>> _feature, double _threshold, ITreeNode _leftNode, ITreeNode _rightNode, int _backgroundPenalty)  {
+TreeNode::TreeNode(pair<pair<int,int>, pair<int,int>> _feature, double _threshold, ITreeNode *_leftNode, ITreeNode *_rightNode, int _backgroundPenalty)  {
 	feature = _feature;
 	threshold = _threshold;
 	leftNode = _leftNode;
@@ -26,7 +26,7 @@ TreeNode::~TreeNode() {
  * Splits the given pixels and forwards them to the left or right child depending on which side of the
  * threshold each pixel falls when projected using the node feature
  */
-void TreeNode::predict(Mat &depthImage, HistogramMatrix &classifiedImage, vector< pair < int,int > > pixels) {
+void TreeNode::predict(Mat &depthImage, HistogramMatrix &classifiedImage, vector<pair<int,int>> pixels) {
 
 	// Uses the trained feature and threshold to determine if a given pixel should travel left
 	// or right down the tree
@@ -52,8 +52,8 @@ void TreeNode::predict(Mat &depthImage, HistogramMatrix &classifiedImage, vector
 	}
 
 	// Send the pixels down the tree
-	leftNode.predict(depthImage, classifiedImage, leftPixels);
-	rightNode.predict(depthImage, classifiedImage, rightPixels);
+	leftNode->predict(depthImage, classifiedImage, leftPixels);
+	rightNode->predict(depthImage, classifiedImage, rightPixels);
 
 
 

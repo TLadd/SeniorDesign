@@ -21,7 +21,7 @@ TerminalNode::~TerminalNode() {
 /*
  * Sets every pixel passed to the node to the maximum class
  */
-void TerminalNode::predict(cv::Mat &depthImage, HistogramMatrix &classifiedImage, vector<pair<int,int>> &pixels) {
+void TerminalNode::predict(Mat &depthImage, HistogramMatrix &classifiedImage, vector<pair<int,int> > pixels) {
 	
 	
 	for(pair<int,int> pixel : pixels) {

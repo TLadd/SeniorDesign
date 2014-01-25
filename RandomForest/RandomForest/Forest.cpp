@@ -2,10 +2,15 @@
 #include "Forest.h"
 #include "NodeFactory.h"
 
+using namespace std;
+using namespace cv;
 
 /*
  * TODO: De-Serialization of the forests
  */
+
+Forest::Forest(){}
+
 Forest::Forest(string fileName) {
 
 }
@@ -24,6 +29,7 @@ Forest::Forest(int _numClasses, int _depth,
 				backgroundPenalty = _backgroundPenalty;
 				featureRange = _featureRange;
 				thresholdRange = _thresholdRange;
+				trees = vector<ITreeNode *>();
 }
 
 /*
@@ -153,13 +159,13 @@ Mat Forest::classifyImage(Mat &inputDepth) {
 	vector<HistogramMatrix> matrices = vector<HistogramMatrix>();
 
 	// Get a matrix of histograms for each tree
-	for(ITreeNode node : trees) {
+	for(ITreeNode *node : trees) {
 	
 		// Construct a container for the matrix of histograms
 		HistogramMatrix histMat = HistogramMatrix(width, height);
 
 		// Delegate to the tree. ClassifiedImage will have the results.
-		node.predict(inputDepth, histMat, pixels);
+		node->predict(inputDepth, histMat, pixels);
 
 		matrices.push_back(histMat);
 
@@ -207,16 +213,10 @@ void Forest::addTree(vector<Mat> inputDepthImages, vector<Mat> inputClassifiedIm
 	// Creates a tree from the selected pixels
 	NodeFactory nodeFac = NodeFactory();
 
-	ITreeNode node = nodeFac.makeNode(numClasses, depth, 0, numFeatures, numThresh, minNumInNode, backgroundPenalty, 
+	ITreeNode *node = nodeFac.makeNode(numClasses, depth, 0, numFeatures, numThresh, minNumInNode, backgroundPenalty, 
 		featureRange, thresholdRange, inputDepthImages, inputClassifiedImages, relevantPixels);
 		
 	trees.push_back(node);
 }
 
 
-/*
- * TODO: Serialization of forest
- */
-void Forest::saveForest() {
-
-}

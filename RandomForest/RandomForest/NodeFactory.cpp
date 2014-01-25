@@ -99,7 +99,7 @@ double calcEntropy(int numClasses, vector<TripletWrapper> &pixels, vector<Mat> &
 
 
 
-ITreeNode NodeFactory::makeNode(int numClasses, int maxDepth, int currentDepth,
+ITreeNode * NodeFactory::makeNode(int numClasses, int maxDepth, int currentDepth,
 			int numFeatures, int numThresh, int minNumInNode, int backgroundPenalty, 
 			std::pair<int, int> featureRange, std::pair<double, double> thresholdRange, 
 			vector<Mat> &inputDepthImages, vector<Mat> &inputClassifiedImages, vector<TripletWrapper> relevantPixels) {
@@ -118,7 +118,7 @@ ITreeNode NodeFactory::makeNode(int numClasses, int maxDepth, int currentDepth,
 
 	// Check if pixels left are below the allowed amount or we are at the maximum depth
 	if(relevantPixels.size() < minNumInNode || currentDepth == maxDepth) {
-		return TerminalNode(histogramNorm);
+		return &TerminalNode(histogramNorm);
 	}
 	else {
 
@@ -129,7 +129,7 @@ ITreeNode NodeFactory::makeNode(int numClasses, int maxDepth, int currentDepth,
 			if(c > 0) {
 				countedClasses++;
 				if(countedClasses > 1) {
-					return TerminalNode(histogramNorm);
+					return &TerminalNode(histogramNorm);
 				}
 			}
 
@@ -225,18 +225,18 @@ ITreeNode NodeFactory::makeNode(int numClasses, int maxDepth, int currentDepth,
 	// Create the left and right child nodes
 	NodeFactory recursiveFactory = NodeFactory();
 
-	ITreeNode leftChild = recursiveFactory.makeNode(numClasses, maxDepth, currentDepth+1, numFeatures, numThresh, 
+	ITreeNode *leftChild = recursiveFactory.makeNode(numClasses, maxDepth, currentDepth+1, numFeatures, numThresh, 
 		minNumInNode, backgroundPenalty, featureRange, thresholdRange, inputDepthImages, inputClassifiedImages, 
 		bestLeft);
 
-	ITreeNode rightChild = recursiveFactory.makeNode(numClasses, maxDepth, currentDepth+1, numFeatures, numThresh, 
+	ITreeNode *rightChild = recursiveFactory.makeNode(numClasses, maxDepth, currentDepth+1, numFeatures, numThresh, 
 		minNumInNode, backgroundPenalty, featureRange, thresholdRange, inputDepthImages, inputClassifiedImages, 
 		bestRight);
 
 	// Create a tree node for oursevles and return
 	TreeNode retNode = TreeNode(bestFeature, bestThresh, leftChild, rightChild, backgroundPenalty);
 
-	return retNode;
+	return &retNode;
 
 
 	

@@ -1,0 +1,7 @@
+22 serialization::archive 10 1 8 TreeNode 1 0
+0 1 0
+1 0 0 0 0 1 2 3 4 0.5 5 4 12 TerminalNode 1 0
+2
+3 3 0 2 3 1 4
+4
+5 3 0 50 70 60
