@@ -154,9 +154,9 @@ ITreeNode * NodeFactory::makeNode(int numClasses, int maxDepth, int currentDepth
 		bestRight);
 
 	// Create a tree node for oursevles and return
-	TreeNode retNode = TreeNode(bestFeature, bestThresh, leftChild, rightChild, backgroundPenalty);
+	ITreeNode *retNode = new TreeNode(bestFeature, bestThresh, leftChild, rightChild, backgroundPenalty);
 
-	return &retNode;
+	return retNode;
 
 
 	

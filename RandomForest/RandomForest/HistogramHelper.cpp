@@ -51,7 +51,7 @@ vector<int> HistogramHelper::calcHistogram(vector<TripletWrapper> &relevantPixel
 	for(TripletWrapper t : relevantPixels) {
 		pair<int,int> pixel = t.getPixelLoc();
 		Mat image = inputClassifiedImages.at(t.getImageIndex());
-		histogram.at(image.at<int>(pixel.first, pixel.second)) += 1;
+		histogram.at(image.at<uchar>(pixel.first, pixel.second)) += 1;
 	}
 
 	return histogram;
