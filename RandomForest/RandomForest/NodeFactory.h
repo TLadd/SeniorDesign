@@ -28,9 +28,8 @@ public:
 			std::pair<int, int> featureRange, std::pair<double, double> thresholdRange, 
 			vector<Mat> &inputDepthImages, vector<Mat> &inputClassifiedImages, vector<TripletWrapper> relevantPixels);
 
-
-private:
 	pair<pair<int,int>, pair<int,int>> getRandFeature(unsigned int leftDownOffset, unsigned int rightUpOffset);
+
 
 };
 

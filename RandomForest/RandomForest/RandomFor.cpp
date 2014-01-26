@@ -9,20 +9,10 @@
 #include <iostream>
 #include <assert.h>
 #include <fstream>
-//#include "TerminalNode.h"
-//#include "TreeNode.h"
 #include "SerializeHelper.h"
-//#include <boost/archive/text_iarchive.hpp>
-//#include <boost/archive/text_oarchive.hpp>
-//#include <boost/serialization/export.hpp>
-
 
 using namespace std;
-//using namespace boost;
-//using namespace serialization;
 
-//BOOST_CLASS_EXPORT_GUID(TerminalNode, "TerminalNode")
-//BOOST_CLASS_EXPORT_GUID(TreeNode, "TreeNode")
 
 int main() {
 

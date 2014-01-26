@@ -71,6 +71,8 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
+    <IncludePath>$(VCInstallDir)UnitTest\include;$(IncludePath)</IncludePath>
+    <LibraryPath>$(VCInstallDir)UnitTest\lib;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
@@ -155,6 +157,7 @@
     <ClInclude Include="..\..\ConsoleApplication1\ConsoleApplication1\stdafx.h" />
     <ClInclude Include="FeatureProjector.h" />
     <ClInclude Include="Forest.h" />
+    <ClInclude Include="HistogramHelper.h" />
     <ClInclude Include="HistogramMatrix.h" />
     <ClInclude Include="ITreeNode.h" />
     <ClInclude Include="NodeFactory.h" />
@@ -167,11 +170,13 @@
   <ItemGroup>
     <ClCompile Include="FeatureProjector.cpp" />
     <ClCompile Include="Forest.cpp" />
+    <ClCompile Include="HistogramHelper.cpp" />
     <ClCompile Include="HistogramMatrix.cpp" />
     <ClCompile Include="NodeFactory.cpp" />
     <ClCompile Include="RandomFor.cpp" />
     <ClCompile Include="SerializeHelper.cpp" />
     <ClCompile Include="TerminalNode.cpp" />
+    <ClCompile Include="TrainingTests.cpp" />
     <ClCompile Include="TreeNode.cpp" />
     <ClCompile Include="TripletWrapper.cpp" />
   </ItemGroup>

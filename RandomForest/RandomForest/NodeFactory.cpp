@@ -5,6 +5,7 @@
  *      Author: thomas
  */
 #include "NodeFactory.h"
+#include "HistogramHelper.h"
 #include <thread>
 #include <random>
 #include <math.h>
@@ -16,85 +17,7 @@ NodeFactory::NodeFactory() {
 
 }
 
-/*
- * Return hlogh usually. 0 if h is 0.
- */
-double safeLog(int h) {
-	if (h == 0)
-		return 0;
-	else {
-		return h * log(h);
-	}
-}
 
-
-double sumHistogram(vector<double> histogram) {
-	
-	double retSum = 0;
-	for(double d : histogram) {
-		retSum = d + retSum;
-	}
-	return retSum;
-}
-
-int sumHistogram(vector<int> histogram) {
-	
-	int retSum = 0;
-	for(int d : histogram) {
-		retSum = d + retSum;
-	}
-	return retSum;
-}
-
-/*
- * Calculates a histogram for the class type of the pixels in the node
- */
-vector<int> calcHistogram(vector<TripletWrapper> &relevantPixels, vector<Mat> &inputClassifiedImages, int numClasses) {
-	vector<int> histogram(numClasses, 0);
-	for(TripletWrapper t : relevantPixels) {
-		pair<int,int> pixel = t.getPixelLoc();
-		Mat image = inputClassifiedImages.at(t.getImageIndex());
-		histogram.at(image.at<int>(pixel.first, pixel.second)) += 1;
-	}
-
-	return histogram;
-
-}
-
-vector<double> normalizeHistogram(vector<int> histogram) {
-	int sum = sumHistogram(histogram);
-
-	vector<double> histogramNorm(histogram.size(), 0);
-	
-
-	for(unsigned int i=0; i < histogram.size(); i++) {
-		histogramNorm.at(i) = histogram.at(i)/sum;
-	}
-
-	return histogramNorm;
-
-}
-
-/*
- * Calculates the histogram, normalizes it, and calculates Shannon Entropy.
- */
-double calcEntropy(int numClasses, vector<TripletWrapper> &pixels, vector<Mat> &inputClassifiedImages) {
-	vector<int> histogram = calcHistogram(pixels, inputClassifiedImages, numClasses);
-	int sum = sumHistogram(histogram);
-
-	vector<double> histogramNorm(numClasses, 0);
-	
-	int i;
-	for(i=0; i < numClasses; i++) {
-		histogramNorm.at(i) = histogram.at(i)/sum;
-	}
-
-	vector<double> hlogh(numClasses);
-	transform(histogramNorm.begin(), histogramNorm.end(), hlogh.begin(), safeLog); 
-	double hloghSum = -1 * sumHistogram(hlogh);
-
-	return hloghSum;
-}
 
 
 
@@ -104,21 +27,19 @@ ITreeNode * NodeFactory::makeNode(int numClasses, int maxDepth, int currentDepth
 			std::pair<int, int> featureRange, std::pair<double, double> thresholdRange, 
 			vector<Mat> &inputDepthImages, vector<Mat> &inputClassifiedImages, vector<TripletWrapper> relevantPixels) {
 
+
+	HistogramHelper histHelp = HistogramHelper();
+	
 	// Count how many of each class we have in this nodes' pixels
-	vector<int> histogram = calcHistogram(relevantPixels, inputClassifiedImages, numClasses);
+	vector<int> histogram = histHelp.calcHistogram(relevantPixels, inputClassifiedImages, numClasses);
 
 	// Normalize the histogram
-	int i;
-	int sum = sumHistogram(histogram);
-
-	vector<double> histogramNorm(numClasses, 0);
-	for(i=0; i < numClasses; i++) {
-		histogramNorm.at(i) = histogram.at(i)/sum;
-	}
+	vector<double> histogramNorm = histHelp.normalizeHistogram(histogram);
 
 	// Check if pixels left are below the allowed amount or we are at the maximum depth
 	if(relevantPixels.size() < minNumInNode || currentDepth == maxDepth) {
-		return &TerminalNode(histogramNorm);
+		ITreeNode *node = new TerminalNode(histogramNorm);
+		return node;
 	}
 	else {
 
@@ -129,7 +50,8 @@ ITreeNode * NodeFactory::makeNode(int numClasses, int maxDepth, int currentDepth
 			if(c > 0) {
 				countedClasses++;
 				if(countedClasses > 1) {
-					return &TerminalNode(histogramNorm);
+					ITreeNode *node = new TerminalNode(histogramNorm);
+					return node;
 				}
 			}
 
@@ -141,9 +63,7 @@ ITreeNode * NodeFactory::makeNode(int numClasses, int maxDepth, int currentDepth
 	
 
 	// Calculate the Shannon Entropy for this node's histogram
-	vector<double> hlogh(numClasses);
-	transform(histogramNorm.begin(), histogramNorm.end(), hlogh.begin(), safeLog); 
-	double hloghSum = -1 * sumHistogram(hlogh);
+	double hloghSum = histHelp.sumLog(histogramNorm);
 
 	int j, k, m;
 
@@ -197,8 +117,8 @@ ITreeNode * NodeFactory::makeNode(int numClasses, int maxDepth, int currentDepth
 			}
 
 			// Calculates entropy for left and right node
-			double leftEntropy = calcEntropy(numClasses, leftPixels, inputClassifiedImages);
-			double rightEntropy = calcEntropy(numClasses, rightPixels, inputClassifiedImages);
+			double leftEntropy = histHelp.calcEntropy(numClasses, leftPixels, inputClassifiedImages);
+			double rightEntropy = histHelp.calcEntropy(numClasses, rightPixels, inputClassifiedImages);
 
 			// Number of pixels to be sent to each node
 			int leftSize = leftPixels.size();
