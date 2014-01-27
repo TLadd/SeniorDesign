@@ -15,11 +15,11 @@ FeatureProjector::~FeatureProjector(void)
 bool FeatureProjector::project(pair<pair<int,int>, pair<int,int>> feature, Mat &image, pair<int,int> pixel, int backgroundPenalty, double thresh) {
 
 	// Offset the pixel location by the feature
-	pair<int,int> u = pair<int,int>(feature.first.first + pixel.first, feature.second.first + pixel.second);
+	pair<int,int> u = pair<int,int>(feature.first.first + pixel.first, feature.first.second + pixel.second);
 	pair<int,int> v = pair<int,int>(feature.second.first + pixel.first, feature.second.second + pixel.second);
 
-	bool ut = u.first < 1 || u.second < 1 || u.first > image.size().width || u.second > image.size().height;
-	bool vt = v.first < 1 || v.second < 1 || v.first > image.size().width || v.second > image.size().height;
+	bool ut = u.first < 0 || u.second < 0 || (u.first > image.size().width - 1) || (u.second > image.size().height - 1);
+	bool vt = v.first < 0 || v.second < 0 || (v.first > image.size().width - 1) || (v.second > image.size().height - 1);
 
 	int depthDiff;
 
@@ -29,13 +29,13 @@ bool FeatureProjector::project(pair<pair<int,int>, pair<int,int>> feature, Mat &
 		depthDiff = 0;
 	}
 	else if(ut && !vt) {
-		depthDiff = backgroundPenalty - image.at<int>(v.first, v.second);
+		depthDiff = backgroundPenalty - image.at<uchar>(v.first, v.second);
 	}
 	else if(!ut && vt) {
-		depthDiff = image.at<int>(u.first, u.second) - backgroundPenalty;
+		depthDiff = image.at<uchar>(u.first, u.second) - backgroundPenalty;
 	}
 	else {
-		depthDiff = image.at<int>(u.first, u.second) - image.at<int>(v.first, v.second);
+		depthDiff = image.at<uchar>(u.first, u.second) - image.at<uchar>(v.first, v.second);
 	}
 
 	// Right side of the threshold

@@ -9,7 +9,7 @@ public:
 	HistogramHelper(void);
 	~HistogramHelper(void);
 
-	double safeHLogH(int h);
+	double safeHLogH(double h);
 
 	double sumHistogram(vector<double> histogram);
 

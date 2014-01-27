@@ -4,6 +4,7 @@
 #include "HistogramMatrix.h"
 #include "boost\serialization\serialization.hpp"
 
+
 using namespace std;
 using namespace cv;
 using namespace boost;
@@ -26,5 +27,7 @@ public:
 	~ITreeNode(void) {}
 
 	virtual void predict(Mat &depthImage, HistogramMatrix &classifiedImage, vector<pair<int,int> > pixels) {}
+
+	virtual string graphvizPrint(int parentID, int *id) {return "";}
 };
 

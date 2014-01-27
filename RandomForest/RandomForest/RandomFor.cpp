@@ -9,6 +9,7 @@
 #include <iostream>
 #include <assert.h>
 #include <fstream>
+#include <sstream>
 #include "SerializeHelper.h"
 #include "HistogramHelper.h"
 #include <boost\test\unit_test.hpp>
@@ -161,8 +162,60 @@ bool histogramTests() {
 
 int main() {
 
+	Forest forest = Forest(2, 5, 100, 5, 0.02, 1, 10, pair<double, double>(60, 60), pair<double, double>(-10,10));
+
+	vector<Mat> depthImages = vector<Mat>();
+	vector<Mat> classifiedImages = vector<Mat>();
+
+	
+	std::ostringstream ximg, yimg;
+	for(int i=1; i <= 100; i++) {
+
+		std::ostringstream ximg, yimg;
+
+		ximg << "SyntheticImages/" << i << "X.png";
+		yimg << "SyntheticImages/" << i << "Y.png";
+		
+		string x = ximg.str();
+		string y = yimg.str();
+
+		Mat depthIm = imread(x, 0);
+		Mat classIm = imread(y, 0);
+
+
+		depthImages.push_back(depthIm);
+		classifiedImages.push_back(classIm);
+
+	}
+
+	forest.addTree(depthImages, classifiedImages);
+
+	string graphvix = forest.getTrees().at(0)->graphvizPrint(-1, NULL);
+	Mat trueClassified = classifiedImages.at(38);
+	Mat depthTest = depthImages.at(38);
+
+
+	for(int i=0; i < trueClassified.size().height; i++) {
+
+		for(int j=0; j < trueClassified.size().width; j++) {
+
+			if(trueClassified.at<uchar>(i,j) == 0) {
+				depthTest.at<uchar>(i,j) = 10;
+			}
+
+		}
+
+	}
+	Mat classified = forest.classifyImage(depthTest);
+
+	namedWindow( "Display window", WINDOW_AUTOSIZE );
+
+	imshow("Display window", classified*100);
+	waitKey(30);
+
 	bool ser = serializationTests();
-	bool hist = histogramTests();
+	cout << "Done\n";
+	getchar();
 	return 0;
 }
 

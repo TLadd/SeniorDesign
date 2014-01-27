@@ -38,7 +38,7 @@ ITreeNode * NodeFactory::makeNode(int numClasses, int maxDepth, int currentDepth
 
 	// Check if pixels left are below the allowed amount or we are at the maximum depth
 	if(relevantPixels.size() < minNumInNode || currentDepth == maxDepth) {
-		ITreeNode *node = new TerminalNode(histogramNorm);
+		ITreeNode *node = new TerminalNode(histogramNorm, relevantPixels.size());
 		return node;
 	}
 	else {
@@ -49,13 +49,15 @@ ITreeNode * NodeFactory::makeNode(int numClasses, int maxDepth, int currentDepth
 		for(double c : histogramNorm) {
 			if(c > 0) {
 				countedClasses++;
-				if(countedClasses > 1) {
-					ITreeNode *node = new TerminalNode(histogramNorm);
-					return node;
-				}
 			}
-
 		}
+
+		if(countedClasses <= 1) {
+			ITreeNode *node = new TerminalNode(histogramNorm, relevantPixels.size());
+			return node;
+		}
+
+
 	}
 
 	
@@ -91,7 +93,7 @@ ITreeNode * NodeFactory::makeNode(int numClasses, int maxDepth, int currentDepth
 			vector<TripletWrapper> rightPixels = vector<TripletWrapper>();;
 
 			// Threshold for this iteration. Step-size times the iteration count
-			double thresh = ((thresholdRange.first - thresholdRange.second) / (numThresh)) * k;
+			double thresh = thresholdRange.first + std::abs((thresholdRange.first - thresholdRange.second) / (numThresh-1)) * k;
 
 			// Iterate through all pixels part of this node. Tally 
 			for(m = 0; m < relevantPixels.size(); m++) {
@@ -126,7 +128,7 @@ ITreeNode * NodeFactory::makeNode(int numClasses, int maxDepth, int currentDepth
 			int totalSize = leftSize + rightSize;
 
 			// Actual score calculation
-			double score = hloghSum - ((leftSize/totalSize) * leftEntropy) - ((rightSize/totalSize) * rightEntropy);
+			double score = hloghSum - (((double)leftSize/totalSize) * leftEntropy) - (((double)rightSize/totalSize) * rightEntropy);
 			
 			// Update best pointers if we found a new best
 			if(score > maxScore) {
@@ -154,7 +156,7 @@ ITreeNode * NodeFactory::makeNode(int numClasses, int maxDepth, int currentDepth
 		bestRight);
 
 	// Create a tree node for oursevles and return
-	ITreeNode *retNode = new TreeNode(bestFeature, bestThresh, leftChild, rightChild, backgroundPenalty);
+	ITreeNode *retNode = new TreeNode(bestFeature, bestThresh, leftChild, rightChild, backgroundPenalty, histogramNorm, relevantPixels.size());
 
 	return retNode;
 
@@ -168,15 +170,18 @@ ITreeNode * NodeFactory::makeNode(int numClasses, int maxDepth, int currentDepth
  */
 pair<pair<int,int>, pair<int,int>> NodeFactory::getRandFeature(unsigned int leftDownOffset, unsigned int rightUpOffset) {
 	
-	std::default_random_engine generator;
+
+	//std::default_random_engine generator = std::default_random_engine(random_device());
+	std:random_device rd;
+
     std::uniform_real_distribution<double> distribution(0.0,1.0);
 	
-
+	distribution(rd);
 	// Four random numbers
-	double zeroZero = distribution(generator);
-	double zeroOne = distribution(generator);
-	double oneZero = distribution(generator);
-	double oneOne = distribution(generator);
+	double zeroZero = distribution(rd);;
+	double zeroOne = distribution(rd);;
+	double oneZero = distribution(rd);;
+	double oneOne = distribution(rd);;
 
 	// Calculate diff
 	unsigned int diff = leftDownOffset + rightUpOffset;
