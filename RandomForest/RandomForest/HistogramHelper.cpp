@@ -14,7 +14,7 @@ HistogramHelper::~HistogramHelper(void)
 /*
  * Return hlogh usually. 0 if h is 0.
  */
-double HistogramHelper::safeHLogH(int h) {
+double HistogramHelper::safeHLogH(double h) {
 	if (h == 0)
 		return 0;
 	else {
@@ -51,7 +51,8 @@ vector<int> HistogramHelper::calcHistogram(vector<TripletWrapper> &relevantPixel
 	for(TripletWrapper t : relevantPixels) {
 		pair<int,int> pixel = t.getPixelLoc();
 		Mat image = inputClassifiedImages.at(t.getImageIndex());
-		histogram.at(image.at<uchar>(pixel.first, pixel.second)) += 1;
+		int pixelVal = image.at<uchar>(pixel.first, pixel.second);
+		histogram.at(pixelVal - 1) += 1;
 	}
 
 	return histogram;
@@ -61,11 +62,15 @@ vector<int> HistogramHelper::calcHistogram(vector<TripletWrapper> &relevantPixel
 vector<double> HistogramHelper::normalizeHistogram(vector<int> histogram) {
 	int sum = sumHistogram(histogram);
 
+	if(sum == 0) {
+		sum = 1;
+	}
+
 	vector<double> histogramNorm(histogram.size(), 0);
 	
 
 	for(unsigned int i=0; i < histogram.size(); i++) {
-		histogramNorm.at(i) = histogram.at(i)/sum;
+		histogramNorm.at(i) = ((double)histogram.at(i))/sum;
 	}
 
 	return histogramNorm;
@@ -77,15 +82,8 @@ vector<double> HistogramHelper::normalizeHistogram(vector<int> histogram) {
  */
 double HistogramHelper::calcEntropy(int numClasses, vector<TripletWrapper> &pixels, vector<Mat> &inputClassifiedImages) {
 	vector<int> histogram = calcHistogram(pixels, inputClassifiedImages, numClasses);
-	int sum = sumHistogram(histogram);
 
-	vector<double> histogramNorm(numClasses, 0);
-	
-	int i;
-	for(i=0; i < numClasses; i++) {
-		histogramNorm.at(i) = histogram.at(i)/sum;
-	}
-
+	vector<double> histogramNorm = normalizeHistogram(histogram);
 
 	return sumLog(histogramNorm);
 }

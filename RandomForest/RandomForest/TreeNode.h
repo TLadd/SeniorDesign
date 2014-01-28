@@ -23,6 +23,9 @@ private:
 
 	int backgroundPenalty;
 
+	vector<double> hist;
+	int pixelCount;
+
 	// Allow serialization to access non-public data members.
 	friend class serialization::access;
 
@@ -38,9 +41,14 @@ public:
 
 	TreeNode(pair<pair<int,int>, pair<int,int>> _feature, double _threshold, ITreeNode *_leftNode, ITreeNode *_rightNode, int _backgroundPenalty);
 
+	TreeNode(pair<pair<int,int>, pair<int,int>> _feature, double _threshold, ITreeNode *_leftNode, ITreeNode *_rightNode, int _backgroundPenalty, vector<double> _hist, int _pixelCount);
+
+
 	~TreeNode();
 
 	void predict(Mat &depthImage, HistogramMatrix &classifiedImage, vector<pair<int,int> > pixels);
+
+	string graphvizPrint(int parentID, int *id);
 
 	ITreeNode * getLeftNode() {
 		return leftNode;

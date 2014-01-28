@@ -12,6 +12,7 @@ private:
 	int height;
 public:
 	HistogramMatrix(int width, int height);
+	HistogramMatrix(int _width, int _height, int numClasses);
 	void addHistogram(int row, int col, vector<double> hist);
 	vector<double> getHistogram(int row, int col);
 	~HistogramMatrix(void);

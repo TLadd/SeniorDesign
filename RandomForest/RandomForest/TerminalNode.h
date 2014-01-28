@@ -16,6 +16,8 @@ class TerminalNode : public ITreeNode {
 private:
 	vector<double> histogram;
 
+	int pixelCount;
+
 	// Allow serialization to access non-public  data members.
 	friend class boost::serialization::access;
 
@@ -31,9 +33,13 @@ public:
 
 	TerminalNode(vector<double> _histogram);
 
+	TerminalNode(std::vector<double> _histogram, int _pixelCount);
+
 	~TerminalNode();
 
 	void predict(Mat &depthImage, HistogramMatrix &classifiedImage, vector<pair<int,int> > pixels);
+
+	string graphvizPrint(int parentID, int *id);
 };
 
 

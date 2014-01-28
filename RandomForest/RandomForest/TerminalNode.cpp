@@ -14,6 +14,13 @@ TerminalNode::TerminalNode(std::vector<double> _histogram)  {
 }
 
 
+TerminalNode::TerminalNode(std::vector<double> _histogram, int _pixelCount)  {
+	histogram = _histogram;
+	pixelCount = _pixelCount;
+}
+
+
+
 TerminalNode::~TerminalNode() {
 
 }
@@ -31,3 +38,29 @@ void TerminalNode::predict(Mat &depthImage, HistogramMatrix &classifiedImage, ve
 	}
 }
 
+string TerminalNode::graphvizPrint(int parentID, int *id) {
+	std::ostringstream stAppender, stHist;
+
+	int myID;
+
+	if(parentID == -1) {
+		id = new int(0);
+		myID = 0;
+	}
+	else {
+		myID = *id + 1;
+		*id = myID;
+		// Draw connection from my parent to me
+		stAppender << parentID << " -> " << myID << "\n";
+	}
+
+	for(int i=0; i < histogram.size(); i++) {
+		stHist << i << ": " << ((double)floor(histogram.at(i)*100 + 0.5))/100 << " ";
+	}
+
+	// Let graphviz know about my node
+	stAppender << myID << " [label=\"" << pixelCount << "pixels, " << stHist.str() << "\"];\n";
+
+
+	return stAppender.str();
+}
