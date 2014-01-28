@@ -12,7 +12,6 @@
 #include <sstream>
 #include "SerializeHelper.h"
 #include "HistogramHelper.h"
-#include <boost\test\unit_test.hpp>
 
 using namespace std;
 
@@ -162,7 +161,8 @@ bool histogramTests() {
 
 int main() {
 
-	Forest forest = Forest(2, 5, 100, 5, 0.02, 1, 10, pair<double, double>(60, 60), pair<double, double>(-10,10));
+	Forest forest = Forest(2, 5, 20, 5, 0.02, 1, 10, pair<double, double>(60, 60), pair<double, double>(-10,10));
+
 
 	vector<Mat> depthImages = vector<Mat>();
 	vector<Mat> classifiedImages = vector<Mat>();
@@ -189,6 +189,7 @@ int main() {
 	}
 
 	forest.addTree(depthImages, classifiedImages);
+	forest.addTree(depthImages, classifiedImages);
 
 	string graphvix = forest.getTrees().at(0)->graphvizPrint(-1, NULL);
 	Mat trueClassified = classifiedImages.at(38);
@@ -206,8 +207,11 @@ int main() {
 		}
 
 	}
+
+	
 	Mat classified = forest.classifyImage(depthTest);
 
+	
 	namedWindow( "Display window", WINDOW_AUTOSIZE );
 
 	imshow("Display window", classified*100);

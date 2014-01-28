@@ -35,6 +35,7 @@ private:
 	std::pair<double, double> featureRange;
 	std::pair<double, double> thresholdRange;
 	Mat computePrediction(vector<HistogramMatrix> matrices, int width, int height, vector<pair<int,int>> pixels);
+	Mat computePrediction2(HistogramMatrix histograms, int width, int height, vector<pair<int,int>> pixels);
 
 	// Allow serialization to access non-public data members.
 	friend class boost::serialization::access;

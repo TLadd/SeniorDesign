@@ -1,6 +1,7 @@
 
 #include "Forest.h"
 #include "NodeFactory.h"
+#include <ctime>
 
 using namespace std;
 using namespace cv;
@@ -81,6 +82,50 @@ vector<int> getRandPixels(Mat classifiedImage) {
 	return retVec;
 }
 
+
+Mat Forest::computePrediction2(HistogramMatrix histograms, int width, int height, vector<pair<int,int>> pixels) {
+	int zeroCount = 0;
+	int oneCount = 0;
+	Mat classifiedImage = Mat(height, width, CV_8UC1);
+
+	// Initially set all predictions to 0
+	classifiedImage.setTo(0);
+
+	// Iterate through every pixel
+	for(pair<int,int> pixel : pixels) {
+
+		// Compute the max class
+		double maxTally = -1;
+		int maxIndex = -1;
+
+		vector<double> hist = histograms.getHistogram(pixel.first, pixel.second);
+
+		for(int n=0; n < numClasses; n++) {
+
+			if(hist.at(n) > maxTally) {
+				maxTally = hist.at(n);
+				maxIndex = n;
+			}
+
+		}
+
+		if(maxIndex == 0) {
+			zeroCount++;
+		}
+		else if(maxIndex == 1) {
+			oneCount++;
+		}
+
+		// Set the pixel to the max class
+		classifiedImage.at<uchar>(pixel.first,pixel.second) = maxIndex+1;
+
+
+	}
+
+
+	return classifiedImage;
+
+}
 
 /*
  * Takes the vector of histogram matrices and averages them for each pixel, and then
@@ -186,6 +231,10 @@ Mat Forest::classifyImage(Mat &inputDepth) {
 
 	vector<pair<int,int>> pixels = vector<pair<int,int>>();
 
+
+	int times = clock();
+	
+
 	// Make a vector of foreground pixels
 	for(int i=0; i < inputDepth.size().height; i++) {
 		for(int j = 0; j < inputDepth.size().width; j++) {
@@ -201,8 +250,16 @@ Mat Forest::classifyImage(Mat &inputDepth) {
 	}
 
 
+	int timed = clock();
+
+	cout << "Constructing foreground vector took "<< (timed-times) <<" ticks.\n"<< endl;
+
+
+
+	times = clock();
 	vector<HistogramMatrix> matrices = vector<HistogramMatrix>();
 
+	//HistogramMatrix histMat = HistogramMatrix(width, height, numClasses);
 	// Get a matrix of histograms for each tree
 	for(ITreeNode *node : trees) {
 	
@@ -216,7 +273,18 @@ Mat Forest::classifyImage(Mat &inputDepth) {
 
 	}
 
+	timed = clock();
+
+	cout << "Going through tree took "<< (timed-times) <<" ticks.\n"<< endl;
+
+	times = clock();
+
 	Mat classifiedImage = computePrediction(matrices, width, height, pixels);
+	//Mat classifiedImage = computePrediction2(histMat, width, height, pixels);
+
+	timed = clock();
+
+	cout << "Summing histograms took "<< (timed-times) <<" ticks.\n"<< endl;
 
 	return classifiedImage;
 }
