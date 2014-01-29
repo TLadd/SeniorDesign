@@ -158,11 +158,81 @@ bool histogramTests() {
 
 
 
+void runPrediction(string treeFile, string testDir) {
+	SerializeHelper sHelp = SerializeHelper();
+	Forest forest = sHelp.loadForest(treeFile);
 
+	ImageReader imReader = ImageReader();
+
+
+	vector<Mat> testDepthImages = imReader.readDepthImages(testDir);
+	vector<Mat> trueClassifiedImages = imReader.readClassifiedImages(testDir);
+	
+	
+	for(int k=0; k < trueClassifiedImages.size(); k++) {
+		Mat trueClassified = trueClassifiedImages.at(k);
+		Mat depthTest = testDepthImages.at(k);
+		for(int i=0; i < trueClassified.size().height; i++) {
+
+			for(int j=0; j < trueClassified.size().width; j++) {
+
+				if(trueClassified.at<uchar>(i,j) == 0) {
+					depthTest.at<uchar>(i,j) = 10;
+				}
+
+			}
+
+		}
+	}
+	
+	for(int k=0; k < trueClassifiedImages.size(); k++) {
+		Mat classified = forest.classifyImage(testDepthImages.at(k));
+		std::ostringstream path;
+
+		path << "Display window" << k;
+		
+		string windowName = path.str();
+		namedWindow( windowName, WINDOW_AUTOSIZE );
+
+		imshow(windowName, classified*100);
+		waitKey(30);
+	}
+
+}
+
+
+void trainTree(string treeFile, string trainDir) {
+
+	SerializeHelper sHelp = SerializeHelper();
+	
+	ImageReader imReader = ImageReader();
+	
+	vector<Mat> depthImages = imReader.readDepthImages(trainDir);
+	vector<Mat> classifiedImages = imReader.readClassifiedImages(trainDir);
+
+	int times = clock();
+
+	Forest forest = Forest(2, 10, 200, 20, 0.02, 1, 10, pair<double, double>(60, 60), pair<double, double>(-8,8));
+	forest.makeTrees(depthImages, classifiedImages, 500, 3);
+
+	int timed = clock();
+
+	cout << "Making trees took "<< (timed-times) <<" ticks.\n"<< endl;
+
+	//Forest forest = sHelp.loadForest("MediumTree100F1000.txt");
+	sHelp.serializeForest(forest, treeFile);
+	string graphvix = forest.getTrees().at(0)->graphvizPrint(-1, NULL);
+	
+	
+
+}
 
 
 int main() {
-	SerializeHelper sHelp = SerializeHelper();
+
+
+	runPrediction("HardDeeperParams.txt", "SynthHardTest"); 
+/*	SerializeHelper sHelp = SerializeHelper();
 	
 	ImageReader imReader = ImageReader();
 	
@@ -178,7 +248,7 @@ int main() {
 
 	int times = clock();
 
-	Forest forest = Forest(2, 6, 200, 5, 0.02, 1, 10, pair<double, double>(60, 60), pair<double, double>(-10,10));
+	Forest forest = Forest(2, 10, 200, 5, 0.02, 1, 10, pair<double, double>(60, 60), pair<double, double>(-10,10));
 	forest.makeTrees(depthImages, classifiedImages, 1000, 3);
 
 	int timed = clock();
@@ -186,7 +256,7 @@ int main() {
 	cout << "Making trees took "<< (timed-times) <<" ticks.\n"<< endl;
 
 	//Forest forest = sHelp.loadForest("MediumTree100F1000.txt");
-	sHelp.serializeForest(forest, "MedSuggestParams.txt");
+	sHelp.serializeForest(forest, "MedDeeperParams.txt");
 	string graphvix = forest.getTrees().at(0)->graphvizPrint(-1, NULL);
 	
 	
@@ -219,7 +289,7 @@ int main() {
 		waitKey(30);
 	}
 	bool ser = serializationTests();
-	
+	*/
 	cout << "Done\n";
 	getchar();
 	return 0;

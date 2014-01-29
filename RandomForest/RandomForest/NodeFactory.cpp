@@ -27,7 +27,7 @@ ITreeNode * NodeFactory::makeNode(int numClasses, int maxDepth, int currentDepth
 			std::pair<int, int> featureRange, std::pair<double, double> thresholdRange, 
 			vector<Mat> &inputDepthImages, vector<Mat> &inputClassifiedImages, vector<TripletWrapper> relevantPixels) {
 
-
+				cout << "Current depth is " << currentDepth << endl;
 	HistogramHelper histHelp = HistogramHelper();
 	
 	// Count how many of each class we have in this nodes' pixels
