@@ -18,8 +18,8 @@ bool FeatureProjector::project(pair<pair<int,int>, pair<int,int>> feature, Mat &
 	pair<int,int> u = pair<int,int>(feature.first.first + pixel.first, feature.first.second + pixel.second);
 	pair<int,int> v = pair<int,int>(feature.second.first + pixel.first, feature.second.second + pixel.second);
 
-	bool ut = u.first < 0 || u.second < 0 || (u.first > image.size().width - 1) || (u.second > image.size().height - 1);
-	bool vt = v.first < 0 || v.second < 0 || (v.first > image.size().width - 1) || (v.second > image.size().height - 1);
+	bool ut = u.first < 0 || u.second < 0 || (u.first > image.size().height - 1) || (u.second > image.size().width - 1);
+	bool vt = v.first < 0 || v.second < 0 || (v.first > image.size().height - 1) || (v.second > image.size().width - 1);
 
 	int depthDiff;
 
