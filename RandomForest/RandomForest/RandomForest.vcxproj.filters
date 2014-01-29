@@ -57,6 +57,9 @@
     <ClInclude Include="HistogramHelper.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="ImageReader.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="NodeFactory.cpp">
@@ -90,6 +93,9 @@
       <Filter>Test Files</Filter>
     </ClCompile>
     <ClCompile Include="HistogramHelper.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ImageReader.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

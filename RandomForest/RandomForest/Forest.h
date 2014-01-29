@@ -36,7 +36,8 @@ private:
 	std::pair<double, double> thresholdRange;
 	Mat computePrediction(vector<HistogramMatrix> matrices, int width, int height, vector<pair<int,int>> pixels);
 	Mat computePrediction2(HistogramMatrix histograms, int width, int height, vector<pair<int,int>> pixels);
-
+	ITreeNode * makeTree(vector<Mat> inputDepthImages, vector<Mat> inputClassifiedImages);
+	void makeTreeOperation(vector<Mat> &allInputDepthImages, vector<Mat> &allInputClassifiedImages, int numImages, int numTrees, vector<ITreeNode *> *addedTrees, int index);
 	// Allow serialization to access non-public data members.
 	friend class boost::serialization::access;
 
@@ -57,7 +58,7 @@ public:
 			int minNumInNode, double backgroundPenalty, std::pair<double, double> featureRange,
 			std::pair<double, double> thresholdRange);
 
-	void makeTrees(vector<string> &inputDepthImages, vector<string> &inputClassifiedImages, int numImages, int numTrees);
+	void makeTrees(vector<Mat> &inputDepthImages, vector<Mat> &inputClassifiedImages, int numImages, int numTrees);
 
 	
 

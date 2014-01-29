@@ -8,9 +8,7 @@ using namespace std;
 using namespace cv;
 using namespace boost;
 
-/*
- * TODO: De-Serialization of the forests
- */
+
 
 Forest::Forest(){}
 
@@ -196,12 +194,7 @@ Mat Forest::computePrediction(vector<HistogramMatrix> matrices, int width, int h
 }
 
 
-/*
- * Utility method to make making multiple trees at once easier. Makes numTrees trees by following this process: 
- *		Takes in two vectors of filenames and selects numImages of them randomly. 
- *		The images are then placed in a vector and a tree is added with that training data 
- */
-void Forest::makeTrees(vector<string> &allInputDepthImages, vector<string> &allInputClassifiedImages, int numImages, int numTrees) {
+void Forest::makeTreeOperation(vector<Mat> &allInputDepthImages, vector<Mat> &allInputClassifiedImages, int numImages, int numTrees, vector<ITreeNode *> *addedTrees, int index) {
 	
 	vector<int> imageSelector = getRandVector(allInputDepthImages.size());
 
@@ -210,13 +203,43 @@ void Forest::makeTrees(vector<string> &allInputDepthImages, vector<string> &allI
 	vector<Mat> inputClassifiedImages = vector<Mat>(numImages);
 
 	for(int j = 0; j < numImages; j++) {
-		int selectedIndex = imageSelector.at(j);
-		inputDepthImages.push_back(imread(allInputDepthImages.at(selectedIndex)));
-		inputClassifiedImages.push_back(imread(allInputClassifiedImages.at(selectedIndex)));
+			int selectedIndex = imageSelector.at(j);
+			inputDepthImages.push_back(allInputDepthImages.at(selectedIndex));
+			inputClassifiedImages.push_back(allInputClassifiedImages.at(selectedIndex));
 	}
 
+
+	ITreeNode *node = makeTree(inputDepthImages, inputClassifiedImages);	
+
+	addedTrees->at(index) = node;
+}
+
+/*
+ * Utility method to make making multiple trees at once easier. Makes numTrees trees by following this process: 
+ *		Takes in two vectors of filenames and selects numImages of them randomly. 
+ *		The images are then placed in a vector and a tree is added with that training data 
+ */
+void Forest::makeTrees(vector<Mat> &allInputDepthImages, vector<Mat> &allInputClassifiedImages, int numImages, int numTrees) {
+
+	vector<thread *> waitingThreads;
+
+	vector<ITreeNode *> addedTrees = vector<ITreeNode *>(numTrees);
+
 	for(int i=0; i < numTrees; i++) {
-		addTree(inputDepthImages, inputClassifiedImages);	
+		
+		thread *t = new thread(&Forest::makeTreeOperation, this, allInputDepthImages, allInputClassifiedImages, numImages, numTrees, &addedTrees, i);
+	
+		waitingThreads.push_back(t);
+		
+	}
+
+	for(thread *tj : waitingThreads) {
+		tj->join();
+		delete tj;
+	}
+
+	for(ITreeNode * tree : addedTrees) {
+		trees.push_back(tree);
 	}
 
 }
@@ -233,7 +256,46 @@ void predictOperation(ITreeNode *node, int index, vector<HistogramMatrix> *matri
 	matrices->at(index) = histMat;
 }
 
+vector<HistogramMatrix> traverseTreeParallel(vector<ITreeNode *> trees, int width, int height, Mat &inputDepth, vector<pair<int,int>> pixels) {
+	vector<HistogramMatrix> matrices = vector<HistogramMatrix>(trees.size());
 
+	vector<thread *> waitingThreads = vector<thread *>();
+	
+	for(int k = 0; k < trees.size(); k++) {
+
+		ITreeNode *node = trees.at(k);
+
+		thread *t = new thread(predictOperation, node, k, &matrices, width, height, inputDepth, pixels);
+	
+		waitingThreads.push_back(t);
+	}
+
+	for(thread *tj : waitingThreads) {
+		tj->join();
+		delete tj;
+	}
+
+	return matrices;
+}
+
+vector<HistogramMatrix> traverseTreeSerial(vector<ITreeNode *> trees, int width, int height, Mat &inputDepth, vector<pair<int,int>> pixels) {
+
+	vector<HistogramMatrix> matrices = vector<HistogramMatrix>();
+
+	for(ITreeNode *node : trees) {
+
+		// Construct a container for the matrix of histograms
+		HistogramMatrix histMat = HistogramMatrix(width, height);
+
+		// Delegate to the tree. ClassifiedImage will have the results.
+		node->predict(inputDepth, histMat, pixels);
+
+		matrices.push_back(histMat);
+
+	}
+
+	return matrices;
+}
 /*
  * Takes in an input depth image and outputs a Mat where each pixel corresponds to the classification
  * of the corresponding pixel in the depth image
@@ -245,9 +307,6 @@ Mat Forest::classifyImage(Mat &inputDepth) {
 
 
 	vector<pair<int,int>> pixels = vector<pair<int,int>>();
-
-
-	int times = clock();
 	
 
 	// Make a vector of foreground pixels
@@ -265,41 +324,14 @@ Mat Forest::classifyImage(Mat &inputDepth) {
 	}
 
 
-	int timed = clock();
 
-	cout << "Constructing foreground vector took "<< (timed-times) <<" ticks.\n"<< endl;
 
 	
-
+	int timed, times;
 	times = clock();
-	vector<HistogramMatrix> matrices = vector<HistogramMatrix>(trees.size());
 
-	vector<thread *> waitingThreads = vector<thread *>();
-	//HistogramMatrix histMat = HistogramMatrix(width, height, numClasses);
-	// Get a matrix of histograms for each tree
-	for(int k = 0; k < trees.size(); k++) {
-//	for(ITreeNode *node : trees) {
-
-		ITreeNode *node = trees.at(k);
-
-		thread *t = new thread(predictOperation, node, k, &matrices, width, height, inputDepth, pixels);
+	vector<HistogramMatrix> matrices = traverseTreeParallel(trees, width, height, inputDepth, pixels);
 	
-		waitingThreads.push_back(t);
-		// Construct a container for the matrix of histograms
-		//HistogramMatrix histMat = HistogramMatrix(width, height);
-
-		// Delegate to the tree. ClassifiedImage will have the results.
-		//node->predict(inputDepth, histMat, pixels);
-
-		//matrices.push_back(histMat);
-
-	}
-
-	for(thread *tj : waitingThreads) {
-		tj->join();
-		delete tj;
-	}
-
 
 	timed = clock();
 
@@ -308,8 +340,6 @@ Mat Forest::classifyImage(Mat &inputDepth) {
 	times = clock();
 
 	Mat classifiedImage = computePrediction(matrices, width, height, pixels);
-	//Mat classifiedImage = computePrediction2(histMat, width, height, pixels);
-
 	timed = clock();
 
 	cout << "Summing histograms took "<< (timed-times) <<" ticks.\n"<< endl;
@@ -317,10 +347,11 @@ Mat Forest::classifyImage(Mat &inputDepth) {
 	return classifiedImage;
 }
 
+
 /*
  * Adds a single tree using the specified training images
  */
-void Forest::addTree(vector<Mat> inputDepthImages, vector<Mat> inputClassifiedImages) {
+ITreeNode * Forest::makeTree(vector<Mat> inputDepthImages, vector<Mat> inputClassifiedImages) {
 	
 	// Randomly selected pixels container
 	vector<TripletWrapper> relevantPixels = vector<TripletWrapper>();
@@ -356,6 +387,17 @@ void Forest::addTree(vector<Mat> inputDepthImages, vector<Mat> inputClassifiedIm
 
 	ITreeNode *node = nodeFac.makeNode(numClasses, depth, 0, numFeatures, numThresh, minNumInNode, backgroundPenalty, 
 		featureRange, thresholdRange, inputDepthImages, inputClassifiedImages, relevantPixels);
+		
+	return node;
+}
+
+
+/*
+ * Adds a single tree using the specified training images
+ */
+void Forest::addTree(vector<Mat> inputDepthImages, vector<Mat> inputClassifiedImages) {
+
+	ITreeNode *node = makeTree(inputDepthImages, inputClassifiedImages);
 		
 	trees.push_back(node);
 }

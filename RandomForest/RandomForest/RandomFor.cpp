@@ -12,6 +12,7 @@
 #include <sstream>
 #include "SerializeHelper.h"
 #include "HistogramHelper.h"
+#include "ImageReader.h"
 
 using namespace std;
 
@@ -160,71 +161,52 @@ bool histogramTests() {
 
 
 int main() {
-
-	Forest forest = Forest(2, 5, 20, 5, 0.02, 1, 10, pair<double, double>(60, 60), pair<double, double>(-10,10));
-
-
-	vector<Mat> depthImages = vector<Mat>();
-	vector<Mat> classifiedImages = vector<Mat>();
-
+	SerializeHelper sHelp = SerializeHelper();
 	
-	std::ostringstream ximg, yimg;
-	for(int i=1; i <= 100; i++) {
+	ImageReader imReader = ImageReader();
 
-		std::ostringstream ximg, yimg;
+	vector<Mat> depthImages = imReader.readDepthImages("SynthMedTrain");
+	vector<Mat> classifiedImages = imReader.readClassifiedImages("SynthMedTrain");
 
-		ximg << "SyntheticImages/" << i << "X.png";
-		yimg << "SyntheticImages/" << i << "Y.png";
-		
-		string x = ximg.str();
-		string y = yimg.str();
+	vector<Mat> testDepthImages = imReader.readDepthImages("SynthMedTest");
+	vector<Mat> trueClassifiedImages = imReader.readClassifiedImages("SynthMedTest");
 
-		Mat depthIm = imread(x, 0);
-		Mat classIm = imread(y, 0);
+	//Forest forest = Forest(2, 5, 100, 5, 0.02, 1, 10, pair<double, double>(60, 60), pair<double, double>(-10,10));
+	//forest.makeTrees(depthImages, classifiedImages, 1000, 10);
 
-
-		depthImages.push_back(depthIm);
-		classifiedImages.push_back(classIm);
-
-	}
-
-	forest.addTree(depthImages, classifiedImages);
-	forest.addTree(depthImages, classifiedImages);
-	forest.addTree(depthImages, classifiedImages);
-	forest.addTree(depthImages, classifiedImages);
-	forest.addTree(depthImages, classifiedImages);
-	forest.addTree(depthImages, classifiedImages);
-	forest.addTree(depthImages, classifiedImages);
-	forest.addTree(depthImages, classifiedImages);
-	forest.addTree(depthImages, classifiedImages);
-	forest.addTree(depthImages, classifiedImages);
-
+	Forest forest = sHelp.loadForest("MediumTree100F1000.txt");
+	//sHelp.serializeForest(forest, "MediumTree100F1000.txt");
 	string graphvix = forest.getTrees().at(0)->graphvizPrint(-1, NULL);
-	Mat trueClassified = classifiedImages.at(38);
-	Mat depthTest = depthImages.at(38);
+	
 
+	for(int k=0; k < trueClassifiedImages.size(); k++) {
+		Mat trueClassified = trueClassifiedImages.at(k);
+		Mat depthTest = testDepthImages.at(k);
+		for(int i=0; i < trueClassified.size().height; i++) {
 
-	for(int i=0; i < trueClassified.size().height; i++) {
+			for(int j=0; j < trueClassified.size().width; j++) {
 
-		for(int j=0; j < trueClassified.size().width; j++) {
+				if(trueClassified.at<uchar>(i,j) == 0) {
+					depthTest.at<uchar>(i,j) = 10;
+				}
 
-			if(trueClassified.at<uchar>(i,j) == 0) {
-				depthTest.at<uchar>(i,j) = 10;
 			}
 
 		}
-
 	}
-
 	
-	Mat classified = forest.classifyImage(depthTest);
+	for(int k=0; k < trueClassifiedImages.size(); k++) {
+		Mat classified = forest.classifyImage(testDepthImages.at(k));
+		std::ostringstream path;
 
-	
-	namedWindow( "Display window", WINDOW_AUTOSIZE );
+		path << "Display window" << k;
+		
+		string windowName = path.str();
+		namedWindow( windowName, WINDOW_AUTOSIZE );
 
-	imshow("Display window", classified*100);
-	waitKey(30);
-
+		imshow(windowName, classified*100);
+		waitKey(30);
+	}
 	bool ser = serializationTests();
 	cout << "Done\n";
 	getchar();

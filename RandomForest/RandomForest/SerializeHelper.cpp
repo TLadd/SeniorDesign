@@ -47,8 +47,8 @@ Forest SerializeHelper::loadForest(string filename) {
 	
 	Forest f;
 	{
-		std::ofstream ofs(filename);
-		archive::text_oarchive ar(ofs);
+		std::ifstream ifs(filename);
+		archive::text_iarchive ar(ifs);
 
 		ar & f;
 	}
