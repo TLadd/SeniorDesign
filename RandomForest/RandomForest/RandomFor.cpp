@@ -190,6 +190,14 @@ int main() {
 
 	forest.addTree(depthImages, classifiedImages);
 	forest.addTree(depthImages, classifiedImages);
+	forest.addTree(depthImages, classifiedImages);
+	forest.addTree(depthImages, classifiedImages);
+	forest.addTree(depthImages, classifiedImages);
+	forest.addTree(depthImages, classifiedImages);
+	forest.addTree(depthImages, classifiedImages);
+	forest.addTree(depthImages, classifiedImages);
+	forest.addTree(depthImages, classifiedImages);
+	forest.addTree(depthImages, classifiedImages);
 
 	string graphvix = forest.getTrees().at(0)->graphvizPrint(-1, NULL);
 	Mat trueClassified = classifiedImages.at(38);

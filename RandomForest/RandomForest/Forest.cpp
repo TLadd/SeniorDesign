@@ -1,10 +1,12 @@
 
 #include "Forest.h"
 #include "NodeFactory.h"
+#include <boost/thread/thread.hpp>
 #include <ctime>
 
 using namespace std;
 using namespace cv;
+using namespace boost;
 
 /*
  * TODO: De-Serialization of the forests
@@ -219,6 +221,19 @@ void Forest::makeTrees(vector<string> &allInputDepthImages, vector<string> &allI
 
 }
 
+
+
+void predictOperation(ITreeNode *node, int index, vector<HistogramMatrix> *matrices, int width, int height, Mat &inputDepth, vector<pair<int,int>> pixels) {
+	// Construct a container for the matrix of histograms
+	HistogramMatrix histMat = HistogramMatrix(width, height);
+
+	// Delegate to the tree. ClassifiedImage will have the results.
+	node->predict(inputDepth, histMat, pixels);
+
+	matrices->at(index) = histMat;
+}
+
+
 /*
  * Takes in an input depth image and outputs a Mat where each pixel corresponds to the classification
  * of the corresponding pixel in the depth image
@@ -254,24 +269,37 @@ Mat Forest::classifyImage(Mat &inputDepth) {
 
 	cout << "Constructing foreground vector took "<< (timed-times) <<" ticks.\n"<< endl;
 
-
+	
 
 	times = clock();
-	vector<HistogramMatrix> matrices = vector<HistogramMatrix>();
+	vector<HistogramMatrix> matrices = vector<HistogramMatrix>(trees.size());
 
+	vector<thread *> waitingThreads = vector<thread *>();
 	//HistogramMatrix histMat = HistogramMatrix(width, height, numClasses);
 	// Get a matrix of histograms for each tree
-	for(ITreeNode *node : trees) {
+	for(int k = 0; k < trees.size(); k++) {
+//	for(ITreeNode *node : trees) {
+
+		ITreeNode *node = trees.at(k);
+
+		thread *t = new thread(predictOperation, node, k, &matrices, width, height, inputDepth, pixels);
 	
+		waitingThreads.push_back(t);
 		// Construct a container for the matrix of histograms
-		HistogramMatrix histMat = HistogramMatrix(width, height);
+		//HistogramMatrix histMat = HistogramMatrix(width, height);
 
 		// Delegate to the tree. ClassifiedImage will have the results.
-		node->predict(inputDepth, histMat, pixels);
+		//node->predict(inputDepth, histMat, pixels);
 
-		matrices.push_back(histMat);
+		//matrices.push_back(histMat);
 
 	}
+
+	for(thread *tj : waitingThreads) {
+		tj->join();
+		delete tj;
+	}
+
 
 	timed = clock();
 
