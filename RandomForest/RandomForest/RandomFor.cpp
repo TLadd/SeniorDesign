@@ -165,33 +165,31 @@ int main() {
 	SerializeHelper sHelp = SerializeHelper();
 	
 	ImageReader imReader = ImageReader();
-	/*
+	
 	vector<Mat> depthImages = imReader.readDepthImages("SynthMedTrain");
 	vector<Mat> classifiedImages = imReader.readClassifiedImages("SynthMedTrain");
 
 	vector<Mat> testDepthImages = imReader.readDepthImages("SynthMedTest");
 	vector<Mat> trueClassifiedImages = imReader.readClassifiedImages("SynthMedTest");
-	*/
+	
 
-	vector<Mat> depthImages = imReader.readDepthImages("DollTrain");
-	vector<Mat> classifiedImages = imReader.readClassifiedImages("DollTrain");
+	//vector<Mat> depthImages = imReader.readDepthImages("DollTrain");
+	//vector<Mat> classifiedImages = imReader.readClassifiedImages("DollTrain");
 
-//	vector<Mat> testDepthImages = imReader.readDepthImages("SynthMedTest");
-	//vector<Mat> trueClassifiedImages = imReader.readClassifiedImages("SynthMedTest");
 	int times = clock();
 
-	Forest forest = Forest(6, 10, 2000, 110, 0.01, 10, 0, pair<double, double>(150, 150), pair<double, double>(110,110));
-	forest.makeTrees(depthImages, classifiedImages, 100, 3);
+	Forest forest = Forest(2, 6, 200, 5, 0.02, 1, 10, pair<double, double>(60, 60), pair<double, double>(-10,10));
+	forest.makeTrees(depthImages, classifiedImages, 1000, 3);
 
 	int timed = clock();
 
 	cout << "Making trees took "<< (timed-times) <<" ticks.\n"<< endl;
 
 	//Forest forest = sHelp.loadForest("MediumTree100F1000.txt");
-	sHelp.serializeForest(forest, "Doll4Trees.txt");
+	sHelp.serializeForest(forest, "MedSuggestParams.txt");
 	string graphvix = forest.getTrees().at(0)->graphvizPrint(-1, NULL);
 	
-	/*
+	
 	for(int k=0; k < trueClassifiedImages.size(); k++) {
 		Mat trueClassified = trueClassifiedImages.at(k);
 		Mat depthTest = testDepthImages.at(k);
@@ -221,7 +219,7 @@ int main() {
 		waitKey(30);
 	}
 	bool ser = serializationTests();
-	*/
+	
 	cout << "Done\n";
 	getchar();
 	return 0;
