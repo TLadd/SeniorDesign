@@ -247,13 +247,14 @@ void runPrediction(string treeFile, string testDir) {
 		Mat classified = forest.classifyImage(testDepthImages.at(k));
 		std::ostringstream path;
 
-		path << "Display window" << k;
+		path << "DollTestResults/Image" << k << ".png";
 		
 		string windowName = path.str();
 		namedWindow( windowName, WINDOW_AUTOSIZE );
 
 		Mat cimg = convertToColorForBaby(classified);
-
+		
+		imwrite(windowName, cimg);
 		imshow(windowName, cimg);
 		waitKey(30);
 	}
