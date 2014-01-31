@@ -292,15 +292,11 @@ void trainTree(string treeFile, string trainDir) {
 
 
 int main() {
-<<<<<<< HEAD
-	cout << CLOCKS_PER_SEC;
-	//trainTree("dollpoint215deep.txt", "DollTrain");
-	runPrediction("dollpoint215deep.txt", "DollTest"); 
-=======
+
 
 	//trainTree("dollpoint2.txt", "DollTrain");
 	runPrediction("dollpoint2.txt", "DollTest", true, "DollTestUsingSissyColors"); 
->>>>>>> a6355a49b4c42515f3898bdd274ccb394b17df6b
+
 
 	cout << "Done\n";
 	getchar();
