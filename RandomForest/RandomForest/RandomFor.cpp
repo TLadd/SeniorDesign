@@ -171,40 +171,40 @@ Mat convertToColorForBaby(Mat bwMat) {
 				b=0;
 				break;
 			case 1:
-				r=255;
-				g=0;
-				b=0;
+				r=223;
+				g=175;
+				b=75;
 				break;
 			case 2:
-				r=0;
-				g=0;
-				b=255;
+				r=240;
+				g=82;
+				b=43;
 				break;
 			case 3:
-				r=0;
-				g=255;
-				b=0;
+				r=213;
+				g=78;
+				b=136;
 				break;
 			case 4:
-				r=255;
-				g=255;
-				b=0;
+				r=0;
+				g=140;
+				b=114;
 				break;
 			case 5:
-				r=128;
-				g=0;
-				b=128;
+				r=130;
+				g=70;
+				b=0;
 				break;
 			case 6:
-				r=255;
-				g=255;
-				b=255;
+				r=0;
+				g=106;
+				b=168;
 				break;
 
 				
 			}
 	
-			colorMat.at<Vec3b>(i,j) = Vec3b(r,g,b);
+			colorMat.at<Vec3b>(i,j) = Vec3b(b,g,r);
 		}
 	}
 
@@ -216,7 +216,7 @@ Mat convertToColorForBaby(Mat bwMat) {
 
 
 
-void runPrediction(string treeFile, string testDir) {
+void runPrediction(string treeFile, string testDir, bool writeToFile, string outputFileName) {
 	SerializeHelper sHelp = SerializeHelper();
 	Forest forest = sHelp.loadForest(treeFile);
 
@@ -247,14 +247,16 @@ void runPrediction(string treeFile, string testDir) {
 		Mat classified = forest.classifyImage(testDepthImages.at(k));
 		std::ostringstream path;
 
-		path << "DollTestResults/Image" << k << ".png";
+		path << outputFileName << "/Image" << k << ".png";
 		
 		string windowName = path.str();
 		namedWindow( windowName, WINDOW_AUTOSIZE );
 
 		Mat cimg = convertToColorForBaby(classified);
 		
-		imwrite(windowName, cimg);
+		if(writeToFile) {
+			imwrite(windowName, cimg);
+		}
 		imshow(windowName, cimg);
 		waitKey(30);
 	}
@@ -290,9 +292,15 @@ void trainTree(string treeFile, string trainDir) {
 
 
 int main() {
+<<<<<<< HEAD
 	cout << CLOCKS_PER_SEC;
 	//trainTree("dollpoint215deep.txt", "DollTrain");
 	runPrediction("dollpoint215deep.txt", "DollTest"); 
+=======
+
+	//trainTree("dollpoint2.txt", "DollTrain");
+	runPrediction("dollpoint2.txt", "DollTest", true, "DollTestUsingSissyColors"); 
+>>>>>>> a6355a49b4c42515f3898bdd274ccb394b17df6b
 
 	cout << "Done\n";
 	getchar();
