@@ -7,7 +7,7 @@
 
 #include "ITreeNode.h"
 #include "FeatureProjector.h"
-#include "boost\serialization\utility.hpp"
+#include "boost/serialization/utility.hpp"
 
 using namespace boost;
 using namespace serialization;
@@ -15,7 +15,7 @@ using namespace serialization;
 class TreeNode : public ITreeNode {
 
 private:
-	pair<pair<int,int>, pair<int,int>> feature;
+	pair< pair<int,int>, pair<int,int> > feature;
 	double threshold;
 
 	ITreeNode *leftNode;
@@ -39,14 +39,14 @@ public:
 
 	TreeNode(){}
 
-	TreeNode(pair<pair<int,int>, pair<int,int>> _feature, double _threshold, ITreeNode *_leftNode, ITreeNode *_rightNode, int _backgroundPenalty);
+	TreeNode(pair< pair<int,int>, pair<int,int> > _feature, double _threshold, ITreeNode *_leftNode, ITreeNode *_rightNode, int _backgroundPenalty);
 
-	TreeNode(pair<pair<int,int>, pair<int,int>> _feature, double _threshold, ITreeNode *_leftNode, ITreeNode *_rightNode, int _backgroundPenalty, vector<double> _hist, int _pixelCount);
+	TreeNode(pair< pair<int,int>, pair<int,int> > _feature, double _threshold, ITreeNode *_leftNode, ITreeNode *_rightNode, int _backgroundPenalty, vector<double> _hist, int _pixelCount);
 
 
 	~TreeNode();
 
-	void predict(Mat &depthImage, HistogramMatrix &classifiedImage, vector<pair<int,int> > pixels);
+	void predict(Mat &depthImage, HistogramMatrix &classifiedImage, vector< pair<int,int> > pixels);
 
 	string graphvizPrint(int parentID, int *id);
 

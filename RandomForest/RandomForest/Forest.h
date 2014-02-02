@@ -6,7 +6,7 @@
  */
 #include <utility>
 #include "opencv.hpp"
-#include "boost\serialization\serialization.hpp"
+#include "boost/serialization/serialization.hpp"
 
 
 using namespace cv;
@@ -34,8 +34,8 @@ private:
 	double backgroundPenalty; 
 	std::pair<double, double> featureRange;
 	std::pair<double, double> thresholdRange;
-	Mat computePrediction(vector<HistogramMatrix> matrices, int width, int height, vector<pair<int,int>> pixels);
-	Mat computePrediction2(HistogramMatrix histograms, int width, int height, vector<pair<int,int>> pixels);
+	Mat computePrediction(vector<HistogramMatrix> matrices, int width, int height, vector< pair<int,int> > pixels);
+	Mat computePrediction2(HistogramMatrix histograms, int width, int height, vector< pair<int,int> > pixels);
 	ITreeNode * makeTree(vector<Mat> inputDepthImages, vector<Mat> inputClassifiedImages);
 	void makeTreeOperation(vector<Mat> &allInputDepthImages, vector<Mat> &allInputClassifiedImages, int numImages, int numTrees, vector<ITreeNode *> *addedTrees, int index);
 	// Allow serialization to access non-public data members.

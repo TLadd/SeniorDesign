@@ -43,7 +43,7 @@ bool serializationTests() {
 	ITreeNode *n2p = &n2;
 
 	// Creates the treenode
-	TreeNode root = TreeNode(pair<pair<int,int>,pair<int,int>>(pair<int,int>(1,2), pair<int,int>(3,4)), 0.5, n1p, n2p, 5);
+	TreeNode root = TreeNode(pair< pair<int,int>,pair<int,int> >(pair<int,int>(1,2), pair<int,int>(3,4)), 0.5, n1p, n2p, 5);
 	ITreeNode *rootp = &root;
 
 	SerializeHelper serializeMeCapn = SerializeHelper();

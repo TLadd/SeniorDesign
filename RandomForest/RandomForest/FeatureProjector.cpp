@@ -12,7 +12,7 @@ FeatureProjector::~FeatureProjector(void)
 {
 }
 
-bool FeatureProjector::project(pair<pair<int,int>, pair<int,int>> feature, Mat &image, pair<int,int> pixel, int backgroundPenalty, double thresh) {
+bool FeatureProjector::project(pair< pair<int,int>, pair<int,int> > feature, Mat &image, pair<int,int> pixel, int backgroundPenalty, double thresh) {
 
 	// Offset the pixel location by the feature
 	pair<int,int> u = pair<int,int>(feature.first.first + pixel.first, feature.first.second + pixel.second);

@@ -7,7 +7,7 @@ class HistogramMatrix
 {
 
 private:
-	vector<vector<vector<double>>> matrix;
+	vector< vector< vector<double> > > matrix;
 	int width;
 	int height;
 public:

@@ -2,7 +2,7 @@
 
 #include "opencv.hpp"
 #include "HistogramMatrix.h"
-#include "boost\serialization\serialization.hpp"
+#include "boost/serialization/serialization.hpp"
 
 
 using namespace std;
