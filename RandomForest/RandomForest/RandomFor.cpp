@@ -200,6 +200,11 @@ Mat convertToColorForBaby(Mat bwMat) {
 				g=106;
 				b=168;
 				break;
+			case 7:
+				r=255;
+				g=255;
+				b=255;
+				break;
 
 				
 			}
@@ -275,7 +280,7 @@ void trainTree(string treeFile, string trainDir) {
 
 	int times = clock();
 
-	Forest forest = Forest(6, 15, 200, 50, 0.02, 1, 10, pair<double, double>(150, 150), pair<double, double>(-110,110));
+	Forest forest = Forest(7, 10, 200, 50, 0.02, 1, 10, pair<double, double>(150, 150), pair<double, double>(-110,110));
 	forest.makeTrees(depthImages, classifiedImages, 500, 3);
 
 	int timed = clock();
@@ -293,9 +298,11 @@ void trainTree(string treeFile, string trainDir) {
 
 int main() {
 
+	cout << CLOCKS_PER_SEC;
 
-	//trainTree("dollpoint2.txt", "DollTrain");
-	runPrediction("dollpoint2.txt", "DollTest", true, "DollTestUsingSissyColors"); 
+
+	//trainTree("doll7classes.txt", "DollTrain7");
+	runPrediction("doll7classes.txt", "DollTest7", true, "DollTest7SissyColors"); 
 
 
 	cout << "Done\n";
