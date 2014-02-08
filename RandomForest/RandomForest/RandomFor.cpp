@@ -225,6 +225,11 @@ void runPrediction(string treeFile, string testDir, bool writeToFile, string out
 	SerializeHelper sHelp = SerializeHelper();
 	Forest forest = sHelp.loadForest(treeFile);
 
+	string graphvix = forest.getTrees().at(0)->graphvizPrint(-1, NULL);
+
+	ofstream graphvizFile("graphvizForest.txt");
+	graphvizFile << graphvix;
+
 	ImageReader imReader = ImageReader();
 
 
@@ -280,7 +285,7 @@ void trainTree(string treeFile, string trainDir) {
 
 	int times = clock();
 
-	Forest forest = Forest(7, 10, 200, 50, 0.02, 1, 10, pair<double, double>(150, 150), pair<double, double>(-110,110));
+	Forest forest = Forest(7, 15, 200, 50, 0.02, 1, 10, pair<double, double>(150, 150), pair<double, double>(-110,110));
 	forest.makeTrees(depthImages, classifiedImages, 500, 3);
 
 	int timed = clock();
@@ -300,9 +305,8 @@ int main() {
 
 	cout << CLOCKS_PER_SEC;
 
-
-	//trainTree("doll7classes.txt", "DollTrain7");
-	runPrediction("doll7classes.txt", "DollTest7", true, "DollTest7SissyColors"); 
+	//trainTree("doll7classesReal15.txt", "DollTrain7");
+	runPrediction("doll7classesReal15.txt", "DollTest7", false, "DollTest7SissyColors"); 
 
 
 	cout << "Done\n";
