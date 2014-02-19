@@ -285,8 +285,11 @@ void trainTree(string treeFile, string trainDir) {
 
 	int times = clock();
 
-	Forest forest = Forest(7, 15, 200, 50, 0.02, 1, 10, pair<double, double>(150, 150), pair<double, double>(-110,110));
-	forest.makeTrees(depthImages, classifiedImages, 500, 3);
+	// 7 classes, 15 deep, 200 features, 50 thresholds, 0.02 subsampling, 1 minnuminnode, 10 background penalty, feature range, threshold range
+	Forest forest = Forest(7, 10, 20, 50, 0.02, 1, 10, pair<double, double>(150, 150), pair<double, double>(-110,110));
+
+	// 500 image per tree. Threes made at once.
+	forest.makeTrees(depthImages, classifiedImages, 300, 3);
 
 	int timed = clock();
 
