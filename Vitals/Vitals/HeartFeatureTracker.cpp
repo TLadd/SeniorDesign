@@ -4,7 +4,7 @@
 
 Rect getForeheadFromBbox(Rect bbox) {
 
-	return Rect(bbox.x + bbox.width/4, bbox.y + bbox.height/5, bbox.width/2, bbox.height/5);
+	return Rect(bbox.x + bbox.width/4, bbox.y + bbox.height/6, bbox.width/2, bbox.height/6);
 
 }
 
@@ -49,6 +49,7 @@ void HeartFeatureTracker::track(Mat &colorImage, Mat &depthImage) {
 
 	Mat roi = gray(bbox);
 
+
 	if(prevPoints.empty()) {
 		return;
 	}
@@ -58,11 +59,23 @@ void HeartFeatureTracker::track(Mat &colorImage, Mat &depthImage) {
 
 	Rect dumbRect = boundingRect(points);
 	convertRectToMats(boundBox, dumbRect);
+	rectangle(roiColor, dumbRect, Scalar(0,255,0));
 
-	Mat transform = estimateRigidTransform(prevPoints, points, false);
+	convertRectToMats(patchOfInterest, getForeheadFromBbox(dumbRect));
+
+	RotatedRect dumbRotated = minAreaRect(points);
+	Point2f rect_points[4];
+	dumbRotated.points(rect_points);
+	Scalar color = Scalar( 255, 0, 0 );
+
+	for( int j = 0; j < 4; j++ )
+		line( roiColor, rect_points[j], rect_points[(j+1)%4], color, 1, 8 );
+	
+
+	//Mat transform = estimateRigidTransform(prevPoints, points, false);
 
 	//applyTransformToPoints(boundBox, transform);
-	applyTransformToPoints(patchOfInterest, transform);
+	//applyTransformToPoints(patchOfInterest, transform);
 
 
 	size_t i, k;
@@ -76,8 +89,8 @@ void HeartFeatureTracker::track(Mat &colorImage, Mat &depthImage) {
 	points.resize(k);
     
 
-	DrawBoxFromPoints(boundBox, depthImage);
-	DrawBoxFromPoints(patchOfInterest, depthImage);
+	DrawBoxFromPoints(boundBox, roiColor);
+	DrawBoxFromPoints(patchOfInterest, roiColor);
 
 
 	prevGray = roi;

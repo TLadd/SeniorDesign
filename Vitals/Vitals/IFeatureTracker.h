@@ -16,25 +16,28 @@ protected:
 	vector<Mat> patchOfInterest;
 	Rect bbox;
 
-	void convertRectToMats(vector<Mat> &boxMats, Rect bbox) {
+	void convertRectToMats(vector<Mat> &boxMats, Rect rect) {
+
+		boxMats.clear();
+
 		Mat firstPoint = Mat(3, 1, 6);
-		firstPoint.at<double>(0) = bbox.x;
-		firstPoint.at<double>(1) = bbox.y;
+		firstPoint.at<double>(0) = rect.x;
+		firstPoint.at<double>(1) = rect.y;
 		firstPoint.at<double>(2) = 1;
 
 		Mat secondPoint = Mat(3, 1, 6);
-		secondPoint.at<double>(0) = bbox.x+bbox.width;
-		secondPoint.at<double>(1) = bbox.y;
+		secondPoint.at<double>(0) = rect.x+rect.width;
+		secondPoint.at<double>(1) = rect.y;
 		secondPoint.at<double>(2) = 1;
 
 		Mat thirdPoint = Mat(3, 1, 6);
-		thirdPoint.at<double>(0) = bbox.x;
-		thirdPoint.at<double>(1) = bbox.y+bbox.height;
+		thirdPoint.at<double>(0) = rect.x;
+		thirdPoint.at<double>(1) = rect.y+rect.height;
 		thirdPoint.at<double>(2) = 1;
 
 		Mat fourthPoint = Mat(3, 1, 6);
-		fourthPoint.at<double>(0) = bbox.x+bbox.width;
-		fourthPoint.at<double>(1) = bbox.y+bbox.height;
+		fourthPoint.at<double>(0) = rect.x+rect.width;
+		fourthPoint.at<double>(1) = rect.y+rect.height;
 		fourthPoint.at<double>(2) = 1;
 
 		boxMats.push_back(firstPoint);
