@@ -286,10 +286,10 @@ void trainTree(string treeFile, string trainDir) {
 	int times = clock();
 
 	// 7 classes, 15 deep, 200 features, 50 thresholds, 0.02 subsampling, 1 minnuminnode, 10 background penalty, feature range, threshold range
-	Forest forest = Forest(7, 10, 20, 50, 0.02, 1, 10, pair<double, double>(150, 150), pair<double, double>(-110,110));
+	Forest forest = Forest(6, 10, 200, 50, 0.02, 1, 0, pair<double, double>(150, 150), pair<double, double>(-255,255));
 
-	// 500 image per tree. Threes made at once.
-	forest.makeTrees(depthImages, classifiedImages, 300, 3);
+	// 500 image per tree. Three made at once.
+	forest.makeTrees(depthImages, classifiedImages, 500, 3);
 
 	int timed = clock();
 
@@ -308,8 +308,8 @@ int main() {
 
 	cout << CLOCKS_PER_SEC;
 
-	//trainTree("doll7classesReal15.txt", "DollTrain7");
-	runPrediction("doll7classesReal15.txt", "DollTest7", false, "DollTest7SissyColors"); 
+	trainTree("kiefer.txt", "kieferTrain");
+	//runPrediction("kiefer.txt", "kieferTest", false, "kieferTestPredictions"); 
 
 
 	cout << "Done\n";
