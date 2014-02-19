@@ -198,9 +198,9 @@ void Forest::makeTreeOperation(vector<Mat> &allInputDepthImages, vector<Mat> &al
 	
 	vector<int> imageSelector = getRandVector(allInputDepthImages.size());
 
-	vector<Mat> inputDepthImages = vector<Mat>(numImages);
+	vector<Mat> inputDepthImages = vector<Mat>();
 
-	vector<Mat> inputClassifiedImages = vector<Mat>(numImages);
+	vector<Mat> inputClassifiedImages = vector<Mat>();
 
 	for(int j = 0; j < numImages; j++) {
 			int selectedIndex = imageSelector.at(j);

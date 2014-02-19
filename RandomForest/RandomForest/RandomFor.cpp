@@ -308,8 +308,8 @@ int main() {
 
 	cout << CLOCKS_PER_SEC;
 
-	//trainTree("doll7classesReal15.txt", "DollTrain7");
-	runPrediction("doll7classesReal15.txt", "DollTest7", false, "DollTest7SissyColors"); 
+	trainTree("doll7classesReal15.txt", "DollTrain7");
+	//runPrediction("doll7classesReal15.txt", "DollTest7", false, "DollTest7SissyColors"); 
 
 
 	cout << "Done\n";
