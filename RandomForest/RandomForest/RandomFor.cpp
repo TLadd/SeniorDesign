@@ -236,7 +236,7 @@ void runPrediction(string treeFile, string testDir, bool writeToFile, string out
 	vector<Mat> testDepthImages = imReader.readDepthImages(testDir);
 	vector<Mat> trueClassifiedImages = imReader.readClassifiedImages(testDir);
 	
-	
+	/*
 	for(int k=0; k < trueClassifiedImages.size(); k++) {
 		Mat trueClassified = trueClassifiedImages.at(k);
 		Mat depthTest = testDepthImages.at(k);
@@ -252,7 +252,7 @@ void runPrediction(string treeFile, string testDir, bool writeToFile, string out
 
 		}
 	}
-	
+	*/
 	for(int k=0; k < trueClassifiedImages.size(); k++) {
 		Mat classified = forest.classifyImage(testDepthImages.at(k));
 		std::ostringstream path;
@@ -308,8 +308,8 @@ int main() {
 
 	cout << CLOCKS_PER_SEC;
 
-	trainTree("doll7classesReal15.txt", "DollTrain7");
-	//runPrediction("doll7classesReal15.txt", "DollTest7", false, "DollTest7SissyColors"); 
+	//trainTree("doll7classesReal15.txt", "DollTrain7");
+	runPrediction("doll7classesReal15.txt", "DollTest7", false, "DollTest7SissyColors"); 
 
 
 	cout << "Done\n";

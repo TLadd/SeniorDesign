@@ -313,7 +313,7 @@ Mat Forest::classifyImage(Mat &inputDepth) {
 	for(int i=0; i < inputDepth.size().height; i++) {
 		for(int j = 0; j < inputDepth.size().width; j++) {
 
-			if(inputDepth.at<uchar>(i,j) != 10) {
+			if(inputDepth.at<uchar>(i,j) != 0) {
 				pixels.push_back(pair<int,int>(i, j));
 			}
 			else {

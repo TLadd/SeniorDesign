@@ -35,42 +35,15 @@ Mat frame, roiImg; /* roiImg - the part of the image in the bounding box */
 
 
 
-Point point1;
-int drag = 0;
 
 
 
-
-
-	static void onMouse( int event, int x, int y, int /*flags*/, void* /*param*/ )
-	{
-		if (event == CV_EVENT_LBUTTONDOWN && !drag)
-	    {
-	        /* left button clicked. ROI selection begins */
-	        point1 = Point(x, y);
-	        drag = 1;
-	    }
-	    
-	    if (event == CV_EVENT_MOUSEMOVE && drag)
-	    {
-
-			rect = Rect(min(point1.x, x),min(point1.y,y),abs(x-point1.x),abs(y-point1.y));
-
-	    }
-	    
-	    if (event == CV_EVENT_LBUTTONUP)
-	    {
-	        drag = 0;
-	    }
-	
-	
-	}
 
 
 
 Rect getForeheadFromHead(Rect bbox) {
 
-	return Rect(bbox.x + bbox.width/4, bbox.y + bbox.height/6, bbox.width/2, bbox.height/6);
+	return Rect(bbox.x + bbox.width/4, bbox.y + bbox.height/3, bbox.width/2, bbox.height/12);
 
 }
 	
@@ -99,6 +72,7 @@ ImagePacket getFrames(VideoCapture capture) {
 Point translateDepthToColor(Point d, Mat color, Mat uvMap) {
 	
 	float *uvmap = (float *)uvMap.ptr() + 2 * (d.y * uvMap.cols + d.x);
+	// TODO: FIX THIS
 	int x = (int)((*uvmap) * color.cols); uvmap++;
 	int y = (int)((*uvmap) * color.rows);
 
@@ -135,13 +109,16 @@ int main( int argc, char** argv )
     Mat gray, prevGray, image;
     vector<Point2f> points[2];
 
-	rect = Rect(75, 50, 70, 90);
+	rect = Rect(75, 20, 70, 90);
 
 
 	ImagePacket images = getFrames(capture);
 
 	Mat threshDepth;
-	threshold(images.getDepth(), threshDepth, 1000, 100000, THRESH_TOZERO_INV);
+
+	int threshDist = 750;
+
+	threshold(images.getDepth(), threshDepth, threshDist, 100000, THRESH_TOZERO_INV);
 	
 	threshDepth.convertTo(threshDepth, CV_8U);
 
@@ -159,7 +136,7 @@ int main( int argc, char** argv )
     {
         ImagePacket images = getFrames(capture);
 
-		threshold(images.getDepth(), threshDepth, 1000, 100000, THRESH_TOZERO_INV);
+		threshold(images.getDepth(), threshDepth, threshDist, 100000, THRESH_TOZERO_INV);
 	
 		threshDepth.convertTo(threshDepth, CV_8U);
 
@@ -184,9 +161,10 @@ int main( int argc, char** argv )
 		for(int i = 0; i < foreheadDepth.rows; i++) {
 			for(int j = 0; j < foreheadDepth.cols; j++) {
 				if(foreheadDepth.at<uchar>(i,j) != 0) {
-					Point cPoint = translateDepthToColor(Point(j+forehead.x, i+forehead.y), color, uvMap);
+					Point cPoint = translateDepthToColor(Point(j+forehead.y, i+forehead.x), color, uvMap);
 
-					circle( color, cPoint, 3, Scalar(0,255,0), -1, 8);
+					if(cPoint.x < color.cols && cPoint.y < color.rows)
+						circle( color, cPoint, 3, Scalar(0,255,0), -1, 8);
 				}
 			}
 
