@@ -56,10 +56,31 @@ void HeartFeatureTracker::track(Mat &colorImage, Mat &depthImage) {
 
 	calcOpticalFlowPyrLK(prevGray, roi, prevPoints, points, status, err, Size(10,10),
 							3, TermCriteria(CV_TERMCRIT_ITER|CV_TERMCRIT_EPS, 20, 0.03), 0, 0.001);
+	
 
+	Mat transform = estimateRigidTransform(prevPoints, points, false);
+
+	//applyTransformToPoints(boundBox, transform);
+	//applyTransformToPoints(patchOfInterest, transform);
+
+	size_t i, k;
+	bool brokeOut = false;
+    for( i = k = 0; i < points.size(); i++ ) {
+		if( !status[i] ) {
+			continue;
+		}
+
+		points[k++] = points[i];
+		circle( roiColor, points[i], 3, Scalar(0,255,0), -1, 8);
+	}
+
+
+	points.resize(k);
+    
 	Rect dumbRect = boundingRect(points);
 	convertRectToMats(boundBox, dumbRect);
 	rectangle(roiColor, dumbRect, Scalar(0,255,0));
+
 
 	convertRectToMats(patchOfInterest, getForeheadFromBbox(dumbRect));
 
@@ -70,24 +91,6 @@ void HeartFeatureTracker::track(Mat &colorImage, Mat &depthImage) {
 
 	for( int j = 0; j < 4; j++ )
 		line( roiColor, rect_points[j], rect_points[(j+1)%4], color, 1, 8 );
-	
-
-	//Mat transform = estimateRigidTransform(prevPoints, points, false);
-
-	//applyTransformToPoints(boundBox, transform);
-	//applyTransformToPoints(patchOfInterest, transform);
-
-
-	size_t i, k;
-    for( i = k = 0; i < points.size(); i++ ) {
-		if( !status[i] )
-			continue;
-
-		points[k++] = points[i];
-		circle( roiColor, points[i], 3, Scalar(0,255,0), -1, 8);
-	}
-	points.resize(k);
-    
 
 	DrawBoxFromPoints(boundBox, roiColor);
 	DrawBoxFromPoints(patchOfInterest, roiColor);

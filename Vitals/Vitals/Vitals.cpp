@@ -2,7 +2,11 @@
 #include "opencv2/imgproc/imgproc.hpp"
 #include "opencv2/highgui/highgui.hpp"
 
+#include "IFeatureTracker.h"
 #include "HeartFeatureTracker.h"
+#include "TemplateTracker.h"
+
+#include "ImagePacket.h"
 
 #include <iostream>
 #include <ctype.h>
@@ -32,58 +36,121 @@ Mat frame, roiImg; /* roiImg - the part of the image in the bounding box */
 
 
 
+Point point1;
+int drag = 0;
+
+
+
+
+
+	static void onMouse( int event, int x, int y, int /*flags*/, void* /*param*/ )
+	{
+		if (event == CV_EVENT_LBUTTONDOWN && !drag)
+	    {
+	        /* left button clicked. ROI selection begins */
+	        point1 = Point(x, y);
+	        drag = 1;
+	    }
+	    
+	    if (event == CV_EVENT_MOUSEMOVE && drag)
+	    {
+
+			rect = Rect(min(point1.x, x),min(point1.y,y),abs(x-point1.x),abs(y-point1.y));
+
+	    }
+	    
+	    if (event == CV_EVENT_LBUTTONUP)
+	    {
+	        drag = 0;
+	    }
+	
+	
+	}
+
+
+	
+ImagePacket getFrames(VideoCapture capture) {
+	Mat depthMap;
+	Mat color;
+	Mat uvMap;
+
+	capture.grab();
+
+
+	capture.retrieve( depthMap, CV_CAP_INTELPERC_DEPTH_MAP );
+	transpose(depthMap, depthMap);
+		
+	capture.retrieve(color, CV_CAP_INTELPERC_IMAGE );
+	transpose(color, color);		
+
+	capture.retrieve(uvMap, CV_CAP_INTELPERC_UVDEPTH_MAP);
+	transpose(uvMap, uvMap);
+
+	return ImagePacket(color, depthMap, uvMap);
+}
+
+
+
 
 int main( int argc, char** argv )
 {
     help();
 
-    VideoCapture cap;
-    TermCriteria termcrit(CV_TERMCRIT_ITER|CV_TERMCRIT_EPS, 20, 0.03);
-    Size subPixWinSize(10,10), winSize(31,31);
-
-    const int MAX_COUNT = 500;
-    bool needToInit = false;
+    VideoCapture capture;
 
     
 	// Open webcam
-	//cap.open(0);
-	cap.open("d_kiefer_1.avi");
+	capture.open(CV_CAP_INTELPERC);
+	//cap.open("d2.avi");
 
-    if( !cap.isOpened() )
+    if( !capture.isOpened() )
     {
         cout << "Could not initialize capturing...\n";
-        return 0;
+        return -1;
     }
 
-    namedWindow( "LK Demo", 1 );
+	capture.set(CV_CAP_INTELPERC_IMAGE_GENERATOR | CV_CAP_PROP_INTELPERC_PROFILE_IDX, 0);
+	capture.set(CV_CAP_INTELPERC_DEPTH_GENERATOR | CV_CAP_PROP_INTELPERC_PROFILE_IDX, 0);
 
+    namedWindow( "Depth Map", 1 );
+	namedWindow( "Color", 1 );
 
     Mat gray, prevGray, image;
     vector<Point2f> points[2];
 
-	rect = Rect(103, 54, 109, 140);
+	rect = Rect(75, 50, 70, 90);
 
-	cap >> frame;
-	frame.copyTo(image);
 
-	HeartFeatureTracker hTrack = HeartFeatureTracker();
-	needToInit = true;
-	hTrack.initialize(rect, image, image, 0);
+	ImagePacket images = getFrames(capture);
+
+	Mat threshDepth;
+	threshold(images.getDepth(), threshDepth, 1000, 100000, THRESH_TOZERO_INV);
+	
+	threshDepth.convertTo(threshDepth, CV_8U);
+
+	imwrite("Hopethisworks.png", threshDepth);
+
+	TemplateTracker hTrack = TemplateTracker();
+
+
+	cvWaitKey(10);
+
+	hTrack.initialize(rect, images.getColor(), threshDepth, 0);
 
 
     for(;;)
     {
-        cap >> frame;
-        if( frame.empty() )
-            break;
+        ImagePacket images = getFrames(capture);
 
-        frame.copyTo(image);
-
+		threshold(images.getDepth(), threshDepth, 1000, 100000, THRESH_TOZERO_INV);
 	
-		hTrack.track(image, image);
+		threshDepth.convertTo(threshDepth, CV_8U);
+
+		hTrack.track(images.getColor(), threshDepth);
 	
 
-        imshow("LK Demo", image);
+        imshow("Depth Map", threshDepth);
+		imshow("Color Image", images.getColor());
 
         char c = (char)waitKey(10);
         if( c == 27 )
