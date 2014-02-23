@@ -221,6 +221,8 @@ Mat convertToColorForBaby(Mat bwMat) {
 
 
 
+
+
 void runPrediction(string treeFile, string testDir, bool writeToFile, string outputFileName) {
 	SerializeHelper sHelp = SerializeHelper();
 	Forest forest = sHelp.loadForest(treeFile);
@@ -234,26 +236,8 @@ void runPrediction(string treeFile, string testDir, bool writeToFile, string out
 
 
 	vector<Mat> testDepthImages = imReader.readDepthImages(testDir);
-	vector<Mat> trueClassifiedImages = imReader.readClassifiedImages(testDir);
 	
-	/*
-	for(int k=0; k < trueClassifiedImages.size(); k++) {
-		Mat trueClassified = trueClassifiedImages.at(k);
-		Mat depthTest = testDepthImages.at(k);
-		for(int i=0; i < trueClassified.size().height; i++) {
-
-			for(int j=0; j < trueClassified.size().width; j++) {
-
-				if(trueClassified.at<uchar>(i,j) == 0) {
-					depthTest.at<uchar>(i,j) = 10;
-				}
-
-			}
-
-		}
-	}
-	*/
-	for(int k=0; k < trueClassifiedImages.size(); k++) {
+	for(int k=0; k < testDepthImages.size(); k++) {
 		Mat classified = forest.classifyImage(testDepthImages.at(k));
 		std::ostringstream path;
 
@@ -304,13 +288,29 @@ void trainTree(string treeFile, string trainDir) {
 }
 
 
+void classifyOneImage(string forest, string depthFile) {
+	Mat depthImage = imread(depthFile, 0);
+
+	SerializeHelper sHelp = SerializeHelper();
+	Forest f = sHelp.loadForest(forest);
+
+	Mat classified = f.classifyImage(depthImage);
+
+	Mat cimg = convertToColorForBaby(classified);
+
+	imshow("Hopethisworks", cimg);
+
+	waitKey(30);
+}
+
+
 int main() {
 
 	cout << CLOCKS_PER_SEC;
 
 	//trainTree("doll7classesReal15.txt", "DollTrain7");
-	runPrediction("doll7classesReal15.txt", "DollTest7", false, "DollTest7SissyColors"); 
-
+	runPrediction("dollpoint2.txt", "DollTest", false, "DollTest7SissyColors"); 
+	//classifyOneImage("adult.txt", "Hopethisworks.png");
 
 	cout << "Done\n";
 	getchar();

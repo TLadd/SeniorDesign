@@ -122,7 +122,7 @@ int main( int argc, char** argv )
 	
 	threshDepth.convertTo(threshDepth, CV_8U);
 
-	//imwrite("Hopethisworks.png", threshDepth);
+	imwrite("Hopethisworks.png", threshDepth);
 
 	TemplateTracker hTrack = TemplateTracker();
 
