@@ -257,17 +257,19 @@ void runPrediction(string treeFile, string testDir, bool writeToFile, string out
 		Mat classified = forest.classifyImage(testDepthImages.at(k));
 		std::ostringstream path;
 
-		path << outputFileName << "/Image" << k << ".png";
+		path << outputFileName << "/" << k+1 << "Y.png";
 		
 		string windowName = path.str();
-		namedWindow( windowName, WINDOW_AUTOSIZE );
+		//namedWindow( windowName, WINDOW_AUTOSIZE );
 
-		Mat cimg = convertToColorForBaby(classified);
+		//Mat cimg = convertToColorForBaby(classified);
 		
 		if(writeToFile) {
-			imwrite(windowName, cimg);
+			//imwrite(windowName, cimg);
+			imwrite(windowName, classified);
 		}
-		imshow(windowName, cimg);
+		//imshow(windowName, cimg);
+		//imshow(windowName, classified);
 		waitKey(30);
 	}
 
@@ -286,10 +288,10 @@ void trainTree(string treeFile, string trainDir) {
 	int times = clock();
 
 	// 7 classes, 15 deep, 200 features, 50 thresholds, 0.02 subsampling, 1 minnuminnode, 10 background penalty, feature range, threshold range
-	Forest forest = Forest(6, 10, 200, 50, 0.02, 1, 0, pair<double, double>(150, 150), pair<double, double>(-255,255));
+	Forest forest = Forest(6, 15, 500, 100, 0.05, 10, 0, pair<double, double>(150, 150), pair<double, double>(-255,255));
 
 	// 500 image per tree. Three made at once.
-	forest.makeTrees(depthImages, classifiedImages, 500, 3);
+	forest.makeTrees(depthImages, classifiedImages, 150, 3);
 
 	int timed = clock();
 
@@ -308,8 +310,8 @@ int main() {
 
 	cout << CLOCKS_PER_SEC;
 
-	trainTree("kiefer.txt", "kieferTrain");
-	//runPrediction("kiefer.txt", "kieferTest", false, "kieferTestPredictions"); 
+	//trainTree("adult.txt", "adultTrain");
+	runPrediction("adult.txt", "adultPretraining", true, "adultPretrainingPredictions"); 
 
 
 	cout << "Done\n";
