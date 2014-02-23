@@ -3,7 +3,6 @@
 #include "opencv2/highgui/highgui.hpp"
 
 #include "IFeatureTracker.h"
-#include "HeartFeatureTracker.h"
 #include "TemplateTracker.h"
 
 #include "ImagePacket.h"
@@ -68,6 +67,12 @@ int drag = 0;
 	}
 
 
+
+Rect getForeheadFromHead(Rect bbox) {
+
+	return Rect(bbox.x + bbox.width/4, bbox.y + bbox.height/6, bbox.width/2, bbox.height/6);
+
+}
 	
 ImagePacket getFrames(VideoCapture capture) {
 	Mat depthMap;
@@ -160,17 +165,26 @@ int main( int argc, char** argv )
 
 
 		hTrack.track(images.getColor(), threshDepth);
+
+		forehead = getForeheadFromHead(hTrack.getTrackedRegion());
 	
 		color = images.getColor();
 		uvMap = images.getUVMap();
 
+
+		Mat foreheadDepth = threshDepth(forehead);
+		imshow("forehead", foreheadDepth);
+
 		transpose(threshDepth, threshDepth);
 		transpose(color, color);
+		transpose(foreheadDepth, foreheadDepth);
 
-		for(int i = 0; i < threshDepth.rows; i++) {
-			for(int j = 0; j < threshDepth.cols; j++) {
-				if(threshDepth.at<uchar>(i,j) != 0) {
-					Point cPoint = translateDepthToColor(Point(j, i), color, uvMap);
+		
+
+		for(int i = 0; i < foreheadDepth.rows; i++) {
+			for(int j = 0; j < foreheadDepth.cols; j++) {
+				if(foreheadDepth.at<uchar>(i,j) != 0) {
+					Point cPoint = translateDepthToColor(Point(j+forehead.x, i+forehead.y), color, uvMap);
 
 					circle( color, cPoint, 3, Scalar(0,255,0), -1, 8);
 				}
@@ -182,7 +196,7 @@ int main( int argc, char** argv )
 		transpose(color, color);
 
 		rectangle(threshDepth, hTrack.getTrackedRegion(), Scalar(255, 0, 0), 2, 8, 0);
-
+		rectangle(threshDepth, forehead, Scalar(255, 0, 0), 2, 8, 0);
         imshow("Depth", threshDepth);
 		imshow("Color", color);
 
