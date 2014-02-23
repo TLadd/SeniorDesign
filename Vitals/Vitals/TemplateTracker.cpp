@@ -38,7 +38,11 @@ void TemplateTracker::track(Mat &colorImage, Mat &depthImage) {
 	minMaxLoc( result, &minVal, &maxVal, &minLoc, &maxLoc, Mat() );
 
 	matchLoc = maxLoc;
+	
+	trackedRegion = Rect(matchLoc.x, matchLoc.y, templ.cols, templ.rows);
+	
+}
 
-	rectangle( img, matchLoc, Point( matchLoc.x + templ.cols , matchLoc.y + templ.rows ), Scalar(255, 0, 0), 2, 8, 0 );
-	imshow("template", templ);
+Rect TemplateTracker::getTrackedRegion(){
+	return trackedRegion;
 }

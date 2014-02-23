@@ -84,9 +84,21 @@ ImagePacket getFrames(VideoCapture capture) {
 	transpose(color, color);		
 
 	capture.retrieve(uvMap, CV_CAP_INTELPERC_UVDEPTH_MAP);
-	transpose(uvMap, uvMap);
+	//transpose(uvMap, uvMap);
 
 	return ImagePacket(color, depthMap, uvMap);
+}
+
+
+
+Point translateDepthToColor(Point d, Mat color, Mat uvMap) {
+	
+	float *uvmap = (float *)uvMap.ptr() + 2 * (d.y * uvMap.cols + d.x);
+	int x = (int)((*uvmap) * color.cols); uvmap++;
+	int y = (int)((*uvmap) * color.rows);
+
+	return Point(x,y);
+	
 }
 
 
@@ -112,7 +124,7 @@ int main( int argc, char** argv )
 	capture.set(CV_CAP_INTELPERC_IMAGE_GENERATOR | CV_CAP_PROP_INTELPERC_PROFILE_IDX, 0);
 	capture.set(CV_CAP_INTELPERC_DEPTH_GENERATOR | CV_CAP_PROP_INTELPERC_PROFILE_IDX, 0);
 
-    namedWindow( "Depth Map", 1 );
+    namedWindow( "Depth", 1 );
 	namedWindow( "Color", 1 );
 
     Mat gray, prevGray, image;
@@ -128,7 +140,7 @@ int main( int argc, char** argv )
 	
 	threshDepth.convertTo(threshDepth, CV_8U);
 
-	imwrite("Hopethisworks.png", threshDepth);
+	//imwrite("Hopethisworks.png", threshDepth);
 
 	TemplateTracker hTrack = TemplateTracker();
 
@@ -137,7 +149,7 @@ int main( int argc, char** argv )
 
 	hTrack.initialize(rect, images.getColor(), threshDepth, 0);
 
-
+	Mat color, uvMap;
     for(;;)
     {
         ImagePacket images = getFrames(capture);
@@ -146,11 +158,33 @@ int main( int argc, char** argv )
 	
 		threshDepth.convertTo(threshDepth, CV_8U);
 
+
 		hTrack.track(images.getColor(), threshDepth);
 	
+		color = images.getColor();
+		uvMap = images.getUVMap();
 
-        imshow("Depth Map", threshDepth);
-		imshow("Color Image", images.getColor());
+		transpose(threshDepth, threshDepth);
+		transpose(color, color);
+
+		for(int i = 0; i < threshDepth.rows; i++) {
+			for(int j = 0; j < threshDepth.cols; j++) {
+				if(threshDepth.at<uchar>(i,j) != 0) {
+					Point cPoint = translateDepthToColor(Point(j, i), color, uvMap);
+
+					circle( color, cPoint, 3, Scalar(0,255,0), -1, 8);
+				}
+			}
+
+		}
+
+		transpose(threshDepth, threshDepth);
+		transpose(color, color);
+
+		rectangle(threshDepth, hTrack.getTrackedRegion(), Scalar(255, 0, 0), 2, 8, 0);
+
+        imshow("Depth", threshDepth);
+		imshow("Color", color);
 
         char c = (char)waitKey(10);
         if( c == 27 )

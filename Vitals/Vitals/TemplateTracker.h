@@ -6,6 +6,7 @@ class TemplateTracker {
 
 private:
 	Mat templ;
+	Rect trackedRegion;
 
 public:
 
@@ -16,4 +17,6 @@ public:
 	void initialize(Rect bbox, Mat &colorImage, Mat &depthImage, int lightConditions);
 
 	void track(Mat &colorImage, Mat &depthImage);
+
+	Rect getTrackedRegion();
 };
