@@ -310,15 +310,11 @@ int main() {
 
 	cout << CLOCKS_PER_SEC;
 
-<<<<<<< HEAD
+
 	//trainTree("adult.txt", "adultTrain");
 	runPrediction("adult.txt", "adultPretraining", true, "adultPretrainingPredictions"); 
 
-=======
-	//trainTree("doll7classesReal15.txt", "DollTrain7");
-	runPrediction("dollpoint2.txt", "DollTest", false, "DollTest7SissyColors"); 
-	//classifyOneImage("adult.txt", "Hopethisworks.png");
->>>>>>> adb2cbefb6fced37b116d47bbf919a792a15e637
+
 
 	cout << "Done\n";
 	getchar();
