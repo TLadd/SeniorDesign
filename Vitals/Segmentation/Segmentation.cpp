@@ -1,9 +1,10 @@
+// Segmentation.cpp : Defines the entry point for the console application.
+//
+
 #include "opencv2/video/tracking.hpp"
 #include "opencv2/imgproc/imgproc.hpp"
 #include "opencv2/highgui/highgui.hpp"
 
-#include "IFeatureTracker.h"
-#include "TemplateTracker.h"
 
 #include "ImagePacket.h"
 
@@ -16,42 +17,7 @@
 using namespace cv;
 using namespace std;
 
-#define HEAD 1
 
-static void help()
-{
-    // print a welcome message, and the OpenCV version
-    cout << "\nThis is a demo of Lukas-Kanade optical flow lkdemo(),\n"
-            "Using OpenCV version " << CV_VERSION << endl;
-    cout << "\nIt uses camera by default, but you can provide a path to video as an argument.\n";
-    cout << "\nHot keys: \n"
-            "\tESC - quit the program\n"
-            "\tr - auto-initialize tracking\n"
-            "\tc - delete all the points\n"
-            "\tn - switch the \"night\" mode on/off\n"
-            "To add/remove a feature point click it\n" << endl;
-}
-
-
-
-
-Rect rect, forehead; /* bounding box */
-Mat frame, roiImg; /* roiImg - the part of the image in the bounding box */
-
-
-
-
-
-
-
-
-
-Rect getForeheadFromHead(Rect bbox) {
-
-	return Rect(bbox.x + bbox.width/4, bbox.y + 20, bbox.width/2, bbox.height/12);
-
-}
-	
 ImagePacket getFrames(VideoCapture capture) {
 	Mat depthMap;
 	Mat color;
@@ -157,7 +123,7 @@ Mat convertToColorForBaby(Mat bwMat) {
 Rect isolateBodyPart(Mat image, int pixelVal) {
 
 	vector<Point> allPoints = vector<Point>();
-	int maxRow=0;
+	int maxRow;
 	for(int i=0; i < image.rows; i++) {
 		for(int j=0; j < image.cols; j++) {
 
@@ -181,10 +147,6 @@ Rect isolateBodyPart(Mat image, int pixelVal) {
 		}
 	}
 
-	if(allPoints.empty()) {
-		return  Rect(75, 20, 70, 90);
-	}
-
 	return boundingRect(allPoints);
 
 }
@@ -192,13 +154,12 @@ Rect isolateBodyPart(Mat image, int pixelVal) {
 
 int main( int argc, char** argv )
 {
-    help();
 
     VideoCapture capture;
 
     
 	SerializeHelper sHelp = SerializeHelper();
-	Forest forest = sHelp.loadForest("adult.txt");
+		Forest forest = sHelp.loadForest("adult.txt");
 
 	// Open webcam
 	capture.open(CV_CAP_INTELPERC);
@@ -216,10 +177,6 @@ int main( int argc, char** argv )
     namedWindow( "Depth", 1 );
 	namedWindow( "Color", 1 );
 
-    Mat gray, prevGray, image;
-    vector<Point2f> points[2];
-
-	//rect =
 
 
 	ImagePacket images = getFrames(capture);
@@ -237,14 +194,11 @@ int main( int argc, char** argv )
 	imshow("Segmentation", convertToColorForBaby(segmentedImage));
 
 
-	Rect rect = isolateBodyPart(segmentedImage, HEAD);
 
-	TemplateTracker hTrack = TemplateTracker();
 
 
 	cvWaitKey(10);
 
-	hTrack.initialize(rect, images.getColor(), threshDepth, 0);
 
 	Mat color, uvMap;
     for(;;)
@@ -255,41 +209,23 @@ int main( int argc, char** argv )
 	
 		threshDepth.convertTo(threshDepth, CV_8U);
 
+		segmentedImage = forest.classifyImage(threshDepth);
 
-		hTrack.track(images.getColor(), threshDepth);
-
-		forehead = getForeheadFromHead(hTrack.getTrackedRegion());
+		imshow("Segmentation", convertToColorForBaby(segmentedImage));
 	
 		color = images.getColor();
 		uvMap = images.getUVMap();
 
 
-		Mat foreheadDepth = threshDepth(forehead);
-		imshow("forehead", foreheadDepth);
-
 		transpose(threshDepth, threshDepth);
 		transpose(color, color);
-		transpose(foreheadDepth, foreheadDepth);
 
 		
 
-		for(int i = 0; i < foreheadDepth.rows; i++) {
-			for(int j = 0; j < foreheadDepth.cols; j++) {
-				if(foreheadDepth.at<uchar>(i,j) != 0) {
-					Point cPoint = translateDepthToColor(Point(j+forehead.y, i+forehead.x), color, uvMap);
-
-					if(cPoint.x < color.cols && cPoint.y < color.rows)
-						circle( color, cPoint, 3, Scalar(0,255,0), -1, 8);
-				}
-			}
-
-		}
 
 		transpose(threshDepth, threshDepth);
 		transpose(color, color);
 
-		rectangle(threshDepth, hTrack.getTrackedRegion(), Scalar(255, 0, 0), 2, 8, 0);
-		rectangle(threshDepth, forehead, Scalar(255, 0, 0), 2, 8, 0);
         imshow("Depth", threshDepth);
 		imshow("Color", color);
 
@@ -301,3 +237,4 @@ int main( int argc, char** argv )
 
     return 0;
 }
+
