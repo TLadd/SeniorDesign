@@ -13,6 +13,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Segmentation", "Segmentatio
 		{72E2FA80-39D5-4848-B905-A3A7A43F29BB} = {72E2FA80-39D5-4848-B905-A3A7A43F29BB}
 	EndProjectSection
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "GimbalRegister", "GimbalRegister\GimbalRegister.vcxproj", "{95FBF837-743C-4680-92EE-7E7E8F6232E1}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Mixed Platforms = Debug|Mixed Platforms
@@ -51,13 +53,23 @@ Global
 		{017AD056-6DD1-47D6-984D-AF7C0C8222A2}.Debug|Mixed Platforms.Build.0 = Debug|Win32
 		{017AD056-6DD1-47D6-984D-AF7C0C8222A2}.Debug|Win32.ActiveCfg = Debug|Win32
 		{017AD056-6DD1-47D6-984D-AF7C0C8222A2}.Debug|Win32.Build.0 = Debug|Win32
-		{017AD056-6DD1-47D6-984D-AF7C0C8222A2}.Debug|x64.ActiveCfg = Debug|Win32
+		{017AD056-6DD1-47D6-984D-AF7C0C8222A2}.Debug|x64.ActiveCfg = Debug|x64
 		{017AD056-6DD1-47D6-984D-AF7C0C8222A2}.Release|Mixed Platforms.ActiveCfg = Release|Win32
 		{017AD056-6DD1-47D6-984D-AF7C0C8222A2}.Release|Mixed Platforms.Build.0 = Release|Win32
 		{017AD056-6DD1-47D6-984D-AF7C0C8222A2}.Release|Win32.ActiveCfg = Release|Win32
 		{017AD056-6DD1-47D6-984D-AF7C0C8222A2}.Release|Win32.Build.0 = Release|Win32
 		{017AD056-6DD1-47D6-984D-AF7C0C8222A2}.Release|x64.ActiveCfg = Release|x64
 		{017AD056-6DD1-47D6-984D-AF7C0C8222A2}.Release|x64.Build.0 = Release|x64
+		{95FBF837-743C-4680-92EE-7E7E8F6232E1}.Debug|Mixed Platforms.ActiveCfg = Debug|Win32
+		{95FBF837-743C-4680-92EE-7E7E8F6232E1}.Debug|Mixed Platforms.Build.0 = Debug|Win32
+		{95FBF837-743C-4680-92EE-7E7E8F6232E1}.Debug|Win32.ActiveCfg = Debug|Win32
+		{95FBF837-743C-4680-92EE-7E7E8F6232E1}.Debug|Win32.Build.0 = Debug|Win32
+		{95FBF837-743C-4680-92EE-7E7E8F6232E1}.Debug|x64.ActiveCfg = Debug|x64
+		{95FBF837-743C-4680-92EE-7E7E8F6232E1}.Release|Mixed Platforms.ActiveCfg = Release|Win32
+		{95FBF837-743C-4680-92EE-7E7E8F6232E1}.Release|Mixed Platforms.Build.0 = Release|Win32
+		{95FBF837-743C-4680-92EE-7E7E8F6232E1}.Release|Win32.ActiveCfg = Release|Win32
+		{95FBF837-743C-4680-92EE-7E7E8F6232E1}.Release|Win32.Build.0 = Release|Win32
+		{95FBF837-743C-4680-92EE-7E7E8F6232E1}.Release|x64.ActiveCfg = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
