@@ -27,9 +27,6 @@
     <ClInclude Include="IFeatureTracker.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="HeartFeatureTracker.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="TemplateTracker.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -42,9 +39,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Vitals.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="HeartFeatureTracker.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="TemplateTracker.cpp">

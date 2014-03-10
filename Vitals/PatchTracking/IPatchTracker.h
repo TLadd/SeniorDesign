@@ -8,7 +8,7 @@ using namespace std;
 using namespace cv;
 
 
-class IFeatureTracker
+class IPatchTracker
 {
 
 protected:
@@ -89,12 +89,12 @@ protected:
 
 
 public:
-	IFeatureTracker(void) {}
-	~IFeatureTracker(void) {}
+	IPatchTracker(void) {}
+	~IPatchTracker(void) {}
 
 	virtual void initialize(Rect bbox, Mat &colorImage, Mat &depthImage, int lightConditions){}
 
 	virtual void track(Mat &colorImage, Mat &depthImage) {}
 
-	virtual Rect getTrackedRegion();
+
 };

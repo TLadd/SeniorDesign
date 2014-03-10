@@ -24,7 +24,10 @@
     <ClInclude Include="targetver.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="GimbalHelper.h">
+    <ClInclude Include="IPatchTracker.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="TemplateTracker.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -32,10 +35,10 @@
     <ClCompile Include="stdafx.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="GimbalRegister.cpp">
+    <ClCompile Include="PatchTracking.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="GimbalHelper.cpp">
+    <ClCompile Include="TemplateTracker.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

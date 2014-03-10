@@ -1,19 +1,21 @@
 #pragma once
+#include "opencv.hpp"
+#include "IPatchTracker.h"
 
-#include "IFeatureTracker.h"
+using namespace cv;
 
 
-
-class HeartFeatureTracker : public IFeatureTracker {
+class TemplateTracker : public IPatchTracker {
 
 private:
-	
+	Mat templ;
+	Rect trackedRegion;
 
 public:
 
-	HeartFeatureTracker();
+	TemplateTracker();
 
-	~HeartFeatureTracker();
+	~TemplateTracker();
 
 	void initialize(Rect bbox, Mat &colorImage, Mat &depthImage, int lightConditions);
 

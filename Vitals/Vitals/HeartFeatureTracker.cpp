@@ -1,3 +1,4 @@
+#pragma once
 
 #include "HeartFeatureTracker.h"
 
@@ -101,3 +102,6 @@ void HeartFeatureTracker::track(Mat &colorImage, Mat &depthImage) {
 }
 
 
+Rect HeartFeatureTracker::getTrackedRegion() {
+	return bbox;
+}

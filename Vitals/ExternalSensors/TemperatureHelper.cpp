@@ -1,8 +1,11 @@
+#pragma once
+
 #include "TemperatureHelper.h"
 
 
 TemperatureHelper::TemperatureHelper(void)
 {
+	externalSensors = SensorHelper();
 }
 
 
@@ -17,5 +20,6 @@ TemperatureHelper::~TemperatureHelper(void)
 * @return The core temperature value in degrees F (can be changed)
 */
 double TemperatureHelper::getCoreTemp() {
-
+	
+	return 0;
 }

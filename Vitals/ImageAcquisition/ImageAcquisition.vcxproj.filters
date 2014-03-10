@@ -24,7 +24,10 @@
     <ClInclude Include="targetver.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="GimbalHelper.h">
+    <ClInclude Include="ImageGrabber.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ImageBundle.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -32,10 +35,13 @@
     <ClCompile Include="stdafx.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="GimbalRegister.cpp">
+    <ClCompile Include="ImageAcquisition.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="GimbalHelper.cpp">
+    <ClCompile Include="ImageGrabber.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ImageBundle.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

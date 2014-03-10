@@ -1,5 +1,6 @@
 #pragma once
 
+#include "SensorHelper.h"
 
 
 class TemperatureHelper
@@ -17,5 +18,7 @@ public:
 	 */
 	double getCoreTemp();
 
+private:
+	SensorHelper externalSensors;
 };
 
