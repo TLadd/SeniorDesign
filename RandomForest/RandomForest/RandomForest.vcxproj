@@ -165,6 +165,7 @@
     <ClInclude Include="ImageReader.h" />
     <ClInclude Include="ITreeNode.h" />
     <ClInclude Include="NodeFactory.h" />
+    <ClInclude Include="SegmentationHelper.h" />
     <ClInclude Include="SerializeHelper.h" />
     <ClInclude Include="targetver.h" />
     <ClInclude Include="TerminalNode.h" />
@@ -179,6 +180,7 @@
     <ClCompile Include="ImageReader.cpp" />
     <ClCompile Include="NodeFactory.cpp" />
     <ClCompile Include="RandomFor.cpp" />
+    <ClCompile Include="SegmentationHelper.cpp" />
     <ClCompile Include="SerializeHelper.cpp" />
     <ClCompile Include="TerminalNode.cpp" />
     <ClCompile Include="TrainingTests.cpp" />
