@@ -1,10 +1,20 @@
 #include "ImageGrabber.h"
-#include "ImageGrabber.h"
 
 
-ImageGrabber::ImageGrabber(VideoCapture capture)
+
+ImageGrabber::ImageGrabber()
 {
-	cap = capture;
+	// Open webcam
+	cap.open(CV_CAP_INTELPERC);
+	
+
+    if( !cap.isOpened() )
+    {
+        std::cout << "Could not initialize capturing...\n";
+    }
+
+	cap.set(CV_CAP_INTELPERC_IMAGE_GENERATOR | CV_CAP_PROP_INTELPERC_PROFILE_IDX, 0);
+	cap.set(CV_CAP_INTELPERC_DEPTH_GENERATOR | CV_CAP_PROP_INTELPERC_PROFILE_IDX, 0);
 }
 
 

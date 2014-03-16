@@ -1,4 +1,5 @@
 #pragma once
+
 #include "opencv.hpp";
 #include "ImageBundle.h"
 
@@ -6,7 +7,8 @@ using namespace cv;
 class ImageGrabber
 {
 public:
-	ImageGrabber(VideoCapture capture);
+	ImageGrabber();
+
 	~ImageGrabber(void);
 
 

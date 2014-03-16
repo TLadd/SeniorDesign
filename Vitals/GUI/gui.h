@@ -1,19 +1,20 @@
-#ifndef GUI_H
-#define GUI_H
 
-#include <QtWidgets/QMainWindow>
-#include "ui_gui.h"
 
-class GUI : public QMainWindow
+#include <QtWidgets/QApplication>
+#include "mainwindow.h"
+
+class GUI 
 {
-	Q_OBJECT
+	
 
 public:
-	GUI(QWidget *parent = 0);
+	GUI();
 	~GUI();
 
+	void start(int argc, char **argv);
+
 private:
-	Ui::GUIClass ui;
+	
 };
 
-#endif // GUI_H
+

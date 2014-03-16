@@ -15,6 +15,6 @@ GimbalHelper::~GimbalHelper(void)
  * in the depth image
  * @param center The pixel to point at
  */
-void GimbalHelper::positionGimbal(Point center) {
+void GimbalHelper::positionGimbal(Point center, double depth) {
 
 }

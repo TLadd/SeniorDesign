@@ -24,12 +24,12 @@
       <SourceControlFiles>False</SourceControlFiles>
     </Filter>
     <Filter Include="Generated Files\Debug">
-      <UniqueIdentifier>{4070a70b-0d91-4a22-9c32-fae8424138a9}</UniqueIdentifier>
+      <UniqueIdentifier>{b9b3f550-63a8-4d5d-893a-94f8f6f593c8}</UniqueIdentifier>
       <Extensions>cpp;moc</Extensions>
       <SourceControlFiles>False</SourceControlFiles>
     </Filter>
     <Filter Include="Generated Files\Release">
-      <UniqueIdentifier>{98f2c60a-e698-47bc-b1c9-ff6c44542842}</UniqueIdentifier>
+      <UniqueIdentifier>{e56ac572-2e09-4f29-84af-e06e8edf61f5}</UniqueIdentifier>
       <Extensions>cpp;moc</Extensions>
       <SourceControlFiles>False</SourceControlFiles>
     </Filter>
@@ -38,60 +38,33 @@
     <ClCompile Include="main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="gui.cpp">
+    <ClCompile Include="controllerqt.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="GeneratedFiles\qrc_gui.cpp">
+    <ClCompile Include="GeneratedFiles\Debug\moc_controllerqt.cpp">
+      <Filter>Generated Files\Debug</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Release\moc_controllerqt.cpp">
+      <Filter>Generated Files\Release</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\qrc_controllerqt.cpp">
       <Filter>Generated Files</Filter>
-    </ClCompile>
-    <ClCompile Include="mainwindow.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="GeneratedFiles\Debug\moc_mainwindow.cpp">
-      <Filter>Generated Files\Debug</Filter>
-    </ClCompile>
-    <ClCompile Include="GeneratedFiles\Release\moc_mainwindow.cpp">
-      <Filter>Generated Files\Release</Filter>
-    </ClCompile>
-    <ClCompile Include="qcustomplot.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="GeneratedFiles\Debug\moc_qcustomplot.cpp">
-      <Filter>Generated Files\Debug</Filter>
-    </ClCompile>
-    <ClCompile Include="GeneratedFiles\Release\moc_qcustomplot.cpp">
-      <Filter>Generated Files\Release</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <CustomBuild Include="gui.h">
+    <CustomBuild Include="controllerqt.h">
       <Filter>Header Files</Filter>
     </CustomBuild>
-    <CustomBuild Include="gui.ui">
+    <CustomBuild Include="controllerqt.ui">
       <Filter>Form Files</Filter>
     </CustomBuild>
-    <CustomBuild Include="gui.qrc">
+    <CustomBuild Include="controllerqt.qrc">
       <Filter>Resource Files</Filter>
     </CustomBuild>
-    <CustomBuild Include="mainwindow.h">
-      <Filter>Header Files</Filter>
-    </CustomBuild>
-    <CustomBuild Include="mainwindow.ui">
-      <Filter>Form Files</Filter>
-    </CustomBuild>
-    <CustomBuild Include="qcustomplot.h">
-      <Filter>Header Files</Filter>
-    </CustomBuild>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="GeneratedFiles\ui_gui.h">
+    <ClInclude Include="GeneratedFiles\ui_controllerqt.h">
       <Filter>Generated Files</Filter>
-    </ClInclude>
-    <ClInclude Include="GeneratedFiles\ui_mainwindow.h">
-      <Filter>Generated Files</Filter>
-    </ClInclude>
-    <ClInclude Include="ui_mainwindow.h">
-      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

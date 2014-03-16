@@ -19,9 +19,9 @@
     </ProjectConfiguration>
   </ItemGroup>
   <PropertyGroup Label="Globals">
-    <ProjectGuid>{9852CC78-032B-4356-B278-F941670B5B94}</ProjectGuid>
+    <ProjectGuid>{4284BBBB-FE18-4B6F-8503-A2384FFE1E69}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
-    <RootNamespace>ImageAcquisition</RootNamespace>
+    <RootNamespace>Model</RootNamespace>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -44,7 +44,7 @@
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
-    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
     <PlatformToolset>v110</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
@@ -86,6 +86,7 @@
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
+      <AdditionalIncludeDirectories>$(OPENCV_DIR)\build\include;$(BOOST_DIR)\include\boost-1_55;</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -94,13 +95,12 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
-      <PrecompiledHeader>
-      </PrecompiledHeader>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
-      <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;_WIN32_WINNT=0x0501;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>$(OPENCV_DIR)\build\include;$(BOOST_DIR)\include\boost-1_55;</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(OPENCV_DIR)\build\include;$(BOOST_DIR)\include\boost-1_55;$(SENIORDESIGN_DIR)\Vitals\ExternalSensors;$(SENIORDESIGN_DIR)\Vitals\ImageAcquisition;$(SENIORDESIGN_DIR)\Vitals\PatchTracking;$(SENIORDESIGN_DIR)\RandomForest\RandomForest;$(SENIORDESIGN_DIR)\Vitals\GimbalRegister;$(SENIORDESIGN_DIR)\Vitals\Adapters</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -119,6 +119,7 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
+      <AdditionalIncludeDirectories>$(OPENCV_DIR)\build\include;$(BOOST_DIR)\include\boost-1_55;</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -130,14 +131,13 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
-      <PrecompiledHeader>
-      </PrecompiledHeader>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <Optimization>MaxSpeed</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
-      <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;_WIN32_WINNT=0x0501;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>$(OPENCV_DIR)\build\include;$(BOOST_DIR)\include\boost-1_55;</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(OPENCV_DIR)\build\include;$(BOOST_DIR)\include\boost-1_55;$(SENIORDESIGN_DIR)\Vitals\ExternalSensors;$(SENIORDESIGN_DIR)\Vitals\ImageAcquisition;$(SENIORDESIGN_DIR)\Vitals\PatchTracking;$(SENIORDESIGN_DIR)\RandomForest\RandomForest;$(SENIORDESIGN_DIR)\Vitals\GimbalRegister</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -152,16 +152,34 @@
     <Text Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="ImageBundle.h" />
-    <ClInclude Include="ImageGrabber.h" />
-    <ClInclude Include="stdafx.h" />
+    <ClInclude Include="..\Adapters\ViewAdapter.h" />
     <ClInclude Include="targetver.h" />
+    <ClInclude Include="VitalsModel.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="ImageAcquisition.cpp" />
-    <ClCompile Include="ImageBundle.cpp" />
-    <ClCompile Include="ImageGrabber.cpp" />
-    <ClCompile Include="stdafx.cpp" />
+    <ClCompile Include="..\Adapters\ViewAdapter.cpp" />
+    <ClCompile Include="Model.cpp" />
+    <ClCompile Include="VitalsModel.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\RandomForest\RandomForest\RandomForest.vcxproj">
+      <Project>{72e2fa80-39d5-4848-b905-a3a7a43f29bb}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\ExternalSensors\ExternalSensors.vcxproj">
+      <Project>{40d0ca20-70c1-42db-9561-250ebd1b8709}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\GimbalRegister\GimbalRegister.vcxproj">
+      <Project>{95fbf837-743c-4680-92ee-7e7e8f6232e1}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\GUI\GUI.vcxproj">
+      <Project>{b12702ad-abfb-343a-a199-8e24837244a3}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\ImageAcquisition\ImageAcquisition.vcxproj">
+      <Project>{9852cc78-032b-4356-b278-f941670b5b94}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\PatchTracking\PatchTracking.vcxproj">
+      <Project>{e7121bb3-03e5-4490-89f7-98dc96dffb1a}</Project>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

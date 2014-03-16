@@ -10,7 +10,7 @@ int _tmain(int argc, _TCHAR* argv[])
 	// start kjf edits
 
 	// real-world width of pixels in depth image
-	double dx = 1;
+/*	double dx = 1;
 	double dy = 1;
 
 	// position of depth camera and gimbal mount
@@ -33,7 +33,7 @@ int _tmain(int argc, _TCHAR* argv[])
 	double el = 90 - atan((gyt-gyo)/gzt);
 
 	// end kjf edits
-
+	*/
 	return 0;
 }
 

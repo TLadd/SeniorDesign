@@ -14,6 +14,6 @@ public:
 	 * in the depth image
 	 * @param center The pixel to point at
 	 */
-	void positionGimbal(Point center);
+	void positionGimbal(Point center, double depth);
 };
 

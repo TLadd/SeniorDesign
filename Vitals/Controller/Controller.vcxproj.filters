@@ -24,15 +24,12 @@
     <ClInclude Include="targetver.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="GimbalHelper.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="GimbalRegister.cpp">
+    <ClCompile Include="stdafx.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="GimbalHelper.cpp">
+    <ClCompile Include="Controller.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
