@@ -42,19 +42,21 @@ Mat VitalsModel::thresholdDepthImage(Mat &depthImage) {
  */
 void VitalsModel::processFrame() {
 	cout << "ProcessFrame";
-
+	
 	ImageBundle images = imGrab.getLatestImages();
 
 	Mat threshDepth = thresholdDepthImage(images.getDepth());
 
 	heartTracker.track(images.getColor(), threshDepth);
 
-	breathTracker.track(images.getColor(), threshDepth);
+	//breathTracker.track(images.getColor(), threshDepth);
 
 	Rect forehead = getForeheadFromHead(heartTracker.getTrackedRegion());
 
 	Mat foreheadDepth = threshDepth(forehead);
-
+	
+	imshow("hello", images.getColor());
+	waitKey(15);
 	imageTimer.expires_at(imageTimer.expires_at() + boost::posix_time::milliseconds(imInterval));
 	imageTimer.async_wait(bind(&VitalsModel::processFrame, this));
 }
@@ -64,18 +66,21 @@ void VitalsModel::processFrame() {
  */
 void VitalsModel::processTemp() {
 	cout << "ProcessTemp";
-
+	
 	double temp = temperature.getCoreTemp();
 
 	view.AddTempPoint(temp);
 	view.setTemperature(temp);
 	
 	temperatureTimer.expires_at(temperatureTimer.expires_at() + boost::posix_time::milliseconds(tempInterval));
-	temperatureTimer.async_wait(bind(&VitalsModel::processTemp, this)); 
+	temperatureTimer.async_wait(bind(&VitalsModel::processTemp, this));
+	
 }
 
 
 void VitalsModel::start() {
+
+	namedWindow("hello");
 
 	// Get a set of images to initialize everything with
 	ImageBundle images = imGrab.getLatestImages();
@@ -94,9 +99,6 @@ void VitalsModel::start() {
 	// Initialize heart tracker
 	heartTracker = TemplateTracker();
 	heartTracker.initialize(rectHeart, images.getColor(), threshDepth, 0);
-
-	breathTracker = TemplateTracker();
-	breathTracker.initialize(rectHeart, images.getColor(), threshDepth, 0);
 
 	// Start the timers
 	imageTimer.async_wait(bind(&VitalsModel::processFrame, this));
