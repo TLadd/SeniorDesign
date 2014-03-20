@@ -1,4 +1,12 @@
 #pragma once
+#include "TempDistWrapper.h"
+#include "TempHumidityWrapper.h"
+#include "Serial.h"
+#include <stdio.h>
+#include <tchar.h>
+#include <iostream>
+using namespace std;
+
 class SensorHelper
 {
 public:
@@ -6,25 +14,28 @@ public:
 	~SensorHelper(void);
 
 	/**
-	 * Gets the temperature from the IR temperature sensor
+	 * Gets the raw temperature from the IR temperature sensor and its distance away
 	 * @return The temperature in degrees F
 	 */
-	double getRawTemp();
+	TempDistWrapper getRawTempAndDistance();
 
 
 	/**
-	 * Gets the distance away from the temperature sensor target
-	 * @return the distance from the temperature sensor to the target. No idea what unit
-	 */
-	double getDistance();
-
-
-	/**
-	 * Gets the humidity of the surrounding environment using hte humidity sensor
+	 * Gets the humidity and ambient temperature of the surrounding environment using hte humidity sensor
 	 * @return The humidity. No idea what unit
 	 */
-	double getHumidity();
+	TempHumidityWrapper SensorHelper::getHumidityAndAmbientTemp();
 
+	/**
+	 * Sets the gimbal mount to the provided angles
+	 */
+	void setGimbalAngles(double azimuth, double elevation);
+
+	bool setGimbalAngle(float angle, int whichServo);
+
+private:
+	Serial *SP;
+	bool connected;
 
 };
 

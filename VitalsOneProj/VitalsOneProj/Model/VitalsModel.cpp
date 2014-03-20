@@ -1,6 +1,7 @@
 #pragma once
 
 #include "VitalsModel.h"
+#include <qdebug.h>
 #define HEAD 1
 #define CHEST 2
 
@@ -16,6 +17,8 @@ VitalsModel::VitalsModel(boost::asio::io_service& io, int imInt, int tempInt, in
 	breathTracker = TemplateTracker();
 
 	threshDist = thresh;
+
+	segmenter = SegmentationHelper("adult.txt");
 	
 }
 
@@ -49,14 +52,23 @@ void VitalsModel::processFrame() {
 
 	heartTracker.track(images.getColor(), threshDepth);
 
-	//breathTracker.track(images.getColor(), threshDepth);
-
 	Rect forehead = getForeheadFromHead(heartTracker.getTrackedRegion());
 
 	Mat foreheadDepth = threshDepth(forehead);
 	
-	imshow("hello", images.getColor());
-	waitKey(15);
+	rectangle(threshDepth, heartTracker.getTrackedRegion(), Scalar(255, 0, 0), 2, 8, 0);
+
+	view.showImage("Tracking", threshDepth);
+	view.showImage("Depth", images.getDepth());
+
+	double minVal; 
+    double maxVal; 
+    Point minLoc; 
+    Point maxLoc;
+
+    minMaxLoc(images.getDepth(), &minVal, &maxVal, &minLoc, &maxLoc );
+	QString poop = QString::number(minVal) + ", " + QString::number(maxVal);
+	//qDebug() << poop;
 	imageTimer.expires_at(imageTimer.expires_at() + boost::posix_time::milliseconds(imInterval));
 	imageTimer.async_wait(bind(&VitalsModel::processFrame, this));
 }
@@ -69,6 +81,9 @@ void VitalsModel::processTemp() {
 	
 	double temp = temperature.getCoreTemp();
 
+	QString poop = QString::number(temp);
+	qDebug() << poop;
+
 	view.AddTempPoint(temp);
 	view.setTemperature(temp);
 	
@@ -80,18 +95,16 @@ void VitalsModel::processTemp() {
 
 void VitalsModel::start() {
 
-	namedWindow("hello");
-
 	// Get a set of images to initialize everything with
 	ImageBundle images = imGrab.getLatestImages();
 
 	// Threshold the depth image so it only includes the person
-	Mat threshDepth;
-	threshold(images.getDepth(), threshDepth, threshDist, 100000, THRESH_TOZERO_INV);
-	threshDepth.convertTo(threshDepth, CV_8U);
+	Mat threshDepth = thresholdDepthImage(images.getDepth());
 
 	// Segment the image
 	Mat segmentedImage = segmenter.segmentImage(threshDepth);
+
+	view.showSegmentedImage("Segmented", segmentedImage);
 
 	// Get the bounding box containing the head
 	Rect rectHeart = segmenter.getBodyPart(segmentedImage, HEAD);

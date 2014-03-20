@@ -137,6 +137,8 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="ExternalSensors\Serial.cpp" />
+    <ClCompile Include="Gimbal\CameraParameters.cpp" />
     <ClCompile Include="Forest\FeatureProjector.cpp" />
     <ClCompile Include="Forest\Forest.cpp" />
     <ClCompile Include="GeneratedFiles\Debug\moc_mainwindow.cpp">
@@ -185,6 +187,8 @@
     <ClCompile Include="Forest\TripletWrapper.cpp" />
     <ClCompile Include="Model\ViewAdapter.cpp" />
     <ClCompile Include="Model\VitalsModel.cpp" />
+    <ClCompile Include="ExternalSensors\TempDistWrapper.cpp" />
+    <ClCompile Include="ExternalSensors\TempHumidityWrapper.cpp" />
   </ItemGroup>
   <ItemGroup>
     <CustomBuild Include="vitalsoneproj.ui">
@@ -207,6 +211,8 @@
     </CustomBuild>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="ExternalSensors\Serial.h" />
+    <ClInclude Include="Gimbal\CameraParameters.h" />
     <ClInclude Include="Forest\FeatureProjector.h" />
     <ClInclude Include="Forest\Forest.h" />
     <ClInclude Include="GeneratedFiles\ui_mainwindow.h" />
@@ -231,6 +237,8 @@
     <ClInclude Include="GUI\ui_mainwindow.h" />
     <ClInclude Include="Model\ViewAdapter.h" />
     <ClInclude Include="Model\VitalsModel.h" />
+    <ClInclude Include="ExternalSensors\TempDistWrapper.h" />
+    <ClInclude Include="ExternalSensors\TempHumidityWrapper.h" />
     <CustomBuild Include="GUI\qcustomplot.h">
       <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(QTDIR)\bin\moc.exe;%(FullPath)</AdditionalInputs>
       <Message Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Moc%27ing qcustomplot.h...</Message>

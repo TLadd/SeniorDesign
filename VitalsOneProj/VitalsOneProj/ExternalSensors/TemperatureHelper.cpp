@@ -21,5 +21,6 @@ TemperatureHelper::~TemperatureHelper(void)
 */
 double TemperatureHelper::getCoreTemp() {
 	
-	return 0;
+	return externalSensors.getRawTempAndDistance().getRawTemp();
+	
 }

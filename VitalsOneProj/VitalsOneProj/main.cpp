@@ -8,7 +8,7 @@
 
 void startModel(boost::asio::io_service *io) {
 	
-	VitalsModel model(*io, 20, 3, 750);
+	VitalsModel model(*io, 20, 0.5, 750);
 	model.start();
 	io->run();
 }

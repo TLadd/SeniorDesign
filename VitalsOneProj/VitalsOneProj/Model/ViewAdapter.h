@@ -1,6 +1,10 @@
 #pragma once
 
 #include "./GUI/mainwindow.h"
+#include "opencv.hpp"
+
+using namespace std;
+using namespace cv;
 
 class ViewAdapter
 {
@@ -50,6 +54,16 @@ public:
 	 * Redraws the graphs. Happens automatically or not?
 	 */
 	void updateDisplay();
+
+	/**
+	 * Show a segmented image in the specified window
+	 */
+	void showSegmentedImage(string winName, Mat image);
+
+	/**
+	 * Show a Mat image in the specified window
+	 */
+	void showImage(string winName, Mat image);
 
 private:
 	MainWindow *view;

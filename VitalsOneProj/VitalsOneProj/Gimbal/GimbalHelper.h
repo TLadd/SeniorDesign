@@ -1,12 +1,14 @@
 #pragma once
 #include "opencv.hpp"
+#include "CameraParameters.h"
+#include <cmath>
 
 using namespace cv;
 
 class GimbalHelper
 {
 public:
-	GimbalHelper(void);
+	GimbalHelper(CameraParameters _camParams, Point _relativePos);
 	~GimbalHelper(void);
 
 	/**
@@ -15,5 +17,10 @@ public:
 	 * @param center The pixel to point at
 	 */
 	void positionGimbal(Point center, double depth);
+
+
+private:
+	CameraParameters camParams;
+	Point gimbalPos;
 };
 

@@ -20,5 +20,7 @@ public:
 
 private:
 	SensorHelper externalSensors;
+	Serial *SP;
+	bool connected;
 };
 
