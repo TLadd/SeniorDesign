@@ -11,7 +11,6 @@ VitalsModel::VitalsModel(boost::asio::io_service& io, int imInt, int tempInt, in
 	imInterval = imInt;
 	tempInterval = tempInt;
 
-	temperature = TemperatureHelper();
 	imGrab = ImageGrabber();
 	heartTracker = TemplateTracker();
 	breathTracker = TemplateTracker();
@@ -87,13 +86,19 @@ void VitalsModel::processTemp() {
 	view.AddTempPoint(temp);
 	view.setTemperature(temp);
 	
-	temperatureTimer.expires_at(temperatureTimer.expires_at() + boost::posix_time::milliseconds(tempInterval));
+	temperatureTimer.expires_at(temperatureTimer.expires_at() + boost::posix_time::seconds(tempInterval));
 	temperatureTimer.async_wait(bind(&VitalsModel::processTemp, this));
 	
 }
 
 
 void VitalsModel::start() {
+	/*
+	while(true) {
+		processTemp();
+		Sleep(2000);
+	}*/
+
 
 	// Get a set of images to initialize everything with
 	ImageBundle images = imGrab.getLatestImages();

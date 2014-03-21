@@ -8,7 +8,7 @@
 
 void startModel(boost::asio::io_service *io) {
 	
-	VitalsModel model(*io, 20, 0.5, 750);
+	VitalsModel model(*io, 20, 2, 750);
 	model.start();
 	io->run();
 }
@@ -20,8 +20,7 @@ int main(int argc, char *argv[])
 	MainWindow w;
 	boost::asio::io_service io;
 	thread *t = new thread(&startModel, &io);
-	//while(true);
-	//return 0;
+
 	w.show();
 	return a.exec();
 }

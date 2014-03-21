@@ -5,7 +5,6 @@
 
 TemperatureHelper::TemperatureHelper(void)
 {
-	externalSensors = SensorHelper();
 }
 
 

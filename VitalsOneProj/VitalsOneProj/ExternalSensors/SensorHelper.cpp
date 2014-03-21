@@ -1,6 +1,7 @@
 #pragma once
 
 #include "SensorHelper.h"
+#include <qdebug.h>
 
 #define CMD_SERVO0 85	// control servo 0
 #define CMD_SERVO1 90	// control servo 1
@@ -11,7 +12,10 @@ SensorHelper::SensorHelper(void)
 {
 	SP = new Serial(L"\\\\.\\COM16");    // adjust as needed
 	if (SP->IsConnected())
-		printf("We're connected!\n");
+		qDebug() << "We are connected\n";	
+	else
+		qDebug() << "We are not connected\n";	
+		
 }
 
 
