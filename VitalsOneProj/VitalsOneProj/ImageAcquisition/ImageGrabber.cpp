@@ -31,6 +31,11 @@ ImageBundle ImageGrabber::getLatestImages() {
 	Mat color;
 	Mat uvMap;
 
+
+	if(!cap.isOpened()) {
+		return ImageBundle(Mat::zeros(320, 240, CV_8U), Mat::zeros(320, 240, CV_8U), Mat::zeros(320, 240, CV_8U));
+	}
+
 	cap.grab();
 
 
