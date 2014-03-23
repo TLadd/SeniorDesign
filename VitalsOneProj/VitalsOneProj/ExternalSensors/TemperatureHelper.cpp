@@ -3,7 +3,7 @@
 #include "TemperatureHelper.h"
 
 
-TemperatureHelper::TemperatureHelper(void)
+TemperatureHelper::TemperatureHelper(Serial *SPc) : externalSensors(SPc)
 {
 }
 

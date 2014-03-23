@@ -10,7 +10,7 @@ using namespace std;
 class SensorHelper
 {
 public:
-	SensorHelper(void);
+	SensorHelper(Serial *SPc);
 	~SensorHelper(void);
 
 	/**
@@ -26,12 +26,7 @@ public:
 	 */
 	TempHumidityWrapper SensorHelper::getHumidityAndAmbientTemp();
 
-	/**
-	 * Sets the gimbal mount to the provided angles
-	 */
-	void setGimbalAngles(double azimuth, double elevation);
 
-	bool setGimbalAngle(float angle, int whichServo);
 
 private:
 	Serial *SP;

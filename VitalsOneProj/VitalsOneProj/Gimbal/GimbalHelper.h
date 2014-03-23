@@ -2,13 +2,14 @@
 #include "opencv.hpp"
 #include "CameraParameters.h"
 #include <cmath>
+#include "./ExternalSensors/Serial.h"
 
 using namespace cv;
 
 class GimbalHelper
 {
 public:
-	GimbalHelper(CameraParameters _camParams, Point _relativePos);
+	GimbalHelper(CameraParameters _camParams, Serial *SPc);
 	~GimbalHelper(void);
 
 	/**
@@ -18,9 +19,17 @@ public:
 	 */
 	void positionGimbal(Point center, double depth);
 
+	
+	/**
+	 * Sets the gimbal mount to the provided angles
+	 */
+	void setGimbalAngles(double azimuth, double elevation);
+
+	bool setGimbalAngle(float angle, int whichServo);
+
 
 private:
 	CameraParameters camParams;
-	Point gimbalPos;
+	Serial *SP;
 };
 

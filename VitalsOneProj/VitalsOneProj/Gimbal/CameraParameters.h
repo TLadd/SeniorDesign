@@ -1,13 +1,14 @@
 #pragma once
 
 #include "opencv.hpp"
+#include <cmath>
 
 using namespace cv;
 
 class CameraParameters
 {
 public:
-	CameraParameters(Point _fov, int _width, int _height, Point _focalLength, int _minDepthVal, int _maxDepthVal, double _depthSteps);
+	CameraParameters(Point _fov, int _width, int _height, double _minDepth, double _maxDepth, double _depthSteps, Point _relativeGinbal);
 	CameraParameters();
 
 	~CameraParameters(void);
@@ -35,18 +36,22 @@ public:
 	 /**
 	  * The minimum possible depth value
 	  */
-	 int getMinDepthVal();
+	 double getMinDepthVal();
 
 	 /**
 	  * The maximum possible depth value
 	  */
-	 int getMaxDepthVal();
+	 double getMaxDepthVal();
 
 	 /**
 	  * The number of centimeters each depth step corresponds to
 	  */
 	 double getDepthSteps();
 
+	 /**
+	  * Get the relative position of the gimbal mount from the senz3d
+	  */
+	 Point getRelativePos();
 
 
 private:
@@ -74,17 +79,22 @@ private:
 	 /**
 	  * The minimum possible real world depth value
 	  */
-	 int minDepthVal;
+	 double minDepthVal;
 
 	 /**
 	  * The maximum possible real world depth value
 	  */
-	 int maxDepthVal;
+	 double maxDepthVal;
 
 	 /**
 	  * The number of depth steps
 	  */
 	 double depthSteps;
+
+	 /**
+	  * The relative position of the gimbal mount from the camera
+	  */ 
+	 Point relativePosGimbal;
 
 
 };

@@ -5,19 +5,8 @@
 #define HEAD 1
 #define CHEST 2
 
-VitalsModel::VitalsModel(boost::asio::io_service& io, int imInt, int tempInt, int thresh) 
-	: imageTimer(io, posix_time::milliseconds(imInt)), temperatureTimer(io, posix_time::seconds(tempInt)) {
-
-	imInterval = imInt;
-	tempInterval = tempInt;
-
-	imGrab = ImageGrabber();
-	heartTracker = TemplateTracker();
-	breathTracker = TemplateTracker();
-
-	threshDist = thresh;
-
-	segmenter = SegmentationHelper("adult.txt");
+VitalsModel::VitalsModel(boost::asio::io_service& io, Serial *SP, CameraParameters _camParams, int imInt, int tempInt, int thresh) 
+	: imageTimer(io, posix_time::milliseconds(imInt)), temperatureTimer(io, posix_time::seconds(tempInt)), imInterval(imInt), tempInterval(tempInt), temperature(SP), gimb(_camParams, SP), segmenter("adult.txt"), threshDist(thresh) {
 	
 }
 
@@ -93,12 +82,6 @@ void VitalsModel::processTemp() {
 
 
 void VitalsModel::start() {
-	/*
-	while(true) {
-		processTemp();
-		Sleep(2000);
-	}*/
-
 
 	// Get a set of images to initialize everything with
 	ImageBundle images = imGrab.getLatestImages();

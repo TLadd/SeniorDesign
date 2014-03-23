@@ -6,7 +6,7 @@
 class TemperatureHelper
 {
 public:
-	TemperatureHelper(void);
+	TemperatureHelper(Serial *SPc);
 	~TemperatureHelper(void);
 
 
@@ -20,7 +20,6 @@ public:
 
 private:
 	SensorHelper externalSensors;
-	Serial *SP;
 	bool connected;
 };
 

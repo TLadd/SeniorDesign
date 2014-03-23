@@ -10,14 +10,15 @@ CameraParameters::~CameraParameters(void)
 {
 }
 
-CameraParameters::CameraParameters(Point _fov, int _width, int _height, Point _focalLength, int _minDepthVal, int _maxDepthVal, double _depthSteps) {
+CameraParameters::CameraParameters(Point _fov, int _width, int _height, double _minDepth, double _maxDepth, double _depthSteps, Point _relativePos) {
 	FOV = _fov;
 	width = _width;
 	height = _height;
-	focalLength = _focalLength;
-	minDepthVal = _minDepthVal;
-	maxDepthVal = _maxDepthVal;
+	focalLength = Point(width/2/tan(FOV.x/2), height/2/tan(FOV.y/2));
+	minDepthVal = _minDepth;
+	maxDepthVal = _maxDepth;
 	depthSteps = _depthSteps;
+	relativePosGimbal = _relativePos;
 }
 
 
@@ -53,14 +54,14 @@ Point CameraParameters::getFocalLength() {
 /**
 * The minimum possible depth value
 */
-int CameraParameters::getMinDepthVal() {
+double CameraParameters::getMinDepthVal() {
 	return minDepthVal;
 }
 
 /**
 * The maximum possible depth value
 */
-int CameraParameters::getMaxDepthVal() {
+double CameraParameters::getMaxDepthVal() {
 	return maxDepthVal;
 }
 
@@ -69,4 +70,10 @@ int CameraParameters::getMaxDepthVal() {
 */
 double CameraParameters::getDepthSteps() {
 	return depthSteps;
+}
+
+
+Point CameraParameters::getRelativePos() {
+
+	return relativePosGimbal;
 }

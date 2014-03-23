@@ -7,8 +7,15 @@
 
 
 void startModel(boost::asio::io_service *io) {
+
+	Serial *SP = new Serial(L"\\\\.\\COM16");    // adjust as needed
+	if (SP->IsConnected())
+		qDebug() << "We are connected\n";	
+	else
+		qDebug() << "We are not connected\n";	
 	
-	VitalsModel model(*io, 20, 2, 750);
+	VitalsModel model(*io, SP, CameraParameters(Point(74,74), 240, 320, 15.24, 106.68, 1000, Point(0,20)), 20, 2, 750);
+
 	model.start();
 	io->run();
 }

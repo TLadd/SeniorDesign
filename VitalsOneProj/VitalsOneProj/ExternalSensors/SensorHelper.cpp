@@ -3,18 +3,13 @@
 #include "SensorHelper.h"
 #include <qdebug.h>
 
-#define CMD_SERVO0 85	// control servo 0
-#define CMD_SERVO1 90	// control servo 1
+
 #define CMD_TMD 165		// request Melexis temperature and distance
 #define CMD_TAH 170		// request ambient temperature and humidity
 
-SensorHelper::SensorHelper(void)
+SensorHelper::SensorHelper(Serial *SPc)
 {
-	SP = new Serial(L"\\\\.\\COM16");    // adjust as needed
-	if (SP->IsConnected())
-		qDebug() << "We are connected\n";	
-	else
-		qDebug() << "We are not connected\n";	
+	SP = SPc;
 		
 }
 
@@ -87,28 +82,3 @@ TempHumidityWrapper SensorHelper::getHumidityAndAmbientTemp() {
 }
 
 
-bool SensorHelper::setGimbalAngle(float angle, int whichServo) {
-	angle += 90;
-	angle = angle * (1000/180);
-	angle += 1000;
-
-	int angle_out = (int) angle;
-	char outgoingData[3];
-	outgoingData[0] = (char) whichServo;
-	outgoingData[1] = (char) angle_out & 0x000F;
-	outgoingData[2] = (char) angle_out & 0x00F0 >> 8;
-
-	bool writeResult = SP->WriteData(outgoingData, 3);
-
-	return writeResult;
-}
-
-
-/**
- * Sets the gimbal mount to the provided angles
- */
-void SensorHelper::setGimbalAngles(double azimuth, double elevation) {
-	setGimbalAngle(azimuth, CMD_SERVO0);
-	setGimbalAngle(elevation, CMD_SERVO1);
-
-}

@@ -7,6 +7,8 @@
 #include "./PatchTracking/TemplateTracker.h"
 #include "ViewAdapter.h"
 #include "./Forest/SegmentationHelper.h"
+#include "./Gimbal/GimbalHelper.h"
+#include "./Gimbal/CameraParameters.h"
 
 using namespace boost;
 using namespace asio;
@@ -14,7 +16,7 @@ using namespace asio;
 class VitalsModel
 {
 public:
-	VitalsModel(boost::asio::io_service& io, int imInt, int tempInt, int thresh);
+	VitalsModel(boost::asio::io_service& io, Serial *SP, CameraParameters _camParams, int imInt, int tempInt, int thresh);
 	~VitalsModel(void);
 	void start();
 	void setAdapter(ViewAdapter _view);
@@ -82,6 +84,11 @@ private:
 	 */
 	SegmentationHelper segmenter;
 
+	/**
+	 * Used for positioning the gimbal mount
+	 */
+	GimbalHelper gimb;
+	
 
 };
 
