@@ -49,14 +49,13 @@ void VitalsModel::processFrame() {
 	view.showImage("Tracking", threshDepth);
 	view.showImage("Depth", images.getDepth());
 
-	double minVal; 
-    double maxVal; 
-    Point minLoc; 
-    Point maxLoc;
+	Point foreheadCenter = Point(forehead.x + forehead.width/2, forehead.y + forehead.height/2);
 
-    minMaxLoc(images.getDepth(), &minVal, &maxVal, &minLoc, &maxLoc );
-	QString poop = QString::number(minVal) + ", " + QString::number(maxVal);
-	//qDebug() << poop;
+	/**
+	 * Point the gimbal mount at the forehead.
+	 */
+	gimb.positionGimbal(foreheadCenter, threshDepth.at<uchar>(forehead.y, forehead.x));
+
 	imageTimer.expires_at(imageTimer.expires_at() + boost::posix_time::milliseconds(imInterval));
 	imageTimer.async_wait(bind(&VitalsModel::processFrame, this));
 }

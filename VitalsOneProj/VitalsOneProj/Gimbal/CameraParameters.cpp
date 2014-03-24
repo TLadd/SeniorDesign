@@ -14,7 +14,7 @@ CameraParameters::CameraParameters(Point _fov, int _width, int _height, double _
 	FOV = _fov;
 	width = _width;
 	height = _height;
-	focalLength = Point(width/2/tan(FOV.x/2), height/2/tan(FOV.y/2));
+	focalLength = Point(width/2/tan(FOV.x/2 * (3.14/180)), height/2/tan(FOV.y/2 * (3.14/180)));
 	minDepthVal = _minDepth;
 	maxDepthVal = _maxDepth;
 	depthSteps = _depthSteps;
