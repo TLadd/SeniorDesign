@@ -9,6 +9,7 @@
 #include "./Forest/SegmentationHelper.h"
 #include "./Gimbal/GimbalHelper.h"
 #include "./Gimbal/CameraParameters.h"
+#include "./DataProcessing/FixedVector.h"
 
 using namespace boost;
 using namespace asio;

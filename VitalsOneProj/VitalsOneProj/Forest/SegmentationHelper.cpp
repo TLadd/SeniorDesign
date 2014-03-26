@@ -23,7 +23,8 @@ SegmentationHelper::~SegmentationHelper(void) {
  * @return Classified image
  */
 Mat SegmentationHelper::segmentImage(Mat &depthImage) {
-	return forest.classifyImage(depthImage);
+	//return forest.classifyImage(depthImage);
+	return forest.classifyImageSparse(depthImage, 5, 5);
 }
 
 

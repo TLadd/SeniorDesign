@@ -3,7 +3,7 @@
 #include "NodeFactory.h"
 #include <boost/thread/thread.hpp>
 #include <ctime>
-
+#include <qdebug.h>
 using namespace std;
 using namespace cv;
 using namespace boost;
@@ -345,6 +345,107 @@ Mat Forest::classifyImage(Mat &inputDepth) {
 	cout << "Summing histograms took "<< (timed-times) <<" ticks.\n"<< endl;
 
 	return classifiedImage;
+}
+
+
+Mat Forest::classifyImageSparse(Mat &inputDepth, int boxWidth, int boxHeight) {
+
+
+	int timed, times;
+	times = clock();
+
+
+
+	int width = inputDepth.size().width;
+	int height = inputDepth.size().height;
+
+
+	vector<pair<int,int>> pixels = vector<pair<int,int>>();
+	
+	vector<pair<int,int>> startingPoints = vector<pair<int,int>>();
+
+	// Make a sparse vector of foreground pixels
+	for(int i=0; i < inputDepth.size().height; i=i+boxHeight) {
+		for(int j = 0; j < inputDepth.size().width; j=j+boxWidth) {
+
+			int centerRow = min(height-1, i+boxHeight/2);
+			int centerCol = min(width-1, j+boxWidth/2);
+
+			if(inputDepth.at<uchar>(centerRow,centerCol) != 0) {
+				pixels.push_back(pair<int,int>(centerRow, centerCol));
+				startingPoints.push_back(pair<int,int>(i, j));
+			}
+			else {
+				//cout << "Hi";
+			}
+
+		}
+
+	}
+
+	ITreeNode *node = trees.at(2);
+
+	// Construct a container for the matrix of histograms
+	HistogramMatrix histMat = HistogramMatrix(width, height);
+
+	// Delegate to the tree. ClassifiedImage will have the results.
+	node->predict(inputDepth, histMat, pixels);
+
+
+	Mat classifiedImage = Mat(height, width, CV_8UC1);
+
+	// Initially set all predictions to 0
+	classifiedImage.setTo(0);
+
+
+	for(int k=0; k < startingPoints.size(); k++) {
+		pair<int,int> pnt = startingPoints.at(k);
+		int centerRow = min(height-1, pnt.first+boxHeight/2);
+		int centerCol = min(width-1, pnt.second+boxWidth/2);
+
+		vector<double> sum = histMat.getHistogram(centerRow, centerCol);
+
+		double maxTally = -1;
+		int maxIndex = -1;
+
+		for(int n=0; n < numClasses; n++) {
+
+			if(sum.at(n) > maxTally) {
+				maxTally = sum.at(n);
+				maxIndex = n;
+			}
+
+		}
+
+
+
+		for(int i=pnt.first; i < pnt.first+boxHeight; i++) {
+			for(int j = pnt.second; j < pnt.second+boxWidth; j++) {
+				if(inputDepth.at<uchar>(centerRow,centerCol) != 0) {
+					// Set the pixel to the max class
+					classifiedImage.at<uchar>(i,j) = maxIndex+1;
+				}
+
+			}
+		}
+
+
+
+
+
+
+
+	}
+
+	
+	timed = clock();
+
+	QString poop = QString::number((timed-times));
+	qDebug() << poop;
+
+
+	return classifiedImage;
+
 }
 
 

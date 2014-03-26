@@ -212,6 +212,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ExternalSensors\Serial.h" />
+    <ClInclude Include="DataProcessing\FixedVector.h" />
     <ClInclude Include="Gimbal\CameraParameters.h" />
     <ClInclude Include="Forest\FeatureProjector.h" />
     <ClInclude Include="Forest\Forest.h" />

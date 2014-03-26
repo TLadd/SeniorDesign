@@ -1,6 +1,7 @@
 #pragma once
 
 #include "VitalsModel.h"
+#include "./Forest/SegmentationHelper.h"
 #include <qdebug.h>
 #define HEAD 1
 #define CHEST 2
@@ -32,13 +33,16 @@ Mat VitalsModel::thresholdDepthImage(Mat &depthImage) {
  * Grab a new frame and process it
  */
 void VitalsModel::processFrame() {
-	cout << "ProcessFrame";
 	
 	ImageBundle images = imGrab.getLatestImages();
 
 	Mat threshDepth = thresholdDepthImage(images.getDepth());
 
+	Mat classified = segmenter.segmentImage(threshDepth);
+
 	heartTracker.track(images.getColor(), threshDepth);
+
+	breathTracker.track(images.getColor(), threshDepth);
 
 	Rect forehead = getForeheadFromHead(heartTracker.getTrackedRegion());
 
@@ -82,6 +86,23 @@ void VitalsModel::processTemp() {
 
 void VitalsModel::start() {
 
+	
+	Mat depthImage = thresholdDepthImage(imread("Hopethisworks.png", 0));
+
+	SegmentationHelper sHelp("adult.txt");
+	Mat classified;
+	for(int i = 0; i < 60; i++) {
+		classified = sHelp.segmentImage(depthImage);
+	}
+
+	//Mat element = getStructuringElement( MORPH_RECT,
+    //                                   Size( 11, 11 ));
+
+	medianBlur(classified, classified, 11);
+	//dilate(classified, classified, element);
+	view.showSegmentedImage("Hopethisworks", classified);
+
+
 	// Get a set of images to initialize everything with
 	ImageBundle images = imGrab.getLatestImages();
 
@@ -91,14 +112,17 @@ void VitalsModel::start() {
 	// Segment the image
 	Mat segmentedImage = segmenter.segmentImage(threshDepth);
 
-	view.showSegmentedImage("Segmented", segmentedImage);
+	
 
 	// Get the bounding box containing the head
 	Rect rectHeart = segmenter.getBodyPart(segmentedImage, HEAD);
+	Rect rectChest = segmenter.getBodyPart(segmentedImage, CHEST);
 
 	// Initialize heart tracker
 	heartTracker = TemplateTracker();
 	heartTracker.initialize(rectHeart, images.getColor(), threshDepth, 0);
+
+	breathTracker.initialize(rectChest, images.getColor(), threshDepth, 0);
 
 	// Start the timers
 	imageTimer.async_wait(bind(&VitalsModel::processFrame, this));
