@@ -65,6 +65,7 @@ public:
 	Mat classifyImage(Mat &inputDepth);
 
 	Mat classifyImageSparse(Mat &inputDepth, int boxWidth, int boxHeight);
+	Mat classifyImageSparseAllTrees(Mat &inputDepth, int boxWidth, int boxHeight);
 
 	void addTree(vector<Mat> inputDepthImages, vector<Mat> inputClassifiedImages);
 

@@ -177,7 +177,7 @@ void MainWindow::setupRealtimeDataDemo()
 
   // setup a timer that repeatedly calls MainWindow::realtimeDataSlot:
   connect(&dataTimer, SIGNAL(timeout()), this, SLOT(realtimeDataSlot()));
-  dataTimer.start(0); // Interval 0 means to refresh as fast as possible
+  dataTimer.start(500); // Interval 0 means to refresh as fast as possible
 }
 
 void MainWindow::realtimeDataSlot()

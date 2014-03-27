@@ -24,31 +24,33 @@ void GimbalHelper::positionGimbal(Point center, double depth) {
 	double xw = ((center.x - camParams.getWidth()/2) * zw) / camParams.getFocalLength().x;
 	double yw = ((center.y - camParams.getHeight()/2) * zw) / camParams.getFocalLength().y;
 	
-	/*double az;
-	double el;
+	/*double az; double el;
 	if ((yw > camParams.getRelativePos().y) && (xw > camParams.getRelativePos().x)) {
 		az = atan((xw-camParams.getRelativePos().x)/zw)*(180/3.14);
 		el = atan((yw-camParams.getRelativePos().y)/zw)*(180/3.14);
 	}
 	else if (yw > camParams.getRelativePos().y) {
-		az = atan((camParams.getRelativePos().x-xw)/zw)*(180/3.14);
+		az = atan((camParams.getRelativePos().x-abs(xw))/zw)*(180/3.14);
 		el = atan((yw-camParams.getRelativePos().y)/zw)*(180/3.14);
 	}
 	else if (xw > camParams.getRelativePos().x) {
 		az = atan((xw-camParams.getRelativePos().x)/zw)*(180/3.14);
-		el = atan((camParams.getRelativePos().y-yw)/zw)*(180/3.14);
+		el = atan((camParams.getRelativePos().y-abs(yw))/zw)*(180/3.14);
 	}
 	else {
-		az = atan((camParams.getRelativePos().x-xw)/zw)*(180/3.14);
-		el = atan((camParams.getRelativePos().y-yw)/zw)*(180/3.14);
-	}*/
+		az = atan((camParams.getRelativePos().x-abs(xw))/zw)*(180/3.14);
+		el = atan((camParams.getRelativePos().y-abs(yw))/zw)*(180/3.14);
+	}
+	az = 90 - az;
+	el = 90 - el;*/
 	double az = 90 - atan((xw - camParams.getRelativePos().x)/zw) * (180/3.14);
 	double el = 90 - atan((yw - camParams.getRelativePos().y)/zw) * (180/3.14);
+
 
 	
 	//az = 90;
 	//el=90;
-	setGimbalAngles(az+130, el-50);
+	setGimbalAngles(az+130, el-90);
 
 }
 

@@ -25,6 +25,7 @@ SegmentationHelper::~SegmentationHelper(void) {
 Mat SegmentationHelper::segmentImage(Mat &depthImage) {
 	//return forest.classifyImage(depthImage);
 	return forest.classifyImageSparse(depthImage, 5, 5);
+	//return forest.classifyImageSparseAllTrees(depthImage, 5, 5);
 }
 
 

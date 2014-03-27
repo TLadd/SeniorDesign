@@ -38,6 +38,8 @@ private:
 
 	int threshDist;
 
+	int gimbalFramCount;
+
 	/**
 	 * Necessary for using asio timers
 	 */
