@@ -10,6 +10,9 @@ class TemplateTracker : public IPatchTracker {
 private:
 	Mat templ;
 	Rect trackedRegion;
+	int bodyType;
+
+	Rect reconciledHeads(Rect segHead, Rect trackHead, Mat &depthImage);
 
 public:
 
@@ -17,9 +20,9 @@ public:
 
 	~TemplateTracker();
 
-	void initialize(Rect bbox, Mat &colorImage, Mat &depthImage, int lightConditions);
+	void initialize(Mat &depthImage, Rect segRegion, int _bodyType);
 
-	void track(Mat &colorImage, Mat &depthImage);
+	void track(Mat &depthImage, Rect segRegion);
 
 	Rect getTrackedRegion();
 };

@@ -1,7 +1,12 @@
 #pragma once
 
 #include "TemplateTracker.h"
-
+#define HEAD 1
+#define CHEST 2
+#define LEFTARM 4
+#define RIGHTARM 3
+#define LEFTLEG 5
+#define RIGHTLEG 6
 
 TemplateTracker::TemplateTracker(void)
 {
@@ -13,14 +18,27 @@ TemplateTracker::~TemplateTracker(void)
 }
 
 
-void TemplateTracker::initialize(Rect bbox, Mat &colorImage, Mat &depthImage, int lightConditions) {
-	Mat temp = depthImage(bbox);
-	temp.copyTo(templ);
-	//namedWindow("template", 1);
-	//imshow("template", temp);
+Rect TemplateTracker::reconciledHeads(Rect segHead, Rect trackHead, Mat &depthImage) {
+	if(segHead.width != 0 && abs(trackHead.x + trackHead.y - (segHead.x + segHead.y)) > 40) {
+		initialize(depthImage, segHead, bodyType);
+		return segHead;
+	}
+	else {
+		return trackHead;
+	}
 }
 
-void TemplateTracker::track(Mat &colorImage, Mat &depthImage) {
+
+
+void TemplateTracker::initialize(Mat &depthImage, Rect segRegion, int _bodyType) {
+	bbox = segRegion;
+	Mat temp = depthImage(segRegion);
+	temp.copyTo(templ);
+
+	bodyType = _bodyType;
+}
+
+void TemplateTracker::track(Mat &depthImage, Rect segRegion) {
 
 	Mat img = depthImage;
 
@@ -42,6 +60,14 @@ void TemplateTracker::track(Mat &colorImage, Mat &depthImage) {
 	matchLoc = maxLoc;
 	
 	trackedRegion = Rect(matchLoc.x, matchLoc.y, templ.cols, templ.rows);
+
+	// All the if/elses based on body type make me cry
+	if(bodyType == HEAD) {
+		reconciledHeads(segRegion, trackedRegion, depthImage);
+	}
+	else if(bodyType == CHEST) {
+		
+	}
 	
 }
 

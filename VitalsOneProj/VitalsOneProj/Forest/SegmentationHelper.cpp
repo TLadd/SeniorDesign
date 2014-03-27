@@ -1,5 +1,11 @@
 #include "SegmentationHelper.h"
 #include "SerializeHelper.h"
+#define HEAD 1
+#define CHEST 2
+#define LEFTARM 4
+#define RIGHTARM 3
+#define LEFTLEG 5
+#define RIGHTLEG 6
 
 
 /**
@@ -68,13 +74,215 @@ Mat SegmentationHelper::segmentImage(Mat &depthImage, Rect roi) {
 
 }
 
+
+
+
+
+
+
+
+
+
+
+Rect getHead(Mat &classifiedImage) {
+
+
+	int minRow = -1;
+	int maxRow = -1;
+	int minCol = -1;
+	int maxCol = -1;
+
+	bool headInRow = false;
+	bool headAtAll = false;
+
+	for(int i=0; i < classifiedImage.rows; i++) {
+		for(int j=0; j < classifiedImage.cols; j++) {
+
+			if(classifiedImage.at<uchar>(i, j) == HEAD) {
+
+				headInRow = true;
+
+				if(!headAtAll) {
+					headAtAll = true;
+					minRow = i; maxRow = i;
+					minCol = j; maxCol = j;
+				}
+
+				if(i < minRow) {
+					minRow = i;
+				}
+				if(i > maxRow) {
+					maxRow = i;
+				}
+				if(j>maxCol) {
+					maxCol = j;
+				}
+				if(j < minCol) {
+					minCol = j;
+				}
+
+			}
+
+		}
+
+		// No head pixels in this row, but a head was previously found
+		if(!headInRow && headAtAll) {
+			Rect headRect(minCol, minRow, maxCol-minCol, maxRow-minRow);
+			if(headRect.area() > 50) {
+				return headRect;
+			}
+			else {
+				headAtAll = false;
+			}
+		}
+
+		headInRow = false;
+
+
+	}
+
+
+	return Rect(0,0,0,0);
+
+}
+
+
+Rect getTorso(Mat &classifiedImage) {
+
+
+	int minRow = 10000;
+	int maxRow = -1;
+	int minCol = 10000;
+	int maxCol = -1;
+	int tempMinRow = 10000;
+	int tempMaxRow = -1;
+	int tempMinCol = 10000;
+	int tempMaxCol = -1;
+
+	bool chestInRow = false;
+	bool chestAtAll = false;
+
+	for(int i=0; i < classifiedImage.rows; i++) {
+		for(int j=0; j < classifiedImage.cols; j++) {
+
+			if(classifiedImage.at<uchar>(i, j) == RIGHTLEG || classifiedImage.at<uchar>(i, j) == LEFTLEG || classifiedImage.at<uchar>(i, j) == HEAD) {
+				tempMinRow = 10000;
+				tempMaxRow = -1;
+				tempMinCol = 10000;
+				tempMaxCol = -1;
+				continue;
+			}
+			else if(classifiedImage.at<uchar>(i, j) == RIGHTARM) {
+				continue;
+			}
+			else if(classifiedImage.at<uchar>(i, j) == LEFTARM) {
+				tempMinRow = 10000;
+				tempMaxRow = -1;
+				tempMinCol = 10000;
+				tempMaxCol = -1;
+			}
+			else if(classifiedImage.at<uchar>(i, j) == CHEST) {
+
+				if(i < minRow && i < tempMinRow) {
+					tempMinRow = i;
+				}
+				if(i > maxRow && i > tempMaxRow) {
+					tempMaxRow = i;
+				}
+				if(j>maxCol && j > tempMaxCol) {
+					tempMaxCol = j;
+				}
+				if(j < minCol && j < tempMinCol) {
+					tempMinCol = j;
+				}
+
+			}
+
+		}
+
+		if(tempMinRow < minRow) {
+			minRow = tempMinRow;
+		}
+		if(tempMaxRow > maxRow) {
+			maxRow = tempMaxRow;
+		}
+		if(tempMinCol < minCol) {
+			minCol = tempMinCol;
+		}
+		if(tempMaxCol > maxCol) {
+			maxCol = tempMaxCol;
+		}
+
+
+	}
+
+	if(minCol != 10000) {
+		return Rect(minCol, minRow, maxCol-minCol, maxRow-minRow);
+	}
+	else {
+		return Rect(0,0,0,0);
+	}
+
+}
+
+
+Rect getTorso2(Mat &classifiedImage, int lowestHead) {
+
+	int farthestLeftRightArm = 10000;
+	int highestLeg = 10000;
+	int farthestRightLeftArm = -1;
+	bool exitEverything = false;
+
+	for(int i=lowestHead; i < classifiedImage.rows; i++) {
+		for(int j=0; j < classifiedImage.cols; j++) {
+			if(classifiedImage.at<uchar>(i, j) == RIGHTLEG || classifiedImage.at<uchar>(i, j) == LEFTLEG) {
+				highestLeg = i;
+				exitEverything = true;
+				break;
+			}
+			else if(classifiedImage.at<uchar>(i, j) == RIGHTARM) {
+				if(j < farthestLeftRightArm) {
+					farthestLeftRightArm = j;
+				}
+			}
+			else if(classifiedImage.at<uchar>(i, j) == LEFTARM) {
+				if(j > farthestRightLeftArm) {
+					farthestRightLeftArm = j;
+				}
+			}
+		}
+
+		if(exitEverything) {
+			break;
+		}
+
+	}
+
+
+
+	if(farthestLeftRightArm != 10000 && highestLeg != 10000 && farthestRightLeftArm != -1) {
+		return Rect(farthestRightLeftArm, lowestHead, farthestLeftRightArm-farthestRightLeftArm, highestLeg-lowestHead);
+	}
+	else {
+		return Rect(0,0,0,0);
+	}
+
+}
+
+
 /**
  * Gets the region of the specified body part in the last segmented image
  * @param  depthImage
  * @return Classified image
  */
 Rect SegmentationHelper::getBodyPart(Mat &seg, int bodyPart) {
-	return isolateBodyPart(seg, bodyPart);
+	if(bodyPart == HEAD) {
+		return getHead(seg);
+	}
+	else {
+		return getTorso(seg);
+	}
+
 }
 
 

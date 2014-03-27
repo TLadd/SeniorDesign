@@ -92,9 +92,9 @@ public:
 	IPatchTracker(void) {}
 	~IPatchTracker(void) {}
 
-	virtual void initialize(Rect bbox, Mat &colorImage, Mat &depthImage, int lightConditions){}
+	virtual void initialize(Mat &depthImage, Rect segRegion, int _bodyType){}
 
-	virtual void track(Mat &colorImage, Mat &depthImage) {}
+	virtual void track(Mat &depthImage, Rect segRegion) {}
 
 
 };
