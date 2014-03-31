@@ -8,6 +8,8 @@
 #define LEFTLEG 5
 #define RIGHTLEG 6
 
+bool deathFlagShouldRemove = false;
+
 TemplateTracker::TemplateTracker(void)
 {
 }
@@ -36,9 +38,18 @@ void TemplateTracker::initialize(Mat &depthImage, Rect segRegion, int _bodyType)
 	temp.copyTo(templ);
 
 	bodyType = _bodyType;
+
+	/*if(bbox.width == 0) {
+		deathFlagShouldRemove = true;
+	}*/
 }
 
 void TemplateTracker::track(Mat &depthImage, Rect segRegion) {
+
+	/*if(deathFlagShouldRemove) {
+
+		return;
+	}*/
 
 	Mat img = depthImage;
 
@@ -51,6 +62,7 @@ void TemplateTracker::track(Mat &depthImage, Rect segRegion) {
 	matchTemplate(depthImage, templ, result, CV_TM_CCORR_NORMED);
 
 	normalize( result, result, 0, 1, NORM_MINMAX, -1, Mat() );
+	
 
 	double minVal; double maxVal; Point minLoc; Point maxLoc;
 	Point matchLoc;

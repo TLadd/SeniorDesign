@@ -57,7 +57,9 @@ void VitalsModel::processFrame() {
 
 	heartTracker.track(threshDepth, segmenter.getBodyPart(classified, HEAD));
 
-	breathTracker.track(threshDepth, segmenter.getBodyPart(classified, CHEST));
+	Rect torso = segmenter.getBodyPart(classified, CHEST);
+
+	//breathTracker.track(threshDepth, torso);
 
 	Rect head = heartTracker.getTrackedRegion();
 
@@ -72,8 +74,7 @@ void VitalsModel::processFrame() {
 	rectangle(threshColor, head, Scalar(255, 0, 0), 2, 8, 0);
 
 
-	Rect torso = breathTracker.getTrackedRegion();
-
+	
 	rectangle(threshColor, torso, Scalar(0, 0, 255), 2, 8, 0);
 
 
@@ -137,7 +138,7 @@ void VitalsModel::start() {
 	// Initialize heart tracker
 	heartTracker.initialize(threshDepth, segmenter.getBodyPart(segmentedImage, HEAD), HEAD);
 
-	breathTracker.initialize(threshDepth, segmenter.getBodyPart(segmentedImage, CHEST), CHEST);
+	//breathTracker.initialize(threshDepth, segmenter.getBodyPart(segmentedImage, CHEST), CHEST);
 
 	// Start the timers
 	imageTimer.async_wait(bind(&VitalsModel::processFrame, this));

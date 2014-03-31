@@ -269,6 +269,37 @@ Rect getTorso2(Mat &classifiedImage, int lowestHead) {
 
 }
 
+Rect getTorso3(Mat &classifiedImage) {
+
+	vector<int> rowChests;
+	vector<int> colChests;
+
+	for(int i=0; i < classifiedImage.rows; i++) {
+		for(int j=0; j < classifiedImage.cols; j++) {
+
+			if(classifiedImage.at<uchar>(i,j) == CHEST) {
+				rowChests.push_back(i);
+				colChests.push_back(j);
+				
+			}
+
+
+		}
+
+	}
+
+	if(rowChests.size() == 0) {
+		return Rect(1,1,1,1);
+	}
+
+	std::nth_element(rowChests.begin(), rowChests.begin()+(rowChests.size()/2), rowChests.end());
+	std::nth_element(colChests.begin(), colChests.begin()+(colChests.size()/2), colChests.end());
+
+	int r = rowChests.at(rowChests.size()/2);
+	int c = colChests.at(colChests.size()/2);
+
+	return Rect(c, r, 20, 20);
+}
 
 /**
  * Gets the region of the specified body part in the last segmented image
@@ -280,7 +311,7 @@ Rect SegmentationHelper::getBodyPart(Mat &seg, int bodyPart) {
 		return getHead(seg);
 	}
 	else {
-		return getTorso(seg);
+		return getTorso3(seg);
 	}
 
 }
