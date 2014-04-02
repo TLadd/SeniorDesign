@@ -2,6 +2,7 @@
 
 #include "VitalsModel.h"
 #include "./Forest/SegmentationHelper.h"
+#include "ViewAdapter.h"
 #include <qdebug.h>
 #define HEAD 1
 #define CHEST 2
@@ -43,7 +44,7 @@ void VitalsModel::processFrame() {
 	
 	ImageBundle images = imGrab.getLatestImages();
 
-	view.showImage("Depth Fixed", images.getDepth());
+	view->showImage("Depth Fixed", images.getDepth());
 
 	Mat threshDepth = thresholdDepthImage(images.getDepth());
 
@@ -52,10 +53,10 @@ void VitalsModel::processFrame() {
 	Mat classified = segmenter.segmentImage(threshDepth);
 
 
-	view.showSegmentedImage("Pre Filter", classified);
+	view->showSegmentedImage("Pre Filter", classified);
 	medianBlur(classified, classified, 25);
 
-	view.showSegmentedImage("Median", classified);
+	view->showSegmentedImage("Median", classified);
 
 	heartTracker.track(threshDepth, segmenter.getBodyPart(classified, HEAD));
 
@@ -79,7 +80,7 @@ void VitalsModel::processFrame() {
 	rectangle(threshColor, torso, Scalar(0, 0, 255), 2, 8, 0);
 
 
-	view.showImage("Tracking", threshColor);
+	view->showImage("Tracking", threshColor);
 
 	Point foreheadCenter = Point(forehead.x + forehead.width/2, forehead.y + forehead.height/2);
 
@@ -96,7 +97,7 @@ void VitalsModel::processFrame() {
 	gimbalFramCount++;
 
 	imageTimer.expires_at(imageTimer.expires_at() + boost::posix_time::milliseconds(imInterval));
-	imageTimer.async_wait(bind(&VitalsModel::processFrame, this));
+	imageTimer.async_wait(boost::bind(&VitalsModel::processFrame, this));
 }
 
 
@@ -113,11 +114,11 @@ void VitalsModel::processTemp() {
 	QString poop = QString::number(temp);
 	qDebug() << poop;
 
-	view.AddTempPoint(temp);
-	view.setTemperature(temp);
+	//view->AddTempPoint(temp);
+	view->setTemperature(temp);
 	
 	temperatureTimer.expires_at(temperatureTimer.expires_at() + boost::posix_time::seconds(tempInterval));
-	temperatureTimer.async_wait(bind(&VitalsModel::processTemp, this));
+	temperatureTimer.async_wait(boost::bind(&VitalsModel::processTemp, this));
 	
 }
 
@@ -156,11 +157,11 @@ void VitalsModel::start() {
 	
 
 	// Start the timers
-	imageTimer.async_wait(bind(&VitalsModel::processFrame, this));
-	temperatureTimer.async_wait(bind(&VitalsModel::processTemp, this));
+	imageTimer.async_wait(boost::bind(&VitalsModel::processFrame, this));
+	temperatureTimer.async_wait(boost::bind(&VitalsModel::processTemp, this));
 }
 
 
-void VitalsModel::setAdapter(ViewAdapter _view) {
+void VitalsModel::setAdapter(ViewAdapter* _view) {
 	view = _view;
 }

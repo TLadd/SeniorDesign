@@ -1,16 +1,18 @@
-#pragma once
+#ifndef VIEWADAPTER_H
+#define VIEWADAPTER_H
 
-#include "./GUI/mainwindow.h"
 #include "opencv.hpp"
+#include <boost/signals2/signal.hpp>
 
 using namespace std;
 using namespace cv;
 
+class MainWindow;
+
 class ViewAdapter
 {
 public:
-	ViewAdapter(MainWindow *_view);
-	ViewAdapter() {}
+	ViewAdapter(MainWindow& _view);
 	~ViewAdapter(void);
 
 
@@ -65,8 +67,25 @@ public:
 	 */
 	void showImage(string winName, Mat image);
 
+	//setup methods for manipulating the connection with the view
+	boost::signals2::connection connect_setTemperatureVal(const boost::signals2::signal<void (double)>::slot_type &subscriber);
+	boost::signals2::connection connect_updateTemperatureGraph(const boost::signals2::signal<void (double)>::slot_type &subscriber);
+	boost::signals2::connection connect_setBreathingRateVal(const boost::signals2::signal<void (double)>::slot_type &subscriber);
+	boost::signals2::connection connect_updateBreathingRateGraph(const boost::signals2::signal<void (double)>::slot_type &subscriber);
+	boost::signals2::connection connect_setHeartRateVal(const boost::signals2::signal<void (double)>::slot_type &subscriber);
+	boost::signals2::connection connect_updateHeartRateGraph(const boost::signals2::signal<void (double)>::slot_type &subscriber);
+
 private:
-	MainWindow *view;
+	MainWindow& view;
+
+	//signals to call view functions
+	boost::signals2::signal<void (double)> sig_setTemperatureVal;
+	boost::signals2::signal<void (double)> sig_updateTemperatureGraph;
+	boost::signals2::signal<void (double)> sig_setBreathingRateVal;
+	boost::signals2::signal<void (double)> sig_updateBreathingRateGraph;
+	boost::signals2::signal<void (double)> sig_setHeartRateVal;
+	boost::signals2::signal<void (double)> sig_updateHeartRateGraph;
 
 };
 
+#endif

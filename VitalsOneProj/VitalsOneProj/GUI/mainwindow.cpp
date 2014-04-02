@@ -47,6 +47,8 @@
 #include <QMessageBox>
 #include <QMetaEnum>
 
+#include "../Model/ViewAdapter.h"
+
 MainWindow::MainWindow(QWidget *parent) :
   QMainWindow(parent),
   ui(new Ui::MainWindow)
@@ -156,7 +158,7 @@ void MainWindow::setupRealtimeDataDemo()
   // blue line
   ui->temperaturePlot->addGraph();
   ui->temperaturePlot->graph(0)->setPen(QPen(Qt::red));
-  ui->temperaturePlot->graph(0)->setBrush(QBrush(QColor(240, 255, 200)));
+ // ui->temperaturePlot->graph(0)->setBrush(QBrush(QColor(240, 255, 200)));
   ui->temperaturePlot->graph(0)->setAntialiasedFill(false);
   // blue dot
   ui->temperaturePlot->addGraph();
@@ -169,7 +171,7 @@ void MainWindow::setupRealtimeDataDemo()
   ui->temperaturePlot->xAxis->setAutoTickStep(false);
   ui->temperaturePlot->xAxis->setTickStep(2);
   ui->temperaturePlot->axisRect()->setupFullAxesBox();
-  ui->temperaturePlot->yAxis->setRange(-1, 1);
+  ui->temperaturePlot->yAxis->setRange(0, 50);
   // make left and bottom axes transfer their ranges to right and top axes:
   connect(ui->temperaturePlot->xAxis, SIGNAL(rangeChanged(QCPRange)), ui->temperaturePlot->xAxis2, SLOT(setRange(QCPRange)));
   connect(ui->temperaturePlot->yAxis, SIGNAL(rangeChanged(QCPRange)), ui->temperaturePlot->yAxis2, SLOT(setRange(QCPRange)));
@@ -197,53 +199,53 @@ void MainWindow::realtimeDataSlot()
 
     //HEART RATE
     //display value
-    ui->heartRateVal->display(100*qSin(key / 100));
-    ui->heartPlot->graph(0)->addData(key, heartVal);
+  //  ui->heartRateVal->display(100*qSin(key / 100));
+  //  ui->heartPlot->graph(0)->addData(key, heartVal);
     // set data of dots:
-    ui->heartPlot->graph(1)->clearData();
-    ui->heartPlot->graph(1)->addData(key, heartVal);
+  //  ui->heartPlot->graph(1)->clearData();
+  //  ui->heartPlot->graph(1)->addData(key, heartVal);
     // remove data of lines that's outside visible range:
-    ui->heartPlot->graph(0)->removeDataBefore(key-8);
+  //  ui->heartPlot->graph(0)->removeDataBefore(key-8);
     // rescale value (vertical) axis to fit the current data:
-    ui->heartPlot->graph(0)->rescaleValueAxis();
+  //  ui->heartPlot->graph(0)->rescaleValueAxis();
 
     //BREATHING RATE
     //display value
-    ui->breathingRateVal->display(100*qSin(key / 500));
-    ui->breathingPlot->graph(0)->addData(key, breathingVal);
+   // ui->breathingRateVal->display(100*qSin(key / 500));
+   // ui->breathingPlot->graph(0)->addData(key, breathingVal);
     // set data of dots:
-    ui->breathingPlot->graph(1)->clearData();
-    ui->breathingPlot->graph(1)->addData(key, breathingVal);
+   // ui->breathingPlot->graph(1)->clearData();
+   // ui->breathingPlot->graph(1)->addData(key, breathingVal);
     // remove data of lines that's outside visible range:
-    ui->breathingPlot->graph(0)->removeDataBefore(key-8);
+   // ui->breathingPlot->graph(0)->removeDataBefore(key-8);
     // rescale value (vertical) axis to fit the current data:
-    ui->breathingPlot->graph(0)->rescaleValueAxis();
+   // ui->breathingPlot->graph(0)->rescaleValueAxis();
 
     //TEMPERATURE
     //display value
-    ui->temperatureVal->display(100*qSin(key / 1200));
-    ui->temperaturePlot->graph(0)->addData(key, temperatureVal);
+    //ui->temperatureVal->display(100*qSin(key / 1200));
+   // ui->temperaturePlot->graph(0)->addData(key, temperatureVal);
     // set data of dots:
-    ui->temperaturePlot->graph(1)->clearData();
-    ui->temperaturePlot->graph(1)->addData(key, temperatureVal);
+  //  ui->temperaturePlot->graph(1)->clearData();
+   // ui->temperaturePlot->graph(1)->addData(key, temperatureVal);
     // remove data of lines that's outside visible range:
-    ui->temperaturePlot->graph(0)->removeDataBefore(key-8);
+  //  ui->temperaturePlot->graph(0)->removeDataBefore(key-8);
     // rescale value (vertical) axis to fit the current data:
-    ui->temperaturePlot->graph(0)->rescaleValueAxis();
+   // ui->temperaturePlot->graph(0)->rescaleValueAxis();
 
 
 
     lastPointKey = key;
   }
   // make key axis range scroll with the data (at a constant range size of 8):
-  ui->heartPlot->xAxis->setRange(key+0.25, 8, Qt::AlignRight);
-  ui->heartPlot->yAxis->setRange(-1, 1);
-  ui->heartPlot->replot();
-  ui->breathingPlot->xAxis->setRange(key+0.25, 8, Qt::AlignRight);
-  ui->breathingPlot->yAxis->setRange(-1, 1);
-  ui->breathingPlot->replot();
+//  ui->heartPlot->xAxis->setRange(key+0.25, 8, Qt::AlignRight);
+//  ui->heartPlot->yAxis->setRange(-1, 1);
+//  ui->heartPlot->replot();
+//  ui->breathingPlot->xAxis->setRange(key+0.25, 8, Qt::AlignRight);
+//  ui->breathingPlot->yAxis->setRange(-1, 1);
+//  ui->breathingPlot->replot();
   ui->temperaturePlot->xAxis->setRange(key+0.25, 8, Qt::AlignRight);
-  ui->temperaturePlot->yAxis->setRange(-1, 1);
+  ui->temperaturePlot->yAxis->setRange(10, 40);
   ui->temperaturePlot->replot();
   
   // calculate frames per second:
@@ -285,6 +287,86 @@ void MainWindow::screenShot()
   qApp->quit();
 }
 
+void MainWindow::setTemperatureValue(double newVal){
+	qDebug() << "In the Viewwwww" << endl;
+	ui->temperatureVal->display(newVal);
+}
+
+void MainWindow::updateTemperatureGraph(double newVal){
+    //ui->temperatureVal->display(100*qSin(key / 1200));
+	qDebug() << "adding to temperature graph in view" << endl;
+	double key = QDateTime::currentDateTime().toMSecsSinceEpoch()/1000.0;
+    ui->temperaturePlot->graph(0)->addData(key, newVal);
+    // set data of dots:
+    ui->temperaturePlot->graph(1)->clearData();
+    ui->temperaturePlot->graph(1)->addData(key, newVal);
+    // remove data of lines that's outside visible range:
+    ui->temperaturePlot->graph(0)->removeDataBefore(key-8);
+    // rescale value (vertical) axis to fit the current data:
+    ui->temperaturePlot->graph(0)->rescaleValueAxis();
+
+//	ui->temperaturePlot->xAxis->setRange(key+0.25, 8, Qt::AlignRight);
+//	ui->temperaturePlot->yAxis->setRange(5, 45);
+//	ui->temperaturePlot->replot();
+}
+
+void MainWindow::setBreathingRateValue(double newVal){
+	qDebug() << "In the Viewwwww" << endl;
+	ui->breathingRateVal->display(newVal);
+}
+
+void MainWindow::updateBreathingRateGraph(double newVal){
+    //ui->temperatureVal->display(100*qSin(key / 1200));
+	qDebug() << "adding to breathing graph in view" << endl;
+	double key = QDateTime::currentDateTime().toMSecsSinceEpoch()/1000.0;
+    ui->breathingPlot->graph(0)->addData(key, newVal);
+    // set data of dots:
+    ui->breathingPlot->graph(1)->clearData();
+    ui->breathingPlot->graph(1)->addData(key, newVal);
+    // remove data of lines that's outside visible range:
+    ui->breathingPlot->graph(0)->removeDataBefore(key-8);
+    // rescale value (vertical) axis to fit the current data:
+    ui->breathingPlot->graph(0)->rescaleValueAxis();
+
+	ui->breathingPlot->xAxis->setRange(key+0.25, 8, Qt::AlignRight);
+	ui->breathingPlot->yAxis->setRange(5, 45);
+	ui->breathingPlot->replot();
+}
+
+void MainWindow::setHeartRateValue(double newVal){
+	qDebug() << "In the Viewwwww" << endl;
+	ui->breathingRateVal->display(newVal);
+}
+
+void MainWindow::updateHeartRateGraph(double newVal){
+    //ui->temperatureVal->display(100*qSin(key / 1200));
+	qDebug() << "adding to breathing graph in view" << endl;
+	double key = QDateTime::currentDateTime().toMSecsSinceEpoch()/1000.0;
+    ui->heartPlot->graph(0)->addData(key, newVal);
+    // set data of dots:
+    ui->heartPlot->graph(1)->clearData();
+    ui->heartPlot->graph(1)->addData(key, newVal);
+    // remove data of lines that's outside visible range:
+    ui->heartPlot->graph(0)->removeDataBefore(key-8);
+    // rescale value (vertical) axis to fit the current data:
+    ui->heartPlot->graph(0)->rescaleValueAxis();
+
+	ui->heartPlot->xAxis->setRange(key+0.25, 8, Qt::AlignRight);
+	ui->heartPlot->yAxis->setRange(5, 45);
+	ui->heartPlot->replot();
+}
+
+//make all calls to adapter
+void MainWindow::configureViewAdapter(ViewAdapter* adap){
+	conn_setTemperatureVal = adap->connect_setTemperatureVal(boost::bind(&MainWindow::setTemperatureValue, this, _1));
+	conn_updateTemperatureGraph = adap->connect_setTemperatureVal(boost::bind(&MainWindow::updateTemperatureGraph, this, _1));
+
+	conn_setHeartRateVal = adap->connect_setHeartRateVal(boost::bind(&MainWindow::setHeartRateValue, this, _1));
+	conn_updateHeartRateGraph = adap->connect_setHeartRateVal(boost::bind(&MainWindow::updateHeartRateGraph, this, _1));
+
+	conn_setBreathingRateVal = adap->connect_setBreathingRateVal(boost::bind(&MainWindow::setBreathingRateValue, this, _1));
+	conn_updateBreathingRateGraph = adap->connect_setBreathingRateVal(boost::bind(&MainWindow::updateBreathingRateGraph, this, _1));
+}
 
 
 

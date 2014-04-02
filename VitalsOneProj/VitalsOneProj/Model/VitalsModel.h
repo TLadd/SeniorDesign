@@ -14,13 +14,14 @@
 using namespace boost;
 using namespace asio;
 
+
 class VitalsModel
 {
 public:
 	VitalsModel(boost::asio::io_service& io, Serial *SP, CameraParameters _camParams, int imInt, int tempInt, int thresh);
 	~VitalsModel(void);
 	void start();
-	void setAdapter(ViewAdapter _view);
+	void setAdapter(ViewAdapter* _view);
 
 private:
 
@@ -80,7 +81,7 @@ private:
 	/**
 	 * Adapter to the GUI
 	 */
-	ViewAdapter view;
+	ViewAdapter* view;
 
 	/**
 	 * Used for segmentation

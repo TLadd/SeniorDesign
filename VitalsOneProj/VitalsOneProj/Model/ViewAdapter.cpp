@@ -1,10 +1,13 @@
 #include "ViewAdapter.h"
+#include "../GUI/mainwindow.h"
 
 
-ViewAdapter::ViewAdapter(MainWindow *_view)
+ViewAdapter::ViewAdapter(MainWindow& _view) : view(_view)
 {
-	view = _view;
+
 }
+
+
 
 
 ViewAdapter::~ViewAdapter(void)
@@ -16,7 +19,7 @@ ViewAdapter::~ViewAdapter(void)
  * @param heartVal
  */
 void ViewAdapter::AddHeartPoint(double heartVal) {
-
+	sig_updateHeartRateGraph(heartVal);
 }
 
 /**
@@ -24,7 +27,7 @@ void ViewAdapter::AddHeartPoint(double heartVal) {
  * @param breathVal
  */
 void ViewAdapter::AddBreathPoint(double breathVal) {
-
+	sig_updateBreathingRateGraph(breathVal);
 }
 
 /**
@@ -32,7 +35,8 @@ void ViewAdapter::AddBreathPoint(double breathVal) {
  * @param tempVal
  */
 void ViewAdapter::AddTempPoint(double tempVal) {
-
+	qDebug() << "in ViewAdapter setting the temperature" << endl;
+	sig_updateTemperatureGraph(tempVal);
 }
 
 /**
@@ -40,7 +44,7 @@ void ViewAdapter::AddTempPoint(double tempVal) {
  * @param heartRate
  */
 void ViewAdapter::setHeartRate(double heartRate) {
-
+	sig_setHeartRateVal(heartRate);
 }
 
 /**
@@ -48,7 +52,7 @@ void ViewAdapter::setHeartRate(double heartRate) {
  * @param breathingRate
  */
 void ViewAdapter::setBreathingRate(double breathingRate) {
-
+	sig_setBreathingRateVal(breathingRate);
 }
 
 /**
@@ -56,7 +60,8 @@ void ViewAdapter::setBreathingRate(double breathingRate) {
  * @param temp
  */
 void ViewAdapter::setTemperature(double temp) {
-
+	qDebug() << "in ViewAdapter setting the temperature" << endl;
+	sig_setTemperatureVal(temp);
 }
 
 /**
@@ -143,4 +148,29 @@ Mat convertToColorForBaby(Mat bwMat) {
 
 void ViewAdapter::showSegmentedImage(string winName, Mat img) {
 	showImage(winName, convertToColorForBaby(img));
+}
+
+//setup methods for accessing the view
+boost::signals2::connection ViewAdapter::connect_setTemperatureVal(const boost::signals2::signal<void (double)>::slot_type& subscriber){
+	return sig_setTemperatureVal.connect(subscriber);
+}
+
+boost::signals2::connection ViewAdapter::connect_updateTemperatureGraph(const boost::signals2::signal<void (double)>::slot_type& subscriber){
+	return sig_updateTemperatureGraph.connect(subscriber);
+}
+
+boost::signals2::connection ViewAdapter::connect_setBreathingRateVal(const boost::signals2::signal<void (double)>::slot_type& subscriber){
+	return sig_setBreathingRateVal.connect(subscriber);
+}
+
+boost::signals2::connection ViewAdapter::connect_updateBreathingRateGraph(const boost::signals2::signal<void (double)>::slot_type& subscriber){
+	return sig_updateBreathingRateGraph.connect(subscriber);
+}
+
+boost::signals2::connection ViewAdapter::connect_setHeartRateVal(const boost::signals2::signal<void (double)>::slot_type& subscriber){
+	return sig_setHeartRateVal.connect(subscriber);
+}
+
+boost::signals2::connection ViewAdapter::connect_updateHeartRateGraph(const boost::signals2::signal<void (double)>::slot_type& subscriber){
+	return sig_updateHeartRateGraph.connect(subscriber);
 }

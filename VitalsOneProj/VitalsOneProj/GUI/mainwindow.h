@@ -46,6 +46,8 @@
 #include <QMainWindow>
 #include <QTimer>
 #include "qcustomplot.h" // the header file of QCustomPlot. Don't forget to add it to your project, if you use an IDE, so it gets compiled.
+#include <boost/signals2/signal.hpp>
+class ViewAdapter;
 
 namespace Ui {
 class MainWindow;
@@ -63,10 +65,26 @@ public:
   void setupRealtimeDataDemo(/*QCustomPlot *customPlot, QCustomPlot *customPlot_2*/);
   
   void setupPlayground(QCustomPlot *customPlot);
+
+  void setTemperatureValue(double newVal);
+  void updateTemperatureGraph(double newVal);
+  
+  void setBreathingRateValue(double newVal);
+  void updateBreathingRateGraph(double newVal);
+  
+  void setHeartRateValue(double newVal);
+  void updateHeartRateGraph(double newVal);
+  
+  // adapter interface setup
+  void configureViewAdapter(ViewAdapter* adap);
   
 private slots:
   void realtimeDataSlot();
   void screenShot();
+
+
+  // functions to create conections to ViewAdater methods
+ // void set_conn_setTemperatureValue(ViewAdapter& adap);
   
 private:
   Ui::MainWindow *ui;
@@ -74,6 +92,16 @@ private:
   QTimer dataTimer;
   QCPItemTracer *itemDemoPhaseTracer;
   int currentDemoIndex;
+
+  // connections to subscribe to ViewAdapter methods
+  boost::signals2::connection conn_setTemperatureVal;
+  boost::signals2::connection conn_updateTemperatureGraph;
+
+  boost::signals2::connection conn_setBreathingRateVal;
+  boost::signals2::connection conn_updateBreathingRateGraph;
+
+  boost::signals2::connection conn_setHeartRateVal;
+  boost::signals2::connection conn_updateHeartRateGraph;
 };
 
 #endif // MAINWINDOW_H
