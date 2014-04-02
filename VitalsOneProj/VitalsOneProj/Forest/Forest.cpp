@@ -441,7 +441,7 @@ Mat Forest::classifyImageSparse(Mat &inputDepth, int boxWidth, int boxHeight) {
 	timed = clock();
 
 	QString poop = QString::number((timed-times));
-	qDebug() << poop;
+	//qDebug() << poop;
 
 
 	return classifiedImage;

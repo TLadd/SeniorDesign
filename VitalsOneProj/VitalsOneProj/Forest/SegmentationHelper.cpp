@@ -298,7 +298,7 @@ Rect getTorso3(Mat &classifiedImage) {
 	int r = rowChests.at(rowChests.size()/2);
 	int c = colChests.at(colChests.size()/2);
 
-	return Rect(c, r, 20, 20);
+	return Rect(c-30, r-20, 60, 40);
 }
 
 /**

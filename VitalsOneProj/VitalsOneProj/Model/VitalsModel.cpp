@@ -22,7 +22,7 @@ VitalsModel::~VitalsModel(void) {
 
 Rect getForeheadFromHead(Rect bbox) {
 
-	return Rect(bbox.x + bbox.width/4, bbox.y + 20, bbox.width/2, bbox.height/12);
+	return Rect(bbox.x + bbox.width/4, bbox.y + 10, bbox.width/2, bbox.height/8);
 
 }
 
@@ -47,7 +47,7 @@ void VitalsModel::processFrame() {
 
 	Mat threshDepth = thresholdDepthImage(images.getDepth());
 
-	
+	threshold(threshDepth, threshDepth, 100, 100000, THRESH_TOZERO);
 
 	Mat classified = segmenter.segmentImage(threshDepth);
 
@@ -61,7 +61,6 @@ void VitalsModel::processFrame() {
 
 	Rect torso = segmenter.getBodyPart(classified, CHEST);
 
-	//breathTracker.track(threshDepth, torso);
 
 	Rect head = heartTracker.getTrackedRegion();
 
@@ -75,7 +74,7 @@ void VitalsModel::processFrame() {
 	
 	rectangle(threshColor, head, Scalar(255, 0, 0), 2, 8, 0);
 
-
+	rectangle(threshColor, forehead, Scalar(0, 255, 0), 2, 8, 0);
 	
 	rectangle(threshColor, torso, Scalar(0, 0, 255), 2, 8, 0);
 
@@ -88,7 +87,9 @@ void VitalsModel::processFrame() {
 	 * Point the gimbal mount at the forehead.
 	 */
 	if(gimbalFramCount == 2) {
-		gimb.positionGimbal(foreheadCenter, threshDepth.at<uchar>(forehead.y, forehead.x));
+		uchar dist = threshDepth.at<uchar>(forehead.y, forehead.x);
+		heartTracker.setForeheadDistance(dist);
+		gimb.positionGimbal(foreheadCenter, dist);
 		gimbalFramCount = 0;
 	}
 
@@ -98,13 +99,16 @@ void VitalsModel::processFrame() {
 	imageTimer.async_wait(bind(&VitalsModel::processFrame, this));
 }
 
+
+
 /**
  * Get a new temperature recording
  */
 void VitalsModel::processTemp() {
 	cout << "ProcessTemp";
+
 	
-	double temp = temperature.getCoreTemp();
+	double temp = temperature.getCoreTemp(heartTracker.getForeheadDistance());
 
 	QString poop = QString::number(temp);
 	qDebug() << poop;
@@ -118,13 +122,10 @@ void VitalsModel::processTemp() {
 }
 
 
+int timed, times;
+bool death = false;
+
 void VitalsModel::start() {	
-	
-
-	//Mat element = getStructuringElement( MORPH_RECT,
-    //                                   Size( 11, 11 ));
-
-	//dilate(classified, classified, element);
 
 
 	// Get a set of images to initialize everything with
@@ -139,8 +140,20 @@ void VitalsModel::start() {
 
 	// Initialize heart tracker
 	heartTracker.initialize(threshDepth, segmenter.getBodyPart(segmentedImage, HEAD), HEAD);
+	
 
-	//breathTracker.initialize(threshDepth, segmenter.getBodyPart(segmentedImage, CHEST), CHEST);
+	if(death) {
+		timed = clock();
+		QString fps = "Frame every " + QString::number(timed-times) + " ticks.\n";
+		//qDebug() << fps;
+		death = true;
+	}
+
+
+	
+
+	times = clock();
+	
 
 	// Start the timers
 	imageTimer.async_wait(bind(&VitalsModel::processFrame, this));

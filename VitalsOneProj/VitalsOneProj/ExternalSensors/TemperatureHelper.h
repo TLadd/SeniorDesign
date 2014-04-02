@@ -16,7 +16,7 @@ public:
 	 * core temperature
 	 * @return The core temperature value in degrees F (can be changed)
 	 */
-	double getCoreTemp();
+	double getCoreTemp(double distance);
 
 private:
 	SensorHelper externalSensors;

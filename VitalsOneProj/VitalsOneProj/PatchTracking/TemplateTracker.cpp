@@ -12,6 +12,7 @@ bool deathFlagShouldRemove = false;
 
 TemplateTracker::TemplateTracker(void)
 {
+	distance = 5;
 }
 
 
