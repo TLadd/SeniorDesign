@@ -32,7 +32,7 @@ Rect getForeheadFromHead(Rect bbox) {
 Mat VitalsModel::thresholdDepthImage(Mat &depthImage) {
 	Mat threshDepth;
 	threshold(depthImage, threshDepth, threshDist, 100000, THRESH_TOZERO_INV);
-	threshDepth.convertTo(threshDepth, CV_8U, 1.0/255.0);
+	threshDepth.convertTo(threshDepth, CV_8U);
 	return threshDepth;
 }
 
@@ -42,6 +42,8 @@ Mat VitalsModel::thresholdDepthImage(Mat &depthImage) {
 void VitalsModel::processFrame() {
 	
 	ImageBundle images = imGrab.getLatestImages();
+
+	view.showImage("Depth Fixed", images.getDepth());
 
 	Mat threshDepth = thresholdDepthImage(images.getDepth());
 

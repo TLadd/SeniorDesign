@@ -14,7 +14,7 @@ void startModel(boost::asio::io_service *io) {
 	else
 		qDebug() << "We are not connected\n";	
 	
-	CameraParameters cp(Point(74,74), 240, 320, 15.24, 106.68, 1000, Point(0,10));
+	CameraParameters cp(Point(74,74), 240, 320, 15.24, 106.68, 255, Point(0,10));
 	GimbalHelper gh(cp, SP);
 
 	/*
@@ -29,7 +29,7 @@ void startModel(boost::asio::io_service *io) {
 	} 
 	*/
 
-	VitalsModel model(*io, SP, cp, 20, 2, 750);
+	VitalsModel model(*io, SP, cp, 20, 2, 200);
 
 	model.start();
 	io->run();

@@ -36,8 +36,9 @@ public:
 	 */
 	Mat getDepthColorMap();
 
+
 private:
 	VideoCapture cap;
-
+	Mat correctDepthImage(Mat depthMap);
 };
 

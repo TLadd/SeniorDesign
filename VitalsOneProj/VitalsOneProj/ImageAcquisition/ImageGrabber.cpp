@@ -22,6 +22,30 @@ ImageGrabber::~ImageGrabber(void)
 {
 }
 
+
+Mat ImageGrabber::correctDepthImage(Mat depthMap) {
+	short lowValue = (short)cap.get(CV_CAP_INTELPERC_DEPTH_GENERATOR | CV_CAP_PROP_INTELPERC_DEPTH_LOW_CONFIDENCE_VALUE);
+    short saturationValue = (short)cap.get(CV_CAP_INTELPERC_DEPTH_GENERATOR | CV_CAP_PROP_INTELPERC_DEPTH_SATURATION_VALUE);
+
+	Mat image;
+	image.create(depthMap.rows, depthMap.cols, CV_8UC1);
+        for (int row = 0; row < depthMap.rows; row++)
+        {
+            uchar* ptrDst = image.ptr(row);
+            short* ptrSrc = (short*)depthMap.ptr(row);
+            for (int col = 0; col < depthMap.cols; col++, ptrSrc++, ptrDst++)
+            {
+                if ((lowValue == (*ptrSrc)) || (saturationValue == (*ptrSrc)))
+                    *ptrDst = 0;
+                else
+                    *ptrDst = (uchar) ((*ptrSrc) >> 2);
+            }
+        }
+
+		
+	return image;
+}
+
 /**
  * Get the depth image, color image, and depth-color map
  * @return An Image packet containing all three Mats
@@ -40,6 +64,7 @@ ImageBundle ImageGrabber::getLatestImages() {
 
 
 	cap.retrieve( depthMap, CV_CAP_INTELPERC_DEPTH_MAP );
+	depthMap = correctDepthImage(depthMap);
 	transpose(depthMap, depthMap);
 		
 	cap.retrieve(color, CV_CAP_INTELPERC_IMAGE );
@@ -62,8 +87,9 @@ Mat ImageGrabber::getDepthImage() {
 
 	cap.retrieve( depthMap, CV_CAP_INTELPERC_DEPTH_MAP );
 	transpose(depthMap, depthMap);
-		
-	return depthMap;
+	
+
+	return correctDepthImage(depthMap);
 }
 
 /**
