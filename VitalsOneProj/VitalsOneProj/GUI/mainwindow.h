@@ -78,6 +78,8 @@ public:
   // adapter interface setup
   void configureViewAdapter(ViewAdapter* adap);
   
+  bool graphLocked;
+
 private slots:
   void realtimeDataSlot();
   void screenShot();
