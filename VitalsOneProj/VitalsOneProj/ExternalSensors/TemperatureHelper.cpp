@@ -11,6 +11,7 @@ TemperatureHelper::TemperatureHelper(Serial *SPc) : externalSensors(SPc)
 
 TemperatureHelper::~TemperatureHelper(void)
 {
+	distance = 175;
 }
 
 /**
@@ -19,16 +20,18 @@ TemperatureHelper::~TemperatureHelper(void)
 * core temperature
 * @return The core temperature value in degrees F (can be changed)
 */
-double TemperatureHelper::getCoreTemp(double dist) {
+double TemperatureHelper::getCoreTemp() {
 
-	dist = 175;
+	if(distance == 0) {
+		distance = 175;
+	}
 
-	double distance = (dist/255.0) * (42 - 6) + 6;
+	double dist = (distance/255.0) * (42 - 6) + 6;
 
 	double mDist = 12;
 	double sDist = 7.532;
 
-	distance = (distance - mDist)/sDist;
+	dist = (dist - mDist)/sDist;
 
 	
 
@@ -65,7 +68,7 @@ double TemperatureHelper::getCoreTemp(double dist) {
 
 	double ambientTemp = tempHumid.getAmbientTemp();
 
-	double dividingFactor = p00 + p10*distance + p01*humidity + p20*powf(distance, 2) + p11*distance*humidity + p02*powf(humidity, 2) + p30*powf(distance, 3) + p21*powf(distance,2)*humidity + p12*distance*powf(humidity,2) + p03*powf(humidity,3);
+	double dividingFactor = p00 + p10*dist + p01*humidity + p20*powf(dist, 2) + p11*dist*humidity + p02*powf(humidity, 2) + p30*powf(dist, 3) + p21*powf(dist,2)*humidity + p12*dist*powf(humidity,2) + p03*powf(humidity,3);
 	
 	double objectTemp = surfaceTemp / dividingFactor;
 

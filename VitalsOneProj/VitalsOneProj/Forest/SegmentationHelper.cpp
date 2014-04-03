@@ -147,7 +147,7 @@ Rect getHead(Mat &classifiedImage) {
 }
 
 
-Rect getTorso(Mat &classifiedImage) {
+Rect getTorso3(Mat &classifiedImage) {
 
 
 	int minRow = 10000;
@@ -269,17 +269,16 @@ Rect getTorso2(Mat &classifiedImage, int lowestHead) {
 
 }
 
-Rect getTorso3(Mat &classifiedImage) {
-
-	vector<int> rowChests;
-	vector<int> colChests;
+Point getMedianBodyPart(Mat &classifiedImage, int bodyPart, int numeratorRow, int denominatorRow, int numeratorCol, int denominatorCol) {
+	vector<int> rows;
+	vector<int> cols;
 
 	for(int i=0; i < classifiedImage.rows; i++) {
 		for(int j=0; j < classifiedImage.cols; j++) {
 
-			if(classifiedImage.at<uchar>(i,j) == CHEST) {
-				rowChests.push_back(i);
-				colChests.push_back(j);
+			if(classifiedImage.at<uchar>(i,j) == bodyPart) {
+				rows.push_back(i);
+				cols.push_back(j);
 				
 			}
 
@@ -288,32 +287,31 @@ Rect getTorso3(Mat &classifiedImage) {
 
 	}
 
-	if(rowChests.size() == 0) {
-		return Rect(1,1,1,1);
+	if(rows.size() == 0) {
+		return Point(0,0);
 	}
 
-	std::nth_element(rowChests.begin(), rowChests.begin()+(rowChests.size()/2), rowChests.end());
-	std::nth_element(colChests.begin(), colChests.begin()+(colChests.size()/2), colChests.end());
+	std::nth_element(rows.begin(), rows.begin()+(numeratorRow * rows.size()/denominatorRow), rows.end());
+	std::nth_element(cols.begin(), cols.begin()+(numeratorCol * cols.size()/denominatorCol), cols.end());
 
-	int r = rowChests.at(rowChests.size()/2);
-	int c = colChests.at(colChests.size()/2);
-
-	return Rect(c-30, r-20, 60, 40);
+	int r = rows.at(numeratorRow * rows.size()/denominatorRow);
+	int c = cols.at(numeratorCol * cols.size()/denominatorCol);
+	return Point(c,r);
 }
 
-/**
- * Gets the region of the specified body part in the last segmented image
- * @param  depthImage
- * @return Classified image
- */
-Rect SegmentationHelper::getBodyPart(Mat &seg, int bodyPart) {
-	if(bodyPart == HEAD) {
-		return getHead(seg);
-	}
-	else {
-		return getTorso3(seg);
-	}
+Rect SegmentationHelper::getTorso(Mat &classifiedImage) {
 
+	Point centChest = getMedianBodyPart(classifiedImage, CHEST, 1, 2, 1, 2);
+	
+	return Rect(max(centChest.x-30, 0), max(centChest.y-20, 0), 60, 40);
 }
+
+
+Point SegmentationHelper::getForehead(Mat &classifiedImage) {
+
+	return getMedianBodyPart(classifiedImage, HEAD, 1, 6, 1, 2);
+}
+
+
 
 

@@ -28,8 +28,18 @@ Rect getForeheadFromHead(Rect bbox) {
 }
 
 
+/**
+ * Return the average value in a patch of a single-channel image
+ */
+double averagePatch(Mat image, Rect roi, Mat mask) {
+	mean(image(roi), mask(roi))[0];
+	return 1;
+}
 
 
+/**
+ * Threshold the depth image according to the specified distance. Everything farther away will be cut out
+ */
 Mat VitalsModel::thresholdDepthImage(Mat &depthImage) {
 	Mat threshDepth;
 	threshold(depthImage, threshDepth, threshDist, 100000, THRESH_TOZERO_INV);
@@ -37,65 +47,84 @@ Mat VitalsModel::thresholdDepthImage(Mat &depthImage) {
 	return threshDepth;
 }
 
+
+int timed, times;
+bool death = false;
+
 /**
  * Grab a new frame and process it
  */
 void VitalsModel::processFrame() {
 	
+	// Get the latest images from senz3d
 	ImageBundle images = imGrab.getLatestImages();
 
-	view->showImage("Depth Fixed", images.getDepth());
-
+	// Threshold depth image
 	Mat threshDepth = thresholdDepthImage(images.getDepth());
 
+	// Apply a forward threshold as well
 	threshold(threshDepth, threshDepth, 100, 100000, THRESH_TOZERO);
 
+	// Segment the depth image
 	Mat classified = segmenter.segmentImage(threshDepth);
 
-
-	view->showSegmentedImage("Pre Filter", classified);
+	// Apply a median filter to the depth image
 	medianBlur(classified, classified, 25);
-
 	view->showSegmentedImage("Median", classified);
 
-	heartTracker.track(threshDepth, segmenter.getBodyPart(classified, HEAD));
 
-	Rect torso = segmenter.getBodyPart(classified, CHEST);
+	// Retrieve the torso from the segmented image
+	Rect torso = segmenter.getTorso(classified);
 
+	// Get the average depth of the breathing patch
+	double breathingAvg = averagePatch(threshDepth, torso, threshDepth);
 
-	Rect head = heartTracker.getTrackedRegion();
+	// Send the average depth to the view as a data point
+	view->AddBreathPoint(breathingAvg);
 
+	
+	// Get the center of the forehead
+	Point foreheadCenter = segmenter.getForehead(classified);
 
-	Rect forehead = getForeheadFromHead(head);
-
-
+	// Draw rectangles around the torso and a point on the forehead
 	Mat threshColor;
-
 	cvtColor(threshDepth, threshColor, CV_GRAY2BGR);
 	
-	rectangle(threshColor, head, Scalar(255, 0, 0), 2, 8, 0);
-
-	rectangle(threshColor, forehead, Scalar(0, 255, 0), 2, 8, 0);
-	
+	circle(threshColor, Point(foreheadCenter.x, foreheadCenter.y), 3, Scalar(0, 255, 0), 2, 8, 0) ;
 	rectangle(threshColor, torso, Scalar(0, 0, 255), 2, 8, 0);
-
 
 	view->showImage("Tracking", threshColor);
 
-	Point foreheadCenter = Point(forehead.x + forehead.width/2, forehead.y + forehead.height/2);
+	
 
 	/**
 	 * Point the gimbal mount at the forehead.
 	 */
 	if(gimbalFramCount == 2) {
-		uchar dist = threshDepth.at<uchar>(forehead.y, forehead.x);
-		heartTracker.setForeheadDistance(dist);
+		uchar dist = threshDepth.at<uchar>(foreheadCenter.y, foreheadCenter.x);
+		temperature.setDistance(dist);
 		gimb.positionGimbal(foreheadCenter, dist);
 		gimbalFramCount = 0;
 	}
 
 	gimbalFramCount++;
 
+
+	// Print out the fps
+	if(death) {
+		timed = clock();
+		QString fps = "Frame every " + QString::number(timed-times) + " ticks.\n";
+		qDebug() << fps;
+		death = true;
+	}
+
+
+	
+
+	times = clock();
+
+
+	// Reset the timers.
 	imageTimer.expires_at(imageTimer.expires_at() + boost::posix_time::milliseconds(imInterval));
 	imageTimer.async_wait(boost::bind(&VitalsModel::processFrame, this));
 }
@@ -106,15 +135,13 @@ void VitalsModel::processFrame() {
  * Get a new temperature recording
  */
 void VitalsModel::processTemp() {
-	cout << "ProcessTemp";
 
-	
-	double temp = temperature.getCoreTemp(heartTracker.getForeheadDistance());
+	// Get the core temperature
+	double temp = temperature.getCoreTemp();
 
-	QString poop = QString::number(temp);
-	qDebug() << poop;
+	//QString poop = QString::number(temp);
+	//qDebug() << poop;
 
-	//view->AddTempPoint(temp);
 	view->setTemperature(temp);
 	
 	temperatureTimer.expires_at(temperatureTimer.expires_at() + boost::posix_time::seconds(tempInterval));
@@ -123,38 +150,23 @@ void VitalsModel::processTemp() {
 }
 
 
-int timed, times;
-bool death = false;
+
 
 void VitalsModel::start() {	
 
 
 	// Get a set of images to initialize everything with
-	ImageBundle images = imGrab.getLatestImages();
+	//ImageBundle images = imGrab.getLatestImages();
 
 	// Threshold the depth image so it only includes the person
-	Mat threshDepth = thresholdDepthImage(images.getDepth());
+	//Mat threshDepth = thresholdDepthImage(images.getDepth());
 
 	// Segment the image
-	Mat segmentedImage = segmenter.segmentImage(threshDepth);
+	//Mat segmentedImage = segmenter.segmentImage(threshDepth);
 
 
 	// Initialize heart tracker
-	heartTracker.initialize(threshDepth, segmenter.getBodyPart(segmentedImage, HEAD), HEAD);
-	
-
-	if(death) {
-		timed = clock();
-		QString fps = "Frame every " + QString::number(timed-times) + " ticks.\n";
-		//qDebug() << fps;
-		death = true;
-	}
-
-
-	
-
-	times = clock();
-	
+	//heartTracker.initialize(threshDepth, segmenter.getBodyPart(segmentedImage, HEAD), HEAD);
 
 	// Start the timers
 	imageTimer.async_wait(boost::bind(&VitalsModel::processFrame, this));

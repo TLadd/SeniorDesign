@@ -18,15 +18,10 @@ public:
 
 	Mat segmentImage(Mat &depthImage, Rect roi);
 
-	/**
-	 * Only segments a particular region of interest
-	 * of the depth image
-	 * @param  depthImage The depth image that will be segmented
-	 * @param  roi The part of the depth image to segment
-	 * @return Segmented image
-	 */
-	Rect SegmentationHelper::getBodyPart(Mat &classifiedImage, int bodyPart);
 
+	Point getForehead(Mat &classifiedImage);
+
+	Rect getTorso(Mat &classifiedImage);
 
 private:
 	Forest forest;
