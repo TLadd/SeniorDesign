@@ -235,7 +235,7 @@ void runPrediction(string treeFile, string testDir, bool writeToFile, string out
 	ImageReader imReader = ImageReader();
 
 
-	vector<Mat> testDepthImages = imReader.readDepthImages(testDir);
+	vector<Mat> testDepthImages = imReader.readTrainingImages(testDir);
 	
 	for(int k=0; k < testDepthImages.size(); k++) {
 		Mat classified = forest.classifyImage(testDepthImages.at(k));
@@ -250,6 +250,7 @@ void runPrediction(string treeFile, string testDir, bool writeToFile, string out
 		
 		if(writeToFile) {
 			//imwrite(windowName, cimg);
+
 			imwrite(windowName, classified);
 		}
 		//imshow(windowName, cimg);
@@ -312,7 +313,7 @@ int main() {
 
 
 	//trainTree("adult.txt", "adultTrain");
-	runPrediction("adult.txt", "adultPretraining", true, "adultPretrainingPredictions"); 
+	runPrediction("adult.txt", "thomas", true, "outputthomas"); 
 
 
 

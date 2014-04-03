@@ -21,7 +21,7 @@ TemperatureHelper::~TemperatureHelper(void)
 */
 double TemperatureHelper::getCoreTemp(double dist) {
 
-	dist = 20;
+	dist = 175;
 
 	double distance = (dist/255.0) * (42 - 6) + 6;
 

@@ -55,3 +55,9 @@ vector<Mat> ImageReader::readClassifiedImages(string directory) {
 		return readImages(directory, "Y.png");
 
 }
+
+vector<Mat> ImageReader::readTrainingImages(string directory) {
+	
+		return readImages(directory, ".jpg");
+
+}

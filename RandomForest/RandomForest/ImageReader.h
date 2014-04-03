@@ -13,6 +13,6 @@ public:
 
 	vector<Mat> readClassifiedImages(string directory);
 
-
+	vector<Mat> readTrainingImages(string directory);
 };
 
