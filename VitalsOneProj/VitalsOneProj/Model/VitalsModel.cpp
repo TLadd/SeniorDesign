@@ -32,8 +32,12 @@ Rect getForeheadFromHead(Rect bbox) {
  * Return the average value in a patch of a single-channel image
  */
 double averagePatch(Mat image, Rect roi, Mat mask) {
-	mean(image(roi), mask(roi))[0];
-	return 1;
+	try {
+		return mean(image(roi), mask(roi))[0];
+	}
+	catch(Exception e) {
+		return 0;
+	}
 }
 
 
