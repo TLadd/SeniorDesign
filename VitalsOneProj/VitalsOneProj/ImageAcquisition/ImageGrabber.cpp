@@ -15,6 +15,14 @@ ImageGrabber::ImageGrabber()
 
 	cap.set(CV_CAP_INTELPERC_IMAGE_GENERATOR | CV_CAP_PROP_INTELPERC_PROFILE_IDX, 0);
 	cap.set(CV_CAP_INTELPERC_DEPTH_GENERATOR | CV_CAP_PROP_INTELPERC_PROFILE_IDX, 0);
+
+	//pgrCam = PGRCamera();
+	pgrCam.connectToCamera();
+
+	//const Mode = MODE_0
+	//const PixelFormat = PIXEL_FORMAT_MONO16
+	pgrCam.setImageSettings(MODE_0, PIXEL_FORMAT_MONO16, 0, 0, 640, 480);
+	pgrCam.startCapture(30);
 }
 
 
@@ -54,14 +62,14 @@ ImageBundle ImageGrabber::getLatestImages() {
 	Mat depthMap;
 	Mat color;
 	Mat uvMap;
+	Mat pgr;
 
 
 	if(!cap.isOpened()) {
-		return ImageBundle(Mat::zeros(320, 240, CV_8U), Mat::zeros(320, 240, CV_8U), Mat::zeros(320, 240, CV_8U));
+		return ImageBundle(Mat::zeros(320, 240, CV_8U), Mat::zeros(320, 240, CV_8U), Mat::zeros(320, 240, CV_8U), Mat::zeros(640, 480, CV_8UC1));
 	}
 
 	cap.grab();
-
 
 	cap.retrieve( depthMap, CV_CAP_INTELPERC_DEPTH_MAP );
 	depthMap = correctDepthImage(depthMap);
@@ -72,7 +80,12 @@ ImageBundle ImageGrabber::getLatestImages() {
 
 	cap.retrieve(uvMap, CV_CAP_INTELPERC_UVDEPTH_MAP);
 
-	return ImageBundle(color, depthMap, uvMap);
+	//capture PGR image
+	Image img;
+	pgrCam.captureImage(img);
+	pgrCam.convertToCV(img, pgr);
+
+	return ImageBundle(color, depthMap, uvMap, pgr);
 }
 
 /**

@@ -128,6 +128,9 @@
     <ClCompile Include="ExternalSensors\Serial.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="ImageAcquisition\PGRCamera.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <CustomBuild Include="vitalsoneproj.ui">
@@ -232,6 +235,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="DataProcessing\FixedVector.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ImageAcquisition\PGRCamera.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

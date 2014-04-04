@@ -1,7 +1,8 @@
 #pragma once
 
-#include "opencv.hpp";
+#include "opencv.hpp"
 #include "ImageBundle.h"
+#include "PGRCamera.h"
 
 using namespace cv;
 class ImageGrabber
@@ -40,5 +41,7 @@ public:
 private:
 	VideoCapture cap;
 	Mat correctDepthImage(Mat depthMap);
+
+	PGRCamera pgrCam;
 };
 
