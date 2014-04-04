@@ -177,6 +177,20 @@ bool PGRCamera::setShutterSpeed(float shutterMillis) {
 	return true;
 }
 
+
+bool PGRCamera::setGain(float gain) {
+	//set the correct frame rate
+	Property frProp;
+	frProp.type = FlyCapture2::GAIN;
+	frProp.absControl = true;
+	frProp.onOff = false;
+	frProp.absValue = gain;
+	error = cam.SetProperty(&frProp, false);
+	TEST_ERR(error);
+
+	return true;
+}
+
 bool PGRCamera::convertToCV(Image &img, cv::Mat &cvImg) {
 	unsigned int rowBytes = (double) img.GetReceivedDataSize() / (double)img.GetRows();
 	cvImg = cv::Mat(img.GetRows(), img.GetCols(), CV_16UC1, img.GetData(), rowBytes);
