@@ -47,6 +47,7 @@
 #include <QTimer>
 #include "qcustomplot.h" // the header file of QCustomPlot. Don't forget to add it to your project, if you use an IDE, so it gets compiled.
 #include <boost/signals2/signal.hpp>
+#include <boost/thread/mutex.hpp>
 class ViewAdapter;
 
 namespace Ui {
@@ -78,7 +79,7 @@ public:
   // adapter interface setup
   void configureViewAdapter(ViewAdapter* adap);
   
-  bool graphLocked;
+  boost::mutex guard;
 
 private slots:
   void realtimeDataSlot();

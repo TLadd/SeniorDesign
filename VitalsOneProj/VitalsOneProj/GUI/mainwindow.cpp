@@ -56,7 +56,6 @@ MainWindow::MainWindow(QWidget *parent) :
 {
   ui->setupUi(this);
   setGeometry(100, 100, 600, 600);
-  graphLocked = false;
   setupDemo();
   //setupPlayground(ui->customPlot);
   // 0:  setupQuadraticDemo(ui->customPlot);
@@ -245,8 +244,7 @@ void MainWindow::realtimeDataSlot()
 //  ui->breathingPlot->xAxis->setRange(key+0.25, 8, Qt::AlignRight);
 //  ui->breathingPlot->yAxis->setRange(-1, 1);
 //  ui->breathingPlot->replot();
-  while(graphLocked) {Sleep(100);}
-	graphLocked = true;
+  boost::mutex::scoped_lock lock(guard);
   ui->temperaturePlot->xAxis->setRange(key+0.25, 8, Qt::AlignRight);
   //ui->temperaturePlot->yAxis->setRange(10, 40);
   ui->temperaturePlot->replot();
@@ -265,7 +263,6 @@ void MainWindow::realtimeDataSlot()
     lastFpsKey = key;
     frameCount = 0;
   }
-  graphLocked = false;
 }
 
 void MainWindow::setupPlayground(QCustomPlot *customPlot)
@@ -292,16 +289,13 @@ void MainWindow::screenShot()
 }
 
 void MainWindow::setTemperatureValue(double newVal){
-	while(graphLocked) {Sleep(100);}
-	graphLocked = true;
+	boost::mutex::scoped_lock lock(guard);
 	qDebug() << "In the Viewwwww" << endl;
 	ui->temperatureVal->display(newVal);
-	graphLocked = false;
 }
 
 void MainWindow::updateTemperatureGraph(double newVal){
-	while(graphLocked) {Sleep(100);}
-	graphLocked = true;
+	boost::mutex::scoped_lock lock(guard);
     //ui->temperatureVal->display(100*qSin(key / 1200));
 	qDebug() << "adding to temperature graph in view" << endl;
 	double key = QDateTime::currentDateTime().toMSecsSinceEpoch()/1000.0;
@@ -313,7 +307,6 @@ void MainWindow::updateTemperatureGraph(double newVal){
     ui->temperaturePlot->graph(0)->removeDataBefore(key-8);
     // rescale value (vertical) axis to fit the current data:
     ui->temperaturePlot->graph(0)->rescaleValueAxis();
-	graphLocked = false;
 
 //	ui->temperaturePlot->xAxis->setRange(key+0.25, 8, Qt::AlignRight);
 //	ui->temperaturePlot->yAxis->setRange(5, 45);
@@ -321,16 +314,13 @@ void MainWindow::updateTemperatureGraph(double newVal){
 }
 
 void MainWindow::setBreathingRateValue(double newVal){
-	while(graphLocked) {Sleep(100);}
-	graphLocked = true;
+	boost::mutex::scoped_lock lock(guard);
 	qDebug() << "In the Viewwwww" << endl;
 	ui->breathingRateVal->display(newVal);
-	graphLocked = false;
 }
 
 void MainWindow::updateBreathingRateGraph(double newVal){
-	while(graphLocked) {Sleep(100);}
-	graphLocked = true;
+	boost::mutex::scoped_lock lock(guard);
     //ui->temperatureVal->display(100*qSin(key / 1200));
 	qDebug() << "adding to breathing graph in view" << endl;
 	double key = QDateTime::currentDateTime().toMSecsSinceEpoch()/1000.0;
@@ -346,21 +336,17 @@ void MainWindow::updateBreathingRateGraph(double newVal){
 	ui->breathingPlot->xAxis->setRange(key+0.25, 8, Qt::AlignRight);
 	//ui->breathingPlot->yAxis->setRange(5, 45);
 	ui->breathingPlot->replot();
-	graphLocked = false;
 }
 
 void MainWindow::setHeartRateValue(double newVal){
-	while(graphLocked) {Sleep(100);}
-	graphLocked = true;
+	boost::mutex::scoped_lock lock(guard);
 	qDebug() << "In the Viewwwww" << endl;
 	ui->breathingRateVal->display(newVal);
-	graphLocked = false;
 }
 
 void MainWindow::updateHeartRateGraph(double newVal){
     //ui->temperatureVal->display(100*qSin(key / 1200));
-	while(graphLocked) {Sleep(100);}
-	graphLocked = true;
+	boost::mutex::scoped_lock lock(guard);
 	qDebug() << "adding to breathing graph in view" << endl;
 	double key = QDateTime::currentDateTime().toMSecsSinceEpoch()/1000.0;
     ui->heartPlot->graph(0)->addData(key, newVal);
@@ -375,13 +361,11 @@ void MainWindow::updateHeartRateGraph(double newVal){
 	ui->heartPlot->xAxis->setRange(key+0.25, 8, Qt::AlignRight);
 	ui->heartPlot->yAxis->setRange(5, 45);
 	ui->heartPlot->replot();
-	graphLocked = false;
 }
 
 //make all calls to adapter
 void MainWindow::configureViewAdapter(ViewAdapter* adap){
-	while(graphLocked) {Sleep(100);}
-	graphLocked = true;
+	boost::mutex::scoped_lock lock(guard);
 	conn_setTemperatureVal = adap->connect_setTemperatureVal(boost::bind(&MainWindow::setTemperatureValue, this, _1));
 	conn_updateTemperatureGraph = adap->connect_updateTemperatureGraph(boost::bind(&MainWindow::updateTemperatureGraph, this, _1));
 
@@ -390,7 +374,6 @@ void MainWindow::configureViewAdapter(ViewAdapter* adap){
 
 	conn_setBreathingRateVal = adap->connect_setBreathingRateVal(boost::bind(&MainWindow::setBreathingRateValue, this, _1));
 	conn_updateBreathingRateGraph = adap->connect_updateBreathingRateGraph(boost::bind(&MainWindow::updateBreathingRateGraph, this, _1));
-	graphLocked = false;
 }
 
 
