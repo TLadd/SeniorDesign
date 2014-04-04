@@ -62,6 +62,13 @@ void VitalsModel::processFrame() {
 	
 	// Get the latest images from senz3d
 	ImageBundle images = imGrab.getLatestImages();
+	
+
+	// Threshold the pgr heart image so it only includes the patch (these numbers probably need to be played with)
+	Mat threshHeart;
+	threshold(images.getPGR(), threshHeart, 30, 10, THRESH_TOZERO);
+	double averageHeart = averagePatch(threshHeart, Rect(0, 0, threshHeart.cols, threshHeart.rows), threshHeart);
+	view->AddHeartPoint(averageHeart);
 
 	// Threshold depth image
 	Mat threshDepth = thresholdDepthImage(images.getDepth());
@@ -86,6 +93,8 @@ void VitalsModel::processFrame() {
 	// Send the average depth to the view as a data point
 	view->AddBreathPoint(breathingAvg);
 
+
+	images.getPGR();
 	
 	// Get the center of the forehead
 	Point foreheadCenter = segmenter.getForehead(classified);

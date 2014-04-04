@@ -27,6 +27,7 @@ public:
 
 	//property control
 	bool setShutterSpeed(float shutterMillis);
+	bool setGain(float gain);
 
 	//capture control
 	bool startCapture(unsigned int frameRate);
