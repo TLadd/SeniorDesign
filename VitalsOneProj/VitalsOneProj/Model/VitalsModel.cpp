@@ -75,7 +75,7 @@ void VitalsModel::processFrame() {
 	// Apply a median filter to the depth image
 	medianBlur(classified, classified, 25);
 	view->showSegmentedImage("Median", classified);
-
+	view->showImage("Fly Cam", images.getPGR());
 
 	// Retrieve the torso from the segmented image
 	Rect torso = segmenter.getTorso(classified);

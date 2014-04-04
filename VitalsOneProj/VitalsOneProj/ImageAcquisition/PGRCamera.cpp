@@ -73,7 +73,7 @@ bool PGRCamera::connectToCamera() {
     error = busMgr.GetNumOfCameras(&numCameras);
     TEST_ERR(error);
 
-    printf( "Number of cameras detected: %u\n", numCameras );
+    printf( "Number of PGR cameras detected: %u\n", numCameras );
 
     if ( numCameras < 1 )
     {
@@ -136,6 +136,7 @@ bool PGRCamera::startCapture(unsigned int frameRate) {
 	Property frProp;
     frProp.type = FRAME_RATE;
 	frProp.absControl = true;
+	frProp.onOff = true;
 	frProp.absValue = (float) frameRate;
 	error = cam.SetProperty(&frProp, false);
 	TEST_ERR(error);
@@ -159,6 +160,19 @@ bool PGRCamera::captureImage(Image &img) {
 	// Retrieve an image
     error = cam.RetrieveBuffer( &img );
     TEST_ERR(error);
+
+	return true;
+}
+
+bool PGRCamera::setShutterSpeed(float shutterMillis) {
+	//set the correct frame rate
+	Property frProp;
+    frProp.type = SHUTTER;
+	frProp.absControl = true;
+	frProp.onOff = true;
+	frProp.absValue = (float) shutterMillis;
+	error = cam.SetProperty(&frProp, false);
+	TEST_ERR(error);
 
 	return true;
 }

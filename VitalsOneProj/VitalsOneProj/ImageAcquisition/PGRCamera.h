@@ -25,6 +25,9 @@ public:
 	bool setImageSettings(Mode mode, PixelFormat format, 
 						 unsigned int offsetX, unsigned int offsetY, unsigned int width, unsigned int height);
 
+	//property control
+	bool setShutterSpeed(float shutterMillis);
+
 	//capture control
 	bool startCapture(unsigned int frameRate);
 	bool stopCapture();
