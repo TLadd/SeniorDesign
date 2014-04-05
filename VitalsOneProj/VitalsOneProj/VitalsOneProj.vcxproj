@@ -90,7 +90,7 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
       <PreprocessorDefinitions>UNICODE;WIN32;WIN64;QT_DLL;QT_CORE_LIB;QT_GUI_LIB;QT_PRINTSUPPORT_LIB;QT_WIDGETS_LIB;_WIN32_WINNT=0x0501;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>.\GeneratedFiles;.;$(QTDIR)\include;.\GeneratedFiles\$(ConfigurationName);$(QTDIR)\include\QtCore;$(QTDIR)\include\QtGui;$(QTDIR)\include\QtPrintSupport;$(QTDIR)\include\QtAngle;$(QTDIR)\include\QtWidgets;$(OPENCV_DIR)\build\include;$(BOOST_DIR)\include\boost-1_55;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>.\GeneratedFiles;.;$(QTDIR)\include;.\GeneratedFiles\$(ConfigurationName);$(QTDIR)\include\QtCore;$(QTDIR)\include\QtGui;$(QTDIR)\include\QtPrintSupport;$(QTDIR)\include\QtAngle;$(QTDIR)\include\QtWidgets;$(OPENCV_DIR)\build\include;$(BOOST_DIR)\include\boost-1_55;$(PGR_DIR)\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <Optimization>Disabled</Optimization>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
@@ -99,9 +99,9 @@
     <Link>
       <SubSystem>Windows</SubSystem>
       <OutputFile>$(OutDir)\$(ProjectName).exe</OutputFile>
-      <AdditionalLibraryDirectories>$(QTDIR)\lib;$(OPENCV_DIR)\build\lib\Debug;$(BOOST_DIR)\lib\x64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(QTDIR)\lib;$(OPENCV_DIR)\build\lib\Debug;$(BOOST_DIR)\lib\x64;$(PGR_DIR)\lib64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>qtmaind.lib;Qt5Cored.lib;Qt5Guid.lib;Qt5PrintSupportd.lib;Qt5Widgetsd.lib;opencv_core248d.lib;opencv_imgproc248d.lib;opencv_highgui248d.lib;opencv_ml248d.lib;opencv_video248d.lib;opencv_features2d248d.lib;opencv_calib3d248d.lib;opencv_objdetect248d.lib;opencv_contrib248d.lib;opencv_legacy248d.lib;opencv_flann248d.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>qtmaind.lib;Qt5Cored.lib;Qt5Guid.lib;Qt5PrintSupportd.lib;Qt5Widgetsd.lib;opencv_core248d.lib;opencv_imgproc248d.lib;opencv_highgui248d.lib;opencv_ml248d.lib;opencv_video248d.lib;opencv_features2d248d.lib;opencv_calib3d248d.lib;opencv_objdetect248d.lib;opencv_contrib248d.lib;opencv_legacy248d.lib;opencv_flann248d.lib;FlyCapture2_v100.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -137,6 +137,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="DataProcessing\FixedVector.cpp" />
     <ClCompile Include="ExternalSensors\Serial.cpp" />
     <ClCompile Include="Gimbal\CameraParameters.cpp" />
     <ClCompile Include="Forest\FeatureProjector.cpp" />
@@ -250,7 +251,7 @@
       <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(QTDIR)\bin\moc.exe;%(FullPath)</AdditionalInputs>
       <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Moc%27ing qcustomplot.h...</Message>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">.\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp</Outputs>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">"$(QTDIR)\bin\moc.exe"  "%(FullPath)" -o ".\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp"  -DUNICODE -DWIN32 -DWIN64 -DQT_DLL -DQT_CORE_LIB -DQT_GUI_LIB -DQT_PRINTSUPPORT_LIB -DQT_WIDGETS_LIB -D_WIN32_WINNT=0x0501  "-I.\GeneratedFiles" "-I." "-I$(QTDIR)\include" "-I.\GeneratedFiles\$(ConfigurationName)\." "-I$(QTDIR)\include\QtCore" "-I$(QTDIR)\include\QtGui" "-I$(QTDIR)\include\QtPrintSupport" "-I$(QTDIR)\include\QtAngle" "-I$(QTDIR)\include\QtWidgets" "-I$(OPENCV_DIR)\build\include" "-I$(BOOST_DIR)\include\boost-1_55"</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">"$(QTDIR)\bin\moc.exe"  "%(FullPath)" -o ".\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp"  -DUNICODE -DWIN32 -DWIN64 -DQT_DLL -DQT_CORE_LIB -DQT_GUI_LIB -DQT_PRINTSUPPORT_LIB -DQT_WIDGETS_LIB -D_WIN32_WINNT=0x0501  "-I.\GeneratedFiles" "-I." "-I$(QTDIR)\include" "-I.\GeneratedFiles\$(ConfigurationName)\." "-I$(QTDIR)\include\QtCore" "-I$(QTDIR)\include\QtGui" "-I$(QTDIR)\include\QtPrintSupport" "-I$(QTDIR)\include\QtAngle" "-I$(QTDIR)\include\QtWidgets" "-I$(OPENCV_DIR)\build\include" "-I$(BOOST_DIR)\include\boost-1_55" "-I$(PGR_DIR)\include"</Command>
       <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(QTDIR)\bin\moc.exe;%(FullPath)</AdditionalInputs>
       <Message Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Moc%27ing qcustomplot.h...</Message>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">.\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp</Outputs>
@@ -268,7 +269,7 @@
       <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(QTDIR)\bin\moc.exe;%(FullPath)</AdditionalInputs>
       <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Moc%27ing mainwindow.h...</Message>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">.\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp</Outputs>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">"$(QTDIR)\bin\moc.exe"  "%(FullPath)" -o ".\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp"  -DUNICODE -DWIN32 -DWIN64 -DQT_DLL -DQT_CORE_LIB -DQT_GUI_LIB -DQT_PRINTSUPPORT_LIB -DQT_WIDGETS_LIB -D_WIN32_WINNT=0x0501  "-I.\GeneratedFiles" "-I." "-I$(QTDIR)\include" "-I.\GeneratedFiles\$(ConfigurationName)\." "-I$(QTDIR)\include\QtCore" "-I$(QTDIR)\include\QtGui" "-I$(QTDIR)\include\QtPrintSupport" "-I$(QTDIR)\include\QtAngle" "-I$(QTDIR)\include\QtWidgets" "-I$(OPENCV_DIR)\build\include" "-I$(BOOST_DIR)\include\boost-1_55"</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">"$(QTDIR)\bin\moc.exe"  "%(FullPath)" -o ".\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp"  -DUNICODE -DWIN32 -DWIN64 -DQT_DLL -DQT_CORE_LIB -DQT_GUI_LIB -DQT_PRINTSUPPORT_LIB -DQT_WIDGETS_LIB -D_WIN32_WINNT=0x0501  "-I.\GeneratedFiles" "-I." "-I$(QTDIR)\include" "-I.\GeneratedFiles\$(ConfigurationName)\." "-I$(QTDIR)\include\QtCore" "-I$(QTDIR)\include\QtGui" "-I$(QTDIR)\include\QtPrintSupport" "-I$(QTDIR)\include\QtAngle" "-I$(QTDIR)\include\QtWidgets" "-I$(OPENCV_DIR)\build\include" "-I$(BOOST_DIR)\include\boost-1_55" "-I$(PGR_DIR)\include"</Command>
       <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(QTDIR)\bin\moc.exe;%(FullPath)</AdditionalInputs>
       <Message Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Moc%27ing mainwindow.h...</Message>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">.\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp</Outputs>
@@ -327,7 +328,7 @@
   </ImportGroup>
   <ProjectExtensions>
     <VisualStudio>
-      <UserProperties UicDir=".\GeneratedFiles" MocDir=".\GeneratedFiles\$(ConfigurationName)" MocOptions="" RccDir=".\GeneratedFiles" lupdateOnBuild="0" lupdateOptions="" lreleaseOptions="" Qt5Version_x0020_Win32="5.2.1" Qt5Version_x0020_x64="Version Name: 5.2.1" />
+      <UserProperties UicDir=".\GeneratedFiles" MocDir=".\GeneratedFiles\$(ConfigurationName)" MocOptions="" RccDir=".\GeneratedFiles" lupdateOnBuild="0" lupdateOptions="" lreleaseOptions="" Qt5Version_x0020_Win32="5.2.1" Qt5Version_x0020_x64="5.2.1" />
     </VisualStudio>
   </ProjectExtensions>
 </Project>

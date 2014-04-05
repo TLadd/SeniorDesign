@@ -131,6 +131,9 @@
     <ClCompile Include="ImageAcquisition\PGRCamera.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="DataProcessing\FixedVector.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <CustomBuild Include="vitalsoneproj.ui">

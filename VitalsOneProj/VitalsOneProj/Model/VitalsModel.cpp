@@ -66,8 +66,13 @@ void VitalsModel::processFrame() {
 
 	// Threshold the pgr heart image so it only includes the patch (these numbers probably need to be played with)
 	Mat threshHeart;
-	threshold(images.getPGR(), threshHeart, 30, 10, THRESH_TOZERO);
+	threshold(images.getPGR(), threshHeart, 117, 10, THRESH_TOZERO);
 	double averageHeart = averagePatch(threshHeart, Rect(0, 0, threshHeart.cols, threshHeart.rows), threshHeart);
+
+	//heartRateData->insertElement(averageHeart);
+
+
+
 	view->AddHeartPoint(averageHeart);
 
 	// Threshold depth image
@@ -113,14 +118,11 @@ void VitalsModel::processFrame() {
 	/**
 	 * Point the gimbal mount at the forehead.
 	 */
-	if(gimbalFramCount == 2) {
-		uchar dist = threshDepth.at<uchar>(foreheadCenter.y, foreheadCenter.x);
-		temperature.setDistance(dist);
-		gimb.positionGimbal(foreheadCenter, dist);
-		gimbalFramCount = 0;
-	}
-
-	gimbalFramCount++;
+	uchar dist = threshDepth.at<uchar>(foreheadCenter.y, foreheadCenter.x);
+	temperature.setDistance(dist);
+	gimb.positionGimbal(foreheadCenter, dist);
+	gimbalFramCount = 0;
+	
 
 
 	// Print out the fps
@@ -156,6 +158,7 @@ void VitalsModel::processTemp() {
 	//qDebug() << poop;
 
 	view->setTemperature(temp);
+	view->AddTempPoint(temp);
 	
 	temperatureTimer.expires_at(temperatureTimer.expires_at() + boost::posix_time::seconds(tempInterval));
 	temperatureTimer.async_wait(boost::bind(&VitalsModel::processTemp, this));

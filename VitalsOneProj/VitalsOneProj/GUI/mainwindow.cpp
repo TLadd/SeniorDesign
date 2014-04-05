@@ -359,7 +359,7 @@ void MainWindow::updateHeartRateGraph(double newVal){
     ui->heartPlot->graph(0)->rescaleValueAxis();
 
 	ui->heartPlot->xAxis->setRange(key+0.25, 8, Qt::AlignRight);
-	ui->heartPlot->yAxis->setRange(5, 45);
+	//ui->heartPlot->yAxis->setRange(5, 45);
 	ui->heartPlot->replot();
 }
 
