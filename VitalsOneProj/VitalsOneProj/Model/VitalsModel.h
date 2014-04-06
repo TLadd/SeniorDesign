@@ -94,5 +94,7 @@ private:
 	GimbalHelper gimb;
 	
 
+	FixedVector *heartRateData;
+
 };
 

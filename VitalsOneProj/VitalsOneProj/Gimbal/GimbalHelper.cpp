@@ -21,8 +21,6 @@ GimbalHelper::~GimbalHelper(void)
 */
 void GimbalHelper::positionGimbal(Point center, double depth) {
 
-	depth = 175;
-
 	double zw = ((camParams.getMaxDepthVal() - camParams.getMinDepthVal()) / camParams.getDepthSteps()) * depth + camParams.getMinDepthVal();
 	double xw = ((center.x - camParams.getWidth()/2) * zw) / camParams.getFocalLength().x;
 	double yw = ((center.y - camParams.getHeight()/2) * zw) / camParams.getFocalLength().y;
@@ -32,7 +30,9 @@ void GimbalHelper::positionGimbal(Point center, double depth) {
 	double el = 90 - atan((yw - camParams.getRelativePos().y)/zw) * (180/3.14);
 
 
-	setGimbalAngles(az+130, el-90);
+	//setGimbalAngles(az+130, el-90);
+	setGimbalAngles(180 - az, el);
+
 
 }
 

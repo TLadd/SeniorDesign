@@ -1,54 +1,33 @@
 #pragma once
 
-using namespace std;
+#include <ctime>
+#include "opencv.hpp"
 
-template <class T> 
+using namespace std;
+using namespace cv;
 class FixedVector
 {
 public:
-	FixedVector(int _size) : size(_size) {}
+	FixedVector(int _size) : size(_size) { times = clock(); }
 
 	~FixedVector(void) {}
 
-	vector<T> getVector() {
-		return vec;
-	}
+	vector<double> getVector();
 	
-	void insertElement(T el) {
-		if(vec.size() == size) {
-			vec.erase(vec.begin());
-		}
-		
-		vec.push_back(el);
-	}
+	void insertElement(double el);
 
-	vector<T> performDFT() {
-		vector<T> outVec(size);
-		dft(vec, outVec);
-		return outVec;
-	}
-
-	T firFilter(vector<double> weights) {
-
-		T sum = 0;
-
-		if(weights.size() > vec.size()) {
-			return vec.at(vec.size()-1);
-		}
-
-		for(int i=0; i < weights.size(); i++) {
-			T val = vec.at(vec.size() - weights.size() + i);
-			sum = sum + val * weights.at(i);
-		}
+	Mat performDFT(int *dftSize);
 
 
-		return sum;
+	float getPeakDFT(int minVal, int maxVal);
 
-	}
+	double firFilter(vector<double> weights);
 
 
 private:
-	vector<T> vec;
+	vector<double> vec;
 	int size;
+	int times;
+	int timed;
 };
 

@@ -61,7 +61,7 @@ void ViewAdapter::setHeartRateGraph(std::vector<int> keyData, std::vector<float>
  * @param breathingRate
  */
 void ViewAdapter::setBreathingRate(double breathingRate) {
-	sig_setBreathingRateVal(breathingRate);
+	//sig_setBreathingRateVal(breathingRate);
 }
 
 /**
@@ -156,7 +156,7 @@ Mat convertToColorForBaby(Mat bwMat) {
 }
 
 void ViewAdapter::showSegmentedImage(string winName, Mat img) {
-	showImage(winName, convertToColorForBaby(img));
+	//showImage(winName, convertToColorForBaby(img));
 }
 
 //setup methods for accessing the view
