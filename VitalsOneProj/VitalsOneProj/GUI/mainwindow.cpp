@@ -382,10 +382,10 @@ void MainWindow::setHeartRateGraph(std::vector<int> intKeyData, std::vector<floa
     // remove data of lines that's outside visible range:
     //ui->heartPlot->graph(0)->removeDataBefore(key-8);
     // rescale value (vertical) axis to fit the current data:
-    //ui->heartPlot->graph(0)->rescaleValueAxis();
+    ui->heartPlot->graph(0)->rescaleValueAxis();
 
 	//ui->heartPlot->xAxis->setRange(key+0.25, 8, Qt::AlignRight);
-	ui->heartPlot->yAxis->setRange(5, 45);
+	//ui->heartPlot->yAxis->setRange(5, 45);
 	ui->heartPlot->replot();
 }
 
