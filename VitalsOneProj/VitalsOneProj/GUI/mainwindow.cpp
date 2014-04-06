@@ -375,16 +375,25 @@ void MainWindow::setHeartRateGraph(std::vector<int> intKeyData, std::vector<floa
 	QVector<double> valQVector = QVector<double>::fromStdVector( doubleValData );
 
 	double key = QDateTime::currentDateTime().toMSecsSinceEpoch()/1000.0;
+
+	for(double f : valQVector) {
+		qDebug() << "The output vector is";
+		QString poop = QString::number(f);
+		qDebug() << poop;
+	}
+
+	ui->heartPlot->graph(0)->clearData();
+
     ui->heartPlot->graph(0)->setData(keyQVector, valQVector);
     // set data of dots:
-    ui->heartPlot->graph(0)->clearData();
+    
     //ui->heartPlot->graph(1)->addData(key, newVal);
     // remove data of lines that's outside visible range:
     //ui->heartPlot->graph(0)->removeDataBefore(key-8);
     // rescale value (vertical) axis to fit the current data:
     ui->heartPlot->graph(0)->rescaleValueAxis();
 
-	//ui->heartPlot->xAxis->setRange(key+0.25, 8, Qt::AlignRight);
+	ui->heartPlot->xAxis->setRange(keyQVector.at(keyQVector.size()-1), keyQVector.size(), Qt::AlignRight);
 	//ui->heartPlot->yAxis->setRange(5, 45);
 	ui->heartPlot->replot();
 }

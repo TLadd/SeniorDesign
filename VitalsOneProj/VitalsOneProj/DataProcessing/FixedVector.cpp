@@ -88,6 +88,9 @@ vector<float> FixedVector::filterBatchData(double *bpmMax) {
 	// end of the row.
 	std::vector<float> filtered(p, p + vec.size());
 
+
+	
+
 	times = clock();
 
 	*bpmMax = maxbpm;

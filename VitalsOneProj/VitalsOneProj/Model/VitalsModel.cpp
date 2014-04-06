@@ -78,9 +78,7 @@ void VitalsModel::processFrame() {
 		vector<float> tdHeart = heartRateData.filterBatchData(&bpm);
 		dataCountHeart = 0;
 
-		QString poop = "Time vec size is: " + QString::number(heartRateData.getTimeVector().size()) + " and the vector is: " + QString::number(tdHeart.size());
-
-		qDebug() << poop;
+		
 
 		view->setHeartRateGraph(heartRateData.getTimeVector(), tdHeart);
 		//view->setHeartRate(bpm);
