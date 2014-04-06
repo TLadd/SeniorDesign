@@ -86,7 +86,7 @@ vector<float> FixedVector::filterBatchData(double *bpmMax) {
 
 	// Copy data to a vector.  Note that (p + mat.cols) points to the
 	// end of the row.
-	std::vector<float> filtered(p, p + magI.cols);
+	std::vector<float> filtered(p, p + vec.size());
 
 	times = clock();
 
