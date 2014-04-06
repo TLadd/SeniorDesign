@@ -2,6 +2,7 @@
 
 #include <ctime>
 #include "FixedVector.h"
+#include "qdebug.h"
 
 
 vector<double> FixedVector::getVector() {
@@ -11,21 +12,17 @@ vector<double> FixedVector::getVector() {
 void FixedVector::insertElement(double el) {
 	if(vec.size() == size) {
 		vec.erase(vec.begin());
+		timeVec.erase(timeVec.begin());
 	}
 		
 	vec.push_back(el);
+	timeVec.push_back(clock());
 }
 
-Mat FixedVector::performDFT(int *dftSize) {
-
-	Mat I = Mat(1, vec.size(), CV_32F);
-	for(int i=0; i < vec.size(); i++) {
-		I.at<float>(0, i) = vec.at(i);
-	}
+Mat FixedVector::performDFT(Mat I, int dftSize) {
 
 	Mat padded;                            //expand input image to optimal size
 	
-	*dftSize = 1024;
 	copyMakeBorder(I, padded, 0, 1 - I.rows, 0, 1024 - I.cols, BORDER_CONSTANT, Scalar::all(0));
 
 	Mat planes[] = {Mat_<float>(padded), Mat::zeros(padded.size(), CV_32F)};
@@ -43,18 +40,77 @@ Mat FixedVector::performDFT(int *dftSize) {
 	return magI;
 }
 
+vector<float> FixedVector::filterBatchData(double *bpmMax) {
+	timed = clock();
+
+	double timeInterval = ((timed - times) + 1) / 1000.0;
+	double sampleRate = 20 / timeInterval;
+
+	QString poop = "The sampling rate is: " + QString::number(sampleRate);
+	qDebug() << poop;
+
+	int dftSize = 1024;
+	Mat I = Mat(1, vec.size(), CV_32F);
+	for(int i=0; i < vec.size(); i++) {
+		I.at<float>(0, i) = vec.at(i);
+	}
+
+	Mat magI = performDFT(I, dftSize);
+
+	double currMax = -1;
+	double maxbpm = -1;
+
+	for(int i=0; i < magI.cols; i++) {
+
+		float f = magI.at<float>(0, i);
+
+		float bpm = (((float)i)/dftSize) * sampleRate * 60;
+
+		if(bpm > 30 && bpm < 240) {
+			if(f > currMax) {
+				currMax = magI.at<float>(0, i);
+				maxbpm = bpm;
+			}
+		}
+		else {
+			magI.at<float>(0,i) = 0;
+		}
+
+
+	}
+
+	dft(magI, magI, DFT_INVERSE);
+
+	// Pointer to the i-th row
+	const float* p = magI.ptr<float>(0);
+
+	// Copy data to a vector.  Note that (p + mat.cols) points to the
+	// end of the row.
+	std::vector<float> filtered(p, p + magI.cols);
+
+	times = clock();
+
+	*bpmMax = maxbpm;
+
+	return filtered;
+
+}
 
 float FixedVector::getPeakDFT(int minVal, int maxVal) {
 
-	int dftSize;
 	timed = clock();
 
 	double timeInterval = ((times - timed) + 1) / 1000.0;
 	double sampleRate = 20;
 
-	times = clock();
+	int dftSize = 1024;
+	Mat I = Mat(1, vec.size(), CV_32F);
+	for(int i=0; i < vec.size(); i++) {
+		I.at<float>(0, i) = vec.at(i);
+	}
 
-	Mat magI = performDFT(&dftSize);
+
+	Mat magI = performDFT(I, dftSize);
 
 	double currMax = -1;
 	int maxbpm = -1;
@@ -76,6 +132,7 @@ float FixedVector::getPeakDFT(int minVal, int maxVal) {
 		}
 	}
 
+	times = clock();
 
 	return maxbpm;
 }

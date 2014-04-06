@@ -12,8 +12,8 @@
 #define RIGHTLEG 6
 
 VitalsModel::VitalsModel(boost::asio::io_service& io, Serial *SP, CameraParameters _camParams, int imInt, int tempInt, int thresh) 
-	: imageTimer(io, posix_time::milliseconds(imInt)), temperatureTimer(io, posix_time::seconds(tempInt)), imInterval(imInt), tempInterval(tempInt), temperature(SP), gimb(_camParams, SP), segmenter("adult.txt"), threshDist(thresh) {
-		gimbalFramCount = 0;
+	: imageTimer(io, posix_time::milliseconds(imInt)), temperatureTimer(io, posix_time::seconds(tempInt)), imInterval(imInt), tempInterval(tempInt), temperature(SP), gimb(_camParams, SP), segmenter("adult.txt"), threshDist(thresh), heartRateData(160) {
+		dataCountHeart = 0;
 }
 
 
@@ -69,8 +69,16 @@ void VitalsModel::processFrame() {
 	threshold(images.getPGR(), threshHeart, 117, 10, THRESH_TOZERO);
 	double averageHeart = averagePatch(threshHeart, Rect(0, 0, threshHeart.cols, threshHeart.rows), threshHeart);
 
-	//heartRateData->insertElement(averageHeart);
+	heartRateData.insertElement(averageHeart);
 
+	dataCountHeart++;
+
+	if(dataCountHeart == 20) {
+		double bpm;
+		vector<float> tdHeart = heartRateData.filterBatchData(&bpm);
+		dataCountHeart = 0;
+		//view->setHeartRate(bpm);
+	}
 
 
 	view->AddHeartPoint(averageHeart);
@@ -121,7 +129,6 @@ void VitalsModel::processFrame() {
 	uchar dist = threshDepth.at<uchar>(foreheadCenter.y, foreheadCenter.x);
 	temperature.setDistance(dist);
 	gimb.positionGimbal(foreheadCenter, dist);
-	gimbalFramCount = 0;
 	
 
 
@@ -137,7 +144,7 @@ void VitalsModel::processFrame() {
 	
 
 	times = clock();
-
+	death = true;
 
 	// Reset the timers.
 	imageTimer.expires_at(imageTimer.expires_at() + boost::posix_time::milliseconds(imInterval));
