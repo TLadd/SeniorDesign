@@ -39,7 +39,7 @@ private:
 
 	int threshDist;
 
-	int gimbalFramCount;
+	int dataCountHeart;
 
 	/**
 	 * Necessary for using asio timers
@@ -94,7 +94,7 @@ private:
 	GimbalHelper gimb;
 	
 
-	FixedVector *heartRateData;
+	FixedVector heartRateData;
 
 };
 
