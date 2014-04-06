@@ -377,7 +377,7 @@ void MainWindow::setHeartRateGraph(std::vector<int> intKeyData, std::vector<floa
 	double key = QDateTime::currentDateTime().toMSecsSinceEpoch()/1000.0;
     ui->heartPlot->graph(0)->setData(keyQVector, valQVector);
     // set data of dots:
-    //ui->heartPlot->graph(1)->clearData();
+    ui->heartPlot->graph(0)->clearData();
     //ui->heartPlot->graph(1)->addData(key, newVal);
     // remove data of lines that's outside visible range:
     //ui->heartPlot->graph(0)->removeDataBefore(key-8);
