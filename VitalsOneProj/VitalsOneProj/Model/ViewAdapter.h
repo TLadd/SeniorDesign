@@ -40,6 +40,11 @@ public:
 	 */
 	void setHeartRate(double heartRate);
 
+	/* Sets the heart rate number bpm.
+	 * @param heartRate
+	 */
+	void setHeartRateGraph(std::vector<int> keyData, std::vector<float> valData);
+
 	/**
 	 * Sets the breathing rate number bpm
 	 * @param breathingRate
@@ -74,6 +79,7 @@ public:
 	boost::signals2::connection connect_updateBreathingRateGraph(const boost::signals2::signal<void (double)>::slot_type &subscriber);
 	boost::signals2::connection connect_setHeartRateVal(const boost::signals2::signal<void (double)>::slot_type &subscriber);
 	boost::signals2::connection connect_updateHeartRateGraph(const boost::signals2::signal<void (double)>::slot_type &subscriber);
+	boost::signals2::connection connect_setHeartRateGraph(const boost::signals2::signal<void (std::vector<int>, std::vector<float>)>::slot_type &subscriber);
 
 private:
 	MainWindow& view;
@@ -85,7 +91,7 @@ private:
 	boost::signals2::signal<void (double)> sig_updateBreathingRateGraph;
 	boost::signals2::signal<void (double)> sig_setHeartRateVal;
 	boost::signals2::signal<void (double)> sig_updateHeartRateGraph;
-
+	boost::signals2::signal<void (std::vector<int>, std::vector<float>)> sig_setHeartRateGraph;
 };
 
 #endif

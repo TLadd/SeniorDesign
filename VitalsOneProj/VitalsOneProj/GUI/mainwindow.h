@@ -45,6 +45,7 @@
 
 #include <QMainWindow>
 #include <QTimer>
+#include <QtCore/qvector.h>
 #include "qcustomplot.h" // the header file of QCustomPlot. Don't forget to add it to your project, if you use an IDE, so it gets compiled.
 #include <boost/signals2/signal.hpp>
 #include <boost/thread/mutex.hpp>
@@ -75,6 +76,7 @@ public:
   
   void setHeartRateValue(double newVal);
   void updateHeartRateGraph(double newVal);
+  void setHeartRateGraph(std::vector<int> keyData, std::vector<float> valData);
   
   // adapter interface setup
   void configureViewAdapter(ViewAdapter* adap);
@@ -105,6 +107,7 @@ private:
 
   boost::signals2::connection conn_setHeartRateVal;
   boost::signals2::connection conn_updateHeartRateGraph;
+  boost::signals2::connection conn_setHeartRateGraph;
 };
 
 #endif // MAINWINDOW_H
