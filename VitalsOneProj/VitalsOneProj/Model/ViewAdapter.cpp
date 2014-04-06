@@ -48,6 +48,15 @@ void ViewAdapter::setHeartRate(double heartRate) {
 }
 
 /**
+ * Sets the heart rate number bpm.
+ * @param heartRate
+ */
+void ViewAdapter::setHeartRateGraph(std::vector<int> keyData, std::vector<float> valData) {
+	sig_setHeartRateGraph(keyData, valData);
+}
+
+
+/**
  * Sets the breathing rate number bpm
  * @param breathingRate
  */
@@ -173,4 +182,8 @@ boost::signals2::connection ViewAdapter::connect_setHeartRateVal(const boost::si
 
 boost::signals2::connection ViewAdapter::connect_updateHeartRateGraph(const boost::signals2::signal<void (double)>::slot_type& subscriber){
 	return sig_updateHeartRateGraph.connect(subscriber);
+}
+
+boost::signals2::connection ViewAdapter::connect_setHeartRateGraph(const boost::signals2::signal<void (std::vector<int>, std::vector<float>)>::slot_type& subscriber){
+	return sig_setHeartRateGraph.connect(subscriber);
 }

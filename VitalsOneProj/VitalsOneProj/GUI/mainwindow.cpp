@@ -341,7 +341,7 @@ void MainWindow::updateBreathingRateGraph(double newVal){
 void MainWindow::setHeartRateValue(double newVal){
 	boost::mutex::scoped_lock lock(guard);
 	qDebug() << "In the Viewwwww" << endl;
-	ui->breathingRateVal->display(newVal);
+	ui->heartRateVal->display(newVal);
 }
 
 void MainWindow::updateHeartRateGraph(double newVal){
@@ -363,6 +363,32 @@ void MainWindow::updateHeartRateGraph(double newVal){
 	ui->heartPlot->replot();
 }
 
+void MainWindow::setHeartRateGraph(std::vector<int> intKeyData, std::vector<float> floatValData){
+    //ui->temperatureVal->display(100*qSin(key / 1200));
+	boost::mutex::scoped_lock lock(guard);
+	qDebug() << "setting heartrateGraph in view" << endl;
+
+	std::vector<double> const doubleKeyData(intKeyData.begin(), intKeyData.end());
+	std::vector<double> const doubleValData(floatValData.begin(), floatValData.end());
+
+	QVector<double> keyQVector = QVector<double>::fromStdVector( doubleKeyData );
+	QVector<double> valQVector = QVector<double>::fromStdVector( doubleValData );
+
+	double key = QDateTime::currentDateTime().toMSecsSinceEpoch()/1000.0;
+    ui->heartPlot->graph(0)->setData(keyQVector, valQVector);
+    // set data of dots:
+    //ui->heartPlot->graph(1)->clearData();
+    //ui->heartPlot->graph(1)->addData(key, newVal);
+    // remove data of lines that's outside visible range:
+    //ui->heartPlot->graph(0)->removeDataBefore(key-8);
+    // rescale value (vertical) axis to fit the current data:
+    //ui->heartPlot->graph(0)->rescaleValueAxis();
+
+	//ui->heartPlot->xAxis->setRange(key+0.25, 8, Qt::AlignRight);
+	ui->heartPlot->yAxis->setRange(5, 45);
+	ui->heartPlot->replot();
+}
+
 //make all calls to adapter
 void MainWindow::configureViewAdapter(ViewAdapter* adap){
 	boost::mutex::scoped_lock lock(guard);
@@ -371,6 +397,7 @@ void MainWindow::configureViewAdapter(ViewAdapter* adap){
 
 	conn_setHeartRateVal = adap->connect_setHeartRateVal(boost::bind(&MainWindow::setHeartRateValue, this, _1));
 	conn_updateHeartRateGraph = adap->connect_updateHeartRateGraph(boost::bind(&MainWindow::updateHeartRateGraph, this, _1));
+	conn_setHeartRateGraph = adap->connect_setHeartRateGraph(boost::bind(&MainWindow::setHeartRateGraph, this, _1, _2));
 
 	conn_setBreathingRateVal = adap->connect_setBreathingRateVal(boost::bind(&MainWindow::setBreathingRateValue, this, _1));
 	conn_updateBreathingRateGraph = adap->connect_updateBreathingRateGraph(boost::bind(&MainWindow::updateBreathingRateGraph, this, _1));
