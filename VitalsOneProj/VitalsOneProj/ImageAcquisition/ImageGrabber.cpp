@@ -21,8 +21,8 @@ ImageGrabber::ImageGrabber()
 
 	//const Mode = MODE_0
 	//const PixelFormat = PIXEL_FORMAT_MONO16
-	pgrCam.setImageSettings(MODE_0, PIXEL_FORMAT_MONO16, 0, 0, 640, 480);
-	pgrCam.setGain(0);
+	pgrCam.setImageSettings(MODE_0, PIXEL_FORMAT_MONO8, 0, 0, 640, 480);
+	//pgrCam.setGain(-4);
 	pgrCam.startCapture(30);
 }
 
@@ -89,7 +89,7 @@ ImageBundle ImageGrabber::getLatestImages() {
 	if(pgrCam.captureImage(img)) {
 		pgrCam.convertToCV(img, pgr);
 
-		pgr.convertTo(pgr, CV_8U, 0.00390625);
+		//pgr.convertTo(pgr, CV_8U, 0.00390625);
 	}
 	else {
 		pgr = Mat::zeros(480, 640, CV_8U);
