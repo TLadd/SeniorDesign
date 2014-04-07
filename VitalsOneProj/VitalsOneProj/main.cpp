@@ -66,6 +66,7 @@ int main(int argc, char *argv[])
 	MainWindow w;
 	ViewAdapter adap(w);
 	w.configureViewAdapter(&adap);
+	w.show();
 	boost::asio::io_service io;
 	thread *t = new thread(&startModel, &io, &adap);
 
@@ -93,6 +94,6 @@ int main(int argc, char *argv[])
 	 // sig();
 	 // sig2(1.23);
 
-	w.show();
+	
 	return a.exec();
 }

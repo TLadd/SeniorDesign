@@ -104,8 +104,8 @@ bool PGRCamera::disconnectCamera() {
 bool PGRCamera::setImageSettings(Mode mode, PixelFormat format, 
 					  unsigned int offsetX, unsigned int offsetY, unsigned int width, unsigned int height) {
     imgSettings.mode = mode;
-    imgSettings.offsetX = offsetX;
-    imgSettings.offsetY = offsetY;
+    imgSettings.offsetX = 0;
+    imgSettings.offsetY = 0;
     imgSettings.width = width;
     imgSettings.height = height;
     imgSettings.pixelFormat = format;
@@ -192,8 +192,7 @@ bool PGRCamera::setGain(float gain) {
 }
 
 bool PGRCamera::convertToCV(Image &img, cv::Mat &cvImg) {
-	//unsigned int rowBytes = (double) img.GetReceivedDataSize() / (double)img.GetRows();
-	unsigned int rowBytes = 0;
+	unsigned int rowBytes = (double) img.GetReceivedDataSize() / (double)img.GetRows();
 	cvImg = cv::Mat(img.GetRows(), img.GetCols(), CV_8UC1, img.GetData(), rowBytes);
 	return true;
 }

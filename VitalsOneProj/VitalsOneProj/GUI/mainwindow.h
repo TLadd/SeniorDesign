@@ -82,6 +82,7 @@ public:
   void configureViewAdapter(ViewAdapter* adap);
   
   boost::mutex guard;
+  QMutex mutex;
 
 private slots:
   void realtimeDataSlot();

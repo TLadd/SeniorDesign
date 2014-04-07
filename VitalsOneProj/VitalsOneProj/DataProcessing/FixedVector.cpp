@@ -97,7 +97,7 @@ vector<float> FixedVector::filterBatchData(double *bpmMax) {
 
 	}
 
-	dft(magI, magI, DFT_INVERSE);
+	//dft(magI, magI, DFT_INVERSE);
 
 	// Pointer to the i-th row
 	const float* p = magI.ptr<float>(0);

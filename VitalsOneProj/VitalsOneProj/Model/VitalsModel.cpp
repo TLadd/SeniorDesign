@@ -66,9 +66,11 @@ void VitalsModel::processFrame() {
 
 	// Threshold the pgr heart image so it only includes the patch (these numbers probably need to be played with)
 	Mat threshHeart;
-	imshow("pgr", images.getPGR());
 	threshold(images.getPGR(), threshHeart, 117, 10, THRESH_TOZERO);
+	imshow("pgr", threshHeart);
 	double averageHeart = averagePatch(threshHeart, Rect(0, 0, threshHeart.cols, threshHeart.rows), threshHeart);
+	view->AddHeartPoint(averageHeart);
+
 
 	heartRateData.insertElement(averageHeart);
 
@@ -82,11 +84,11 @@ void VitalsModel::processFrame() {
 		
 
 		//view->setHeartRateGraph(heartRateData.getTimeVector(), tdHeart);
-		//view->setHeartRate(bpm);
+		view->setHeartRate(bpm);
 	}
 
 
-	view->AddHeartPoint(averageHeart);
+	
 
 	// Threshold depth image
 	Mat threshDepth = thresholdDepthImage(images.getDepth());

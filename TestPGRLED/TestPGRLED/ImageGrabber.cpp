@@ -21,7 +21,7 @@ ImageGrabber::ImageGrabber()
 
 	//const Mode = MODE_0
 	//const PixelFormat = PIXEL_FORMAT_MONO16
-	pgrCam.setImageSettings(MODE_0, PIXEL_FORMAT_MONO8, 320, 272, 640, 480);
+	pgrCam.setImageSettings(MODE_0, PIXEL_FORMAT_MONO8, 0, 0, 640, 480);
 	//pgrCam.setGain(-4);
 	pgrCam.startCapture(30);
 }
