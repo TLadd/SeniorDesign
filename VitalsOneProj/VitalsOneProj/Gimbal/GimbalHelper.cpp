@@ -20,6 +20,29 @@ GimbalHelper::~GimbalHelper(void)
 * @param center The pixel to point at
 */
 void GimbalHelper::positionGimbal(Point center, double depth) {
+	qDebug() << "gimbal being positioned with depth: " << QString::number(depth) << endl;
+	double zw = ((camParams.getMaxDepthVal() - camParams.getMinDepthVal()) / camParams.getDepthSteps()) * depth + camParams.getMinDepthVal();
+	double xw = ((center.x - camParams.getWidth()/2) * zw) / camParams.getFocalLength().x;
+	double yw = ((center.y - camParams.getHeight()/2) * zw) / camParams.getFocalLength().y;
+	
+
+	double az = 90 - atan((xw - camParams.getRelativePos().x)/zw) * (180/3.14);
+	double el = 90 - atan((yw - camParams.getRelativePos().y)/zw) * (180/3.14);
+
+
+	//setGimbalAngles(az+130, el-90);
+	setGimbalAngles(180 - az + 10, 180 - el + 35);
+
+
+}
+
+/**
+* Rotates the gimbal so it points at the supplied point
+* in the depth image
+* @param center The pixel to point at
+*/
+/*
+void GimbalHelper::positionGimbal(Point center, double depth) {
 
 	double zw = ((camParams.getMaxDepthVal() - camParams.getMinDepthVal()) / camParams.getDepthSteps()) * depth + camParams.getMinDepthVal();
 	double xw = ((center.x - camParams.getWidth()/2) * zw) / camParams.getFocalLength().x;
@@ -34,7 +57,7 @@ void GimbalHelper::positionGimbal(Point center, double depth) {
 	setGimbalAngles(180 - az, el);
 
 
-}
+}*/
 
 bool GimbalHelper::setGimbalAngle(float angle, int whichServo) {
 	angle = angle * (1000/180);

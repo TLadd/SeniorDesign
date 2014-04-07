@@ -303,7 +303,7 @@ Rect SegmentationHelper::getTorso(Mat &classifiedImage) {
 
 	Point centChest = getMedianBodyPart(classifiedImage, CHEST, 1, 2, 1, 2);
 	
-	return Rect(max(centChest.x-30, 0), max(centChest.y-20, 0), 60, 40);
+	return Rect(max(centChest.x-30, 0), max(centChest.y, 0), 60, 40);
 }
 
 

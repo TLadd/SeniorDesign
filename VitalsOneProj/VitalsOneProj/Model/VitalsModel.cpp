@@ -80,8 +80,8 @@ void VitalsModel::processFrame() {
 
 		
 
-		view->setHeartRateGraph(heartRateData.getTimeVector(), tdHeart);
-		//view->setHeartRate(bpm);
+		//view->setHeartRateGraph(heartRateData.getTimeVector(), tdHeart);
+		view->setHeartRate(bpm);
 	}
 
 

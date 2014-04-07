@@ -23,7 +23,7 @@ void startModel(boost::asio::io_service *io, ViewAdapter *adap) {
 	else
 		qDebug() << "We are not connected\n";	
 	
-	CameraParameters cp(Point(74,74), 240, 320, 15.24, 106.68, 255, Point(0,10));
+	CameraParameters cp(Point(110,130), 240, 320, 15.24, 106.68, 255, Point(0,10));
 	GimbalHelper gh(cp, SP);
 
 

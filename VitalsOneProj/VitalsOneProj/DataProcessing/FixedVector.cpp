@@ -73,7 +73,7 @@ vector<float> FixedVector::filterBatchData(double *bpmMax) {
 			}
 		}
 		else {
-			magI.at<float>(0,i) = 0;
+			//magI.at<float>(0,i) = 0;
 		}
 
 
