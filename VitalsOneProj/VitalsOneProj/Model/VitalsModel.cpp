@@ -81,11 +81,11 @@ void VitalsModel::processFrame() {
 		
 
 		//view->setHeartRateGraph(heartRateData.getTimeVector(), tdHeart);
-		view->setHeartRate(bpm);
+		//view->setHeartRate(bpm);
 	}
 
 
-	//view->AddHeartPoint(averageHeart);
+	view->AddHeartPoint(averageHeart);
 
 	// Threshold depth image
 	Mat threshDepth = thresholdDepthImage(images.getDepth());
