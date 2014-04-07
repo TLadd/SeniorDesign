@@ -72,7 +72,7 @@ void VitalsModel::processFrame() {
 	view->AddHeartPoint(averageHeart);
 
 
-	heartRateData.insertElement(averageHeart);
+	
 
 	dataCountHeart++;
 
@@ -87,7 +87,7 @@ void VitalsModel::processFrame() {
 		view->setHeartRate(bpm);
 	}
 
-
+	heartRateData.insertElement(averageHeart);
 	
 
 	// Threshold depth image
@@ -102,7 +102,7 @@ void VitalsModel::processFrame() {
 	// Apply a median filter to the depth image
 	medianBlur(classified, classified, 25);
 	view->showSegmentedImage("Median", classified);
-	view->showImage("Fly Cam", images.getPGR());
+	//view->showImage("Fly Cam", images.getPGR());
 
 	// Retrieve the torso from the segmented image
 	Rect torso = segmenter.getTorso(classified);
@@ -114,7 +114,6 @@ void VitalsModel::processFrame() {
 	view->AddBreathPoint(breathingAvg);
 
 
-	images.getPGR();
 	
 	// Get the center of the forehead
 	Point foreheadCenter = segmenter.getForehead(classified);

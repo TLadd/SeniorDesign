@@ -19,7 +19,10 @@ ViewAdapter::~ViewAdapter(void)
  * @param heartVal
  */
 void ViewAdapter::AddHeartPoint(double heartVal) {
+	lock.lock();
 	sig_updateHeartRateGraph(heartVal);
+	lock.unlock();
+
 }
 
 /**
@@ -27,7 +30,9 @@ void ViewAdapter::AddHeartPoint(double heartVal) {
  * @param breathVal
  */
 void ViewAdapter::AddBreathPoint(double breathVal) {
+	lock.lock();
 	sig_updateBreathingRateGraph(breathVal);
+	lock.unlock();
 }
 
 /**
@@ -35,8 +40,10 @@ void ViewAdapter::AddBreathPoint(double breathVal) {
  * @param tempVal
  */
 void ViewAdapter::AddTempPoint(double tempVal) {
+	lock.lock();
 	qDebug() << "in ViewAdapter setting the temperature" << endl;
 	sig_updateTemperatureGraph(tempVal);
+	lock.unlock();
 }
 
 /**
@@ -44,7 +51,10 @@ void ViewAdapter::AddTempPoint(double tempVal) {
  * @param heartRate
  */
 void ViewAdapter::setHeartRate(double heartRate) {
+	lock.lock();
 	sig_setHeartRateVal(heartRate);
+	lock.unlock();
+
 }
 
 /**
@@ -52,7 +62,9 @@ void ViewAdapter::setHeartRate(double heartRate) {
  * @param heartRate
  */
 void ViewAdapter::setHeartRateGraph(std::vector<int> keyData, std::vector<float> valData) {
+	lock.lock();
 	sig_setHeartRateGraph(keyData, valData);
+	lock.unlock();
 }
 
 
@@ -61,7 +73,9 @@ void ViewAdapter::setHeartRateGraph(std::vector<int> keyData, std::vector<float>
  * @param breathingRate
  */
 void ViewAdapter::setBreathingRate(double breathingRate) {
+	lock.lock();
 	sig_setBreathingRateVal(breathingRate);
+	lock.unlock();
 }
 
 /**
@@ -69,8 +83,10 @@ void ViewAdapter::setBreathingRate(double breathingRate) {
  * @param temp
  */
 void ViewAdapter::setTemperature(double temp) {
+	lock.lock();
 	qDebug() << "in ViewAdapter setting the temperature" << endl;
 	sig_setTemperatureVal(temp);
+	lock.unlock();
 }
 
 /**
@@ -83,8 +99,10 @@ void ViewAdapter::updateDisplay() {
 
 
 void ViewAdapter::showImage(string winName, Mat img) {
+	lock.lock();
 	imshow(winName, img);
 	waitKey(1);
+	lock.unlock();
 }
 
 

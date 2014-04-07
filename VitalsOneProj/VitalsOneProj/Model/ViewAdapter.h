@@ -3,6 +3,7 @@
 
 #include "opencv.hpp"
 #include <boost/signals2/signal.hpp>
+#include <boost/thread/mutex.hpp>
 
 using namespace std;
 using namespace cv;
@@ -83,6 +84,8 @@ public:
 
 private:
 	MainWindow& view;
+
+	boost::mutex lock;
 
 	//signals to call view functions
 	boost::signals2::signal<void (double)> sig_setTemperatureVal;
