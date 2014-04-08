@@ -20,7 +20,8 @@ ViewAdapter::~ViewAdapter(void)
  */
 void ViewAdapter::AddHeartPoint(double heartVal) {
 	lock.lock();
-	sig_updateHeartRateGraph(heartVal);
+	view.updateHeartRateGraph(heartVal);
+	//sig_updateHeartRateGraph(heartVal);
 	lock.unlock();
 
 }
@@ -41,7 +42,7 @@ void ViewAdapter::AddBreathPoint(double breathVal) {
  */
 void ViewAdapter::AddTempPoint(double tempVal) {
 	lock.lock();
-	qDebug() << "in ViewAdapter setting the temperature" << endl;
+	qDebug() << "in ViewAdapter adding to temperature graph" << endl;
 	sig_updateTemperatureGraph(tempVal);
 	lock.unlock();
 }
@@ -52,7 +53,8 @@ void ViewAdapter::AddTempPoint(double tempVal) {
  */
 void ViewAdapter::setHeartRate(double heartRate) {
 	lock.lock();
-	sig_setHeartRateVal(heartRate);
+	view.setHeartRateValue(heartRate);
+	//sig_setHeartRateVal(heartRate);
 	lock.unlock();
 
 }
@@ -88,6 +90,7 @@ void ViewAdapter::setTemperature(double temp) {
 	sig_setTemperatureVal(temp);
 	lock.unlock();
 }
+
 
 /**
  * Redraws the graphs. Happens automatically or not?

@@ -18,20 +18,7 @@ void FixedVector::insertElement(double el) {
 	vec.push_back(el);
 	timeVec.push_back(clock());
 
-	QString timeString = "";
-	QString dataString = "";
-
-	if(vec.size() == size) {
-		for(int i = 0; i < size; i++) {
-			timeString = timeString + " " + timeVec.at(i);
-			dataString = dataString + " " + vec.at(i);
-		}
-		qDebug() << "Times";
-		qDebug() << timeString;
-		qDebug() << "Data";
-		qDebug() << dataString;
-
-	}
+	
 
 
 
