@@ -57,6 +57,14 @@ MainWindow::MainWindow(QWidget *parent) :
   ui->setupUi(this);
   setGeometry(100, 100, 600, 600);
   setupDemo();
+  connect(this, SIGNAL(signalSetHeartRateValue(double)), this, SLOT(setHeartRateValueHelper(double)));
+  connect(this, SIGNAL(signalUpdateHeartRateGraph(double)), this, SLOT(updateHeartRateGraphHelper(double)));
+  connect(this, SIGNAL(signalSetTemperatureValue(double)), this, SLOT(setTemperatureValueHelper(double)));
+  connect(this, SIGNAL(signalUpdateTemperatureGraph(double)), this, SLOT(updateTemperatureGraphHelper(double)));
+  connect(this, SIGNAL(signalSetBreathingRateValue(double)), this, SLOT(setBreathingRateValueHelper(double)));
+  connect(this, SIGNAL(signalUpdateBreathingRateGraph(double)), this, SLOT(updateBreathingRateGraphHelper(double)));
+  connect(ui->heartPlot, SIGNAL(afterReplot(void)), this, SLOT(releaseLock(void)));
+  connect(ui->temperaturePlot, SIGNAL(afterReplot(void)), this, SLOT(releaseLock(void)));
   //setupPlayground(ui->customPlot);
   // 0:  setupQuadraticDemo(ui->customPlot);
   // 1:  setupSimpleDemo(ui->customPlot);
@@ -88,7 +96,10 @@ void MainWindow::setupDemo()
   setWindowTitle("QCustomPlot: "+demoName);
   statusBar()->clearMessage();
   ui->heartPlot->yAxis->setRange(-1, 1);
+  qDebug() << "calling replot in setupDemo" << endl;
   ui->heartPlot->replot();
+
+
 }
 
 
@@ -127,7 +138,7 @@ void MainWindow::setupRealtimeDataDemo()
   ui->heartPlot->axisRect()->setupFullAxesBox();
   ui->heartPlot->yAxis->setRange(-1, 1);
   // make left and bottom axes transfer their ranges to right and top axes:
-  connect(ui->heartPlot->xAxis, SIGNAL(rangeChanged(QCPRange)), ui->heartPlot->xAxis2, SLOT(setRange(QCPRange)));
+ // connect(ui->heartPlot->xAxis, SIGNAL(rangeChanged(QCPRange)), ui->heartPlot->xAxis2, SLOT(setRange(QCPRange)));
   //connect(ui->heartPlot->yAxis, SIGNAL(rangeChanged(QCPRange)), ui->heartPlot->yAxis2, SLOT(setRange(QCPRange)));
 
   //BREATHING RATE:
@@ -149,8 +160,8 @@ void MainWindow::setupRealtimeDataDemo()
   ui->breathingPlot->axisRect()->setupFullAxesBox();
   ui->breathingPlot->yAxis->setRange(-1, 1);
   // make left and bottom axes transfer their ranges to right and top axes:
-  connect(ui->breathingPlot->xAxis, SIGNAL(rangeChanged(QCPRange)), ui->breathingPlot->xAxis2, SLOT(setRange(QCPRange)));
-  connect(ui->breathingPlot->yAxis, SIGNAL(rangeChanged(QCPRange)), ui->breathingPlot->yAxis2, SLOT(setRange(QCPRange)));
+  //connect(ui->breathingPlot->xAxis, SIGNAL(rangeChanged(QCPRange)), ui->breathingPlot->xAxis2, SLOT(setRange(QCPRange)));
+  //connect(ui->breathingPlot->yAxis, SIGNAL(rangeChanged(QCPRange)), ui->breathingPlot->yAxis2, SLOT(setRange(QCPRange)));
 
 
   //TEMPERATURE PLOT
@@ -173,13 +184,13 @@ void MainWindow::setupRealtimeDataDemo()
   ui->temperaturePlot->axisRect()->setupFullAxesBox();
   ui->temperaturePlot->yAxis->setRange(0, 50);
   // make left and bottom axes transfer their ranges to right and top axes:
-  connect(ui->temperaturePlot->xAxis, SIGNAL(rangeChanged(QCPRange)), ui->temperaturePlot->xAxis2, SLOT(setRange(QCPRange)));
-  connect(ui->temperaturePlot->yAxis, SIGNAL(rangeChanged(QCPRange)), ui->temperaturePlot->yAxis2, SLOT(setRange(QCPRange)));
+ // connect(ui->temperaturePlot->xAxis, SIGNAL(rangeChanged(QCPRange)), ui->temperaturePlot->xAxis2, SLOT(setRange(QCPRange)));
+ // connect(ui->temperaturePlot->yAxis, SIGNAL(rangeChanged(QCPRange)), ui->temperaturePlot->yAxis2, SLOT(setRange(QCPRange)));
 
 
   // setup a timer that repeatedly calls MainWindow::realtimeDataSlot:
-  connect(&dataTimer, SIGNAL(timeout()), this, SLOT(realtimeDataSlot()));
-  dataTimer.start(500); // Interval 0 means to refresh as fast as possible
+  //connect(&dataTimer, SIGNAL(timeout()), this, SLOT(realtimeDataSlot()));
+  //dataTimer.start(500); // Interval 0 means to refresh as fast as possible
 }
 
 void MainWindow::realtimeDataSlot()
@@ -247,6 +258,7 @@ void MainWindow::realtimeDataSlot()
   boost::mutex::scoped_lock lock(guard);
   ui->temperaturePlot->xAxis->setRange(key+0.25, 8, Qt::AlignRight);
   //ui->temperaturePlot->yAxis->setRange(10, 40);
+  qDebug() << "calling replot in realtimeDataSlot" << endl;
   ui->temperaturePlot->replot();
   
   // calculate frames per second:
@@ -288,14 +300,31 @@ void MainWindow::screenShot()
   qApp->quit();
 }
 
+
 void MainWindow::setTemperatureValue(double newVal){
+	emit signalSetTemperatureValue(newVal);
+}
+
+void MainWindow::setTemperatureValueHelper(double newVal){
 	boost::mutex::scoped_lock lock(guard);
 	qDebug() << "In the Viewwwww" << endl;
 	ui->temperatureVal->display(newVal);
 }
 
+void MainWindow::releaseLock(){
+	guard.unlock();
+	qDebug() << "released the lock" << endl;
+}
+
+
 void MainWindow::updateTemperatureGraph(double newVal){
-	boost::mutex::scoped_lock lock(guard);
+	emit signalUpdateTemperatureGraph(newVal);
+}
+
+void MainWindow::updateTemperatureGraphHelper(double newVal){
+	qDebug() << "locking in updateTemperaturePlot" << endl;
+	guard.lock();
+	//boost::mutex::scoped_lock lock(guard);
     //ui->temperatureVal->display(100*qSin(key / 1200));
 	qDebug() << "adding to temperature graph in view" << endl;
 	double key = QDateTime::currentDateTime().toMSecsSinceEpoch()/1000.0;
@@ -308,18 +337,29 @@ void MainWindow::updateTemperatureGraph(double newVal){
     // rescale value (vertical) axis to fit the current data:
     ui->temperaturePlot->graph(0)->rescaleValueAxis();
 
-//	ui->temperaturePlot->xAxis->setRange(key+0.25, 8, Qt::AlignRight);
+	ui->temperaturePlot->xAxis->setRange(key+0.25, 8, Qt::AlignRight);
 //	ui->temperaturePlot->yAxis->setRange(5, 45);
-//	ui->temperaturePlot->replot();
+	qDebug() << "calling replot in updateTemperaturePlot" << endl;
+	ui->temperaturePlot->replot();
+
+
 }
 
 void MainWindow::setBreathingRateValue(double newVal){
+	emit signalSetBreathingRateValue(newVal);
+}
+
+void MainWindow::setBreathingRateValueHelper(double newVal){
 	boost::mutex::scoped_lock lock(guard);
 	qDebug() << "In the Viewwwww" << endl;
 	ui->breathingRateVal->display(newVal);
 }
 
 void MainWindow::updateBreathingRateGraph(double newVal){
+	emit signalUpdateBreathingRateGraph(newVal);
+}
+
+void MainWindow::updateBreathingRateGraphHelper(double newVal){
 	boost::mutex::scoped_lock lock(guard);
     //ui->temperatureVal->display(100*qSin(key / 1200));
 	qDebug() << "adding to breathing graph in view" << endl;
@@ -335,19 +375,38 @@ void MainWindow::updateBreathingRateGraph(double newVal){
 
 	ui->breathingPlot->xAxis->setRange(key+0.25, 8, Qt::AlignRight);
 	//ui->breathingPlot->yAxis->setRange(5, 45);
+	qDebug() << "calling replot in updateBreathingPlot" << endl;
 	ui->breathingPlot->replot();
 }
 
 void MainWindow::setHeartRateValue(double newVal){
+	//boost::mutex::scoped_lock lock(guard);
+
+	qDebug() << "In the Viewwwww1" << endl;
+	//ui->heartRateVal->display(newVal);
+	emit signalSetHeartRateValue(newVal);
+}
+
+void MainWindow::setHeartRateValueHelper(double newVal){
 	boost::mutex::scoped_lock lock(guard);
-	qDebug() << "In the Viewwwww" << endl;
+	qDebug() << "calling replot in setHeartRateValue" << endl;
+	//guard.lock();
+	qDebug() << "In the Viewwwww2" << endl;
 	ui->heartRateVal->display(newVal);
 }
 
 void MainWindow::updateHeartRateGraph(double newVal){
+	//boost::mutex::scoped_lock lock(guard
+	//  connect(ui->heartPlot, SIGNAL(afterReplot(void)), this, SLOT(releaseLock(void)));
+  //connect(ui->temperaturePlot, SIGNAL(afterReplot(void)), this, SLOT(releaseLock(void)));
+	//guard.lock();
+	emit signalUpdateHeartRateGraph(newVal);
+}
+
+void MainWindow::updateHeartRateGraphHelper(double newVal){
     //ui->temperatureVal->display(100*qSin(key / 1200));
-	boost::mutex::scoped_lock lock(guard);
-	qDebug() << "adding to breathing graph in view" << endl;
+	//boost::mutex::scoped_lock lock(guard);
+	guard.lock();
 	double key = QDateTime::currentDateTime().toMSecsSinceEpoch()/1000.0;
     ui->heartPlot->graph(0)->addData(key, newVal);
     // set data of dots:
@@ -360,6 +419,7 @@ void MainWindow::updateHeartRateGraph(double newVal){
 
 	ui->heartPlot->xAxis->setRange(key+0.25, 8, Qt::AlignRight);
 	//ui->heartPlot->yAxis->setRange(5, 45);
+	qDebug() << "calling replot in updateHeartRateGraph" << endl;
 	ui->heartPlot->replot();
 }
 
@@ -395,6 +455,7 @@ void MainWindow::setHeartRateGraph(std::vector<int> intKeyData, std::vector<floa
 
 	ui->heartPlot->xAxis->setRange(keyQVector.at(keyQVector.size()-1), keyQVector.size(), Qt::AlignRight);
 	//ui->heartPlot->yAxis->setRange(5, 45);
+	qDebug() << "calling replot in setHeartRateGraph" << endl;
 	ui->heartPlot->replot();
 }
 

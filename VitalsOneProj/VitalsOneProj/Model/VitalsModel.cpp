@@ -197,6 +197,20 @@ void VitalsModel::start() {
 	// Initialize heart tracker
 	//heartTracker.initialize(threshDepth, segmenter.getBodyPart(segmentedImage, HEAD), HEAD);
 
+/*
+	while(true) {
+		view->AddHeartPoint(rand());
+		//Sleep(50);
+		view->setHeartRate(rand());
+		//Sleep(50);
+		view->AddTempPoint(rand());
+		view->setTemperature(rand());
+	
+		view->AddBreathPoint(rand());
+		view->setBreathingRate(rand());
+	}
+	*/
+
 	// Start the timers
 	imageTimer.async_wait(boost::bind(&VitalsModel::processFrame, this));
 	temperatureTimer.async_wait(boost::bind(&VitalsModel::processTemp, this));

@@ -76,6 +76,9 @@ public:
   
   void setHeartRateValue(double newVal);
   void updateHeartRateGraph(double newVal);
+
+
+
   void setHeartRateGraph(std::vector<int> keyData, std::vector<float> valData);
   
   // adapter interface setup
@@ -83,6 +86,15 @@ public:
   
   boost::mutex guard;
   QMutex mutex;
+
+  public slots:
+	  void setHeartRateValueHelper(double newVal);
+	  void updateHeartRateGraphHelper(double newVal);
+	  void setBreathingRateValueHelper(double newVal);
+	  void updateBreathingRateGraphHelper(double newVal);
+	  void setTemperatureValueHelper(double newVal);
+	  void updateTemperatureGraphHelper(double newVal);
+	  void releaseLock();
 
 private slots:
   void realtimeDataSlot();
@@ -109,6 +121,18 @@ private:
   boost::signals2::connection conn_setHeartRateVal;
   boost::signals2::connection conn_updateHeartRateGraph;
   boost::signals2::connection conn_setHeartRateGraph;
+
+signals:
+	void signalSetHeartRateValue(double newVal);
+	void signalUpdateHeartRateGraph(double newVal);
+	void signalSetTemperatureValue(double newVal);
+	void signalUpdateTemperatureGraph(double newVal);
+	void signalSetBreathingRateValue(double newVal);
+	void signalUpdateBreathingRateGraph(double newVal);
 };
+
+
+
+
 
 #endif // MAINWINDOW_H
