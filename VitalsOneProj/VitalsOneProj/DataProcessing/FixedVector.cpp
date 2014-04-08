@@ -26,9 +26,15 @@ void FixedVector::insertElement(double el) {
 
 Mat FixedVector::performDFT(Mat I, int dftSize) {
 
-	Mat padded;                            //expand input image to optimal size
+	Mat padded = Mat(I.rows, 1024, I.type());                            //expand input image to optimal size
 	
-	copyMakeBorder(I, padded, 0, 1 - I.rows, 0, 1024 - I.cols, BORDER_CONSTANT, Scalar::all(0));
+	qDebug() << "padding columns: " << 1024 - I.cols << endl;
+	try{
+		copyMakeBorder(I, padded, 0, 1 - I.rows, 0, 1024 - I.cols, BORDER_CONSTANT, Scalar::all(0));
+	}
+	catch(...){
+		qDebug() << "caught exception in fixedVector::copyMakeBoder";
+	}
 
 	Mat planes[] = {Mat_<float>(padded), Mat::zeros(padded.size(), CV_32F)};
 	Mat complexI;
@@ -66,6 +72,7 @@ vector<float> FixedVector::filterBatchData(double *bpmMax, double min, double ma
 	double currMax = -1;
 	double maxbpm = -1;
 
+	try{
 	for(int i=0; i < magI.cols; i++) {
 
 		float f = magI.at<float>(0, i);
@@ -84,7 +91,10 @@ vector<float> FixedVector::filterBatchData(double *bpmMax, double min, double ma
 
 
 	}
-
+	}
+	catch(...){
+		qDebug() << "caught exception2 in FixedVector" << endl;
+	}
 	//dft(magI, magI, DFT_INVERSE);
 
 	// Pointer to the i-th row

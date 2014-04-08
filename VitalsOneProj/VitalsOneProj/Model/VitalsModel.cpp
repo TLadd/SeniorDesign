@@ -54,6 +54,7 @@ Mat VitalsModel::thresholdDepthImage(Mat &depthImage) {
 
 int timed, times;
 bool death = false;
+bool present = false;
 
 /**
  * Grab a new frame and process it
@@ -69,7 +70,12 @@ void VitalsModel::processFrame() {
 	threshold(images.getPGR(), threshHeart, 117, 10, THRESH_TOZERO);
 	imshow("pgr", threshHeart);
 	double averageHeart = averagePatch(threshHeart, Rect(0, 0, threshHeart.cols, threshHeart.rows), threshHeart);
-	view->AddHeartPoint(averageHeart);
+	if(present){
+		view->AddHeartPoint(averageHeart);
+	}
+	else{
+		view->AddHeartPoint(0);
+	}
 
 
 	
@@ -84,7 +90,12 @@ void VitalsModel::processFrame() {
 		
 
 		//view->setHeartRateGraph(heartRateData.getTimeVector(), tdHeart);
-		view->setHeartRate(bpm);
+		if(present){
+			view->setHeartRate(bpm);
+		}
+		else{
+			view->setHeartRate(0);
+		}
 	}
 
 	heartRateData.insertElement(averageHeart);
@@ -92,6 +103,15 @@ void VitalsModel::processFrame() {
 
 	// Threshold depth image
 	Mat threshDepth = thresholdDepthImage(images.getDepth());
+
+	double presence = sum(threshDepth)[0];
+	qDebug() << "presence is: " << presence << endl;
+	if(presence > 100000){
+		present = true;
+	}
+	else{
+		present = false;
+	}
 
 	// Apply a forward threshold as well
 	threshold(threshDepth, threshDepth, 100, 100000, THRESH_TOZERO);
@@ -164,8 +184,14 @@ void VitalsModel::processTemp() {
 	//QString poop = QString::number(temp);
 	//qDebug() << poop;
 
-	view->setTemperature(temp);
-	view->AddTempPoint(temp);
+	if(present){
+		view->setTemperature(temp);
+		view->AddTempPoint(temp);
+	}
+	else{
+		view->setTemperature(0);
+		view->AddTempPoint(0);
+	}
 	
 	temperatureTimer.expires_at(temperatureTimer.expires_at() + boost::posix_time::seconds(tempInterval));
 	temperatureTimer.async_wait(boost::bind(&VitalsModel::processTemp, this));
@@ -181,7 +207,12 @@ void VitalsModel::processBreathing(Rect& torso, Mat& threshDepth){
 	double breathingAvg = averagePatch(threshDepth, torso, threshDepth);
 
 	// Send the average depth to the view as a data point
-	view->AddBreathPoint(breathingAvg);
+	if(present){
+		view->AddBreathPoint(breathingAvg);
+	}
+	else{
+		view->AddBreathPoint(0);
+	}
 
 	dataCountBreath++;
 
@@ -194,7 +225,12 @@ void VitalsModel::processBreathing(Rect& torso, Mat& threshDepth){
 		qDebug() << "time vector size: " << breathingData.getTimeVector().size() << endl;
 		qDebug() << "value vector size: " << tdBreath.size() << endl;
 		//view->setHeartRateGraph(breathingData.getTimeVector(), tdBreath);
-		view->setBreathingRate(bpm);
+		if(present){
+			view->setBreathingRate(bpm);
+		}
+		else{
+			view->setBreathingRate(0);
+		}
 	}
 
 	breathingData.insertElement(breathingAvg);
