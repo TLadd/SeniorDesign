@@ -58,7 +58,7 @@ Mat FixedVector::performDFT(Mat I, int dftSize) {
 	return magI;
 }
 
-vector<float> FixedVector::filterBatchData(double *bpmMax) {
+vector<float> FixedVector::filterBatchData(double *bpmMax, double min, double max) {
 	timed = clock();
 
 	double timeInterval = ((timed - times) + 1) / 1000.0;
@@ -84,7 +84,7 @@ vector<float> FixedVector::filterBatchData(double *bpmMax) {
 
 		float bpm = (((float)i)/dftSize) * sampleRate * 60;
 
-		if(bpm > 30 && bpm < 240) {
+		if(bpm > min && bpm < max) {
 			if(f > currMax) {
 				currMax = magI.at<float>(0, i);
 				maxbpm = bpm;

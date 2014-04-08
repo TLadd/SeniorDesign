@@ -25,7 +25,7 @@ public:
 
 	float getPeakDFT(int minVal, int maxVal);
 
-	vector<float> filterBatchData(double *bpmMax);
+	vector<float> filterBatchData(double *bpmMax, double min, double max);
 
 	double firFilter(vector<double> weights);
 

@@ -27,10 +27,14 @@
 #include <boost\thread\thread.hpp>
 #include <boost\thread\mutex.hpp>
 #include <queue>
+#include <math.h>
 #include "opencv.hpp"
+#include "FixedVector.h"
 using namespace FlyCapture2;
 using namespace std;
 using namespace boost;
+
+#define PI 3.141592654
 
 unsigned int imageCnt = 0;
 
@@ -39,6 +43,35 @@ unsigned int imageCnt = 0;
 queue<Image> workQueue;
 mutex queueLock;
 condition_variable queueConVar;
+
+
+
+bool setShutterSpeed(Camera &cam, float shutterMillis) {
+	//set the correct frame rate
+	Property frProp;
+    frProp.type = SHUTTER;
+	frProp.absControl = true;
+	frProp.onOff = true;
+	frProp.absValue = (float) shutterMillis;
+	cam.SetProperty(&frProp, false);
+
+
+	return true;
+}
+
+
+bool setGain(Camera &cam, float gain) {
+	//set the correct frame rate
+	Property frProp;
+	frProp.type = FlyCapture2::GAIN;
+	frProp.absControl = true;
+	frProp.onOff = false;
+	frProp.absValue = gain;
+	cam.SetProperty(&frProp, false);
+	
+
+	return true;
+}
 
 
 void PrintBuildInfo()
@@ -124,6 +157,8 @@ int RunSingleCamera( PGRGuid guid )
     imgSettings.height = 480;
     imgSettings.pixelFormat = PIXEL_FORMAT_MONO8;
 
+	setGain(cam, 0);
+	setShutterSpeed(cam, 8.042);
 
 	bool valid;
 	Format7PacketInfo fmt7PacketInfo;
@@ -225,10 +260,25 @@ double averagePatch(cv::Mat image) {
 
 void processQueue() {
 
+	FixedVector qpoop = FixedVector(450);
+	for(int i = 0; i < 450; i++) {
+		qpoop.insertElement(0);
+	}
+	FixedVector qpoop2 = FixedVector(450);
+	FixedVector hammtown = FixedVector(450);
+	vector<float> fftpooptown;
+	for (int i = 0; i < 450; i++){
+
+		double hamm = 0.54 - 0.45*cos((2*PI*i)/449);
+		hammtown.insertElement(hamm);
+
+	}
 	ofstream dataFile;
 	dataFile.open("outputdatafile");
 	int lines = 0;
-
+	int cnt = 0;
+	double bpmMax;
+	
 
 	while(true) {
 
@@ -251,11 +301,43 @@ void processQueue() {
 		cv::threshold(frame, frame, 100, 1000000, CV_THRESH_TOZERO);
 
 		double poop = averagePatch(frame);
+		qpoop.insertElement(poop);
+
+		if (cnt % 30 == 0){
+			/*double sum = 0;
+			for(int i = 0; i < qpoop.length(); i++) {
+				sum = sum + qpoop.get(i);
+			}
+			sum = sum/qpoop.length();
+			qpoop = qpoop.subtract(sum);*/
+			qpoop2 = qpoop.pointwiseMultiply(hammtown);
+
+			//for(int i = 0; i < qpoop2.length(); i++)
+				//cout << qpoop2.getVector()[i] << " ";
+		
+
+
+			fftpooptown = qpoop2.filterBatchData(&bpmMax);
+			printf("\n heart rate: %f\n", bpmMax);
+
+			/*float max = 0; float maxf = 0;
+			for (int i = 0;  i < fftpooptown.size(); i++) {
+				if (fftpooptown[i] > max){
+					max = fftpooptown[i];
+					maxf = (float)i / 1024 * 30 * 60;
+				}
+			}
+
+			
+			*/
+		}
+
+		cnt++;
 
 		imshow("fkewofoewf", frame);
 
 		cvWaitKey(1);
-
+		/*
 		if(lines < 1000){
 			dataFile << "" << poop << endl;
 			lines++;
@@ -264,7 +346,7 @@ void processQueue() {
 			dataFile.close();
 			cout << "done bitch" << endl;
 			lines++;
-		}
+		}*/
 
 	}
 
