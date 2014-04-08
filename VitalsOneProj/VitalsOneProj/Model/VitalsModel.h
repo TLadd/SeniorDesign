@@ -31,6 +31,8 @@ private:
 
 	void processTemp();
 
+	void processBreathing(Rect &torso, Mat &threshDepth);
+
 	Mat thresholdDepthImage(Mat &depthImage);
 
 
@@ -40,6 +42,7 @@ private:
 	int threshDist;
 
 	int dataCountHeart;
+	int dataCountBreath;
 
 	/**
 	 * Necessary for using asio timers
@@ -95,6 +98,7 @@ private:
 	
 
 	FixedVector heartRateData;
+	FixedVector breathingData;
 
 };
 

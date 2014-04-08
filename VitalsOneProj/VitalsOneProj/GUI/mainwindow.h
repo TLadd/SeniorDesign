@@ -90,6 +90,7 @@ public:
   public slots:
 	  void setHeartRateValueHelper(double newVal);
 	  void updateHeartRateGraphHelper(double newVal);
+	  void setHeartRateGraphHelper(std::vector<int> intKeyData, std::vector<float> floatValData);
 	  void setBreathingRateValueHelper(double newVal);
 	  void updateBreathingRateGraphHelper(double newVal);
 	  void setTemperatureValueHelper(double newVal);
@@ -125,6 +126,7 @@ private:
 signals:
 	void signalSetHeartRateValue(double newVal);
 	void signalUpdateHeartRateGraph(double newVal);
+	void signalSetHeartRateGraph(std::vector<int> intKeyData, std::vector<float> floatValData);
 	void signalSetTemperatureValue(double newVal);
 	void signalUpdateTemperatureGraph(double newVal);
 	void signalSetBreathingRateValue(double newVal);

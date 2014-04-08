@@ -56,6 +56,7 @@ vector<float> FixedVector::filterBatchData(double *bpmMax, double min, double ma
 
 	int dftSize = 1024;
 	Mat I = Mat(1, vec.size(), CV_32F);
+	//double mean = cv::mean(vec)[0];
 	for(int i=0; i < vec.size(); i++) {
 		I.at<float>(0, i) = vec.at(i);
 	}

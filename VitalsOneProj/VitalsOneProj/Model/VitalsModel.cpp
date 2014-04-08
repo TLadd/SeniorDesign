@@ -78,7 +78,7 @@ void VitalsModel::processFrame() {
 
 	if(dataCountHeart == 20) {
 		double bpm;
-		vector<float> tdHeart = heartRateData.filterBatchData(&bpm);
+		vector<float> tdHeart = heartRateData.filterBatchData(&bpm, 50, 110);
 		dataCountHeart = 0;
 
 		
@@ -104,15 +104,9 @@ void VitalsModel::processFrame() {
 	view->showSegmentedImage("Median", classified);
 	//view->showImage("Fly Cam", images.getPGR());
 
-	// Retrieve the torso from the segmented image
 	Rect torso = segmenter.getTorso(classified);
 
-	// Get the average depth of the breathing patch
-	double breathingAvg = averagePatch(threshDepth, torso, threshDepth);
-
-	// Send the average depth to the view as a data point
-	view->AddBreathPoint(breathingAvg);
-
+	processBreathing(torso, threshDepth);
 
 	
 	// Get the center of the forehead
@@ -178,6 +172,33 @@ void VitalsModel::processTemp() {
 	
 }
 
+
+void VitalsModel::processBreathing(Rect& torso, Mat& threshDepth){
+	// Retrieve the torso from the segmented image
+	
+
+	// Get the average depth of the breathing patch
+	double breathingAvg = averagePatch(threshDepth, torso, threshDepth);
+
+	// Send the average depth to the view as a data point
+	view->AddBreathPoint(breathingAvg);
+
+	dataCountBreath++;
+
+	if(dataCountBreath == 20) {
+		double bpm;
+		vector<float> tdBreath = breathingData.filterBatchData(&bpm, 10, 25);
+		dataCountBreath = 0;
+
+		
+		qDebug() << "time vector size: " << breathingData.getTimeVector().size() << endl;
+		qDebug() << "value vector size: " << tdBreath.size() << endl;
+		//view->setHeartRateGraph(breathingData.getTimeVector(), tdBreath);
+		view->setBreathingRate(bpm);
+	}
+
+	breathingData.insertElement(breathingAvg);
+}
 
 
 

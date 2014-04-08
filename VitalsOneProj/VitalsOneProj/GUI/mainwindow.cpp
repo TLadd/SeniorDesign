@@ -57,8 +57,11 @@ MainWindow::MainWindow(QWidget *parent) :
   ui->setupUi(this);
   setGeometry(100, 100, 600, 600);
   setupDemo();
+  qRegisterMetaType<std::vector<int>>("timeVec");
+  qRegisterMetaType<std::vector<float>>("valueVec");
   connect(this, SIGNAL(signalSetHeartRateValue(double)), this, SLOT(setHeartRateValueHelper(double)));
   connect(this, SIGNAL(signalUpdateHeartRateGraph(double)), this, SLOT(updateHeartRateGraphHelper(double)));
+  connect(this, SIGNAL(signalSetHeartRateGraph(std::vector<int>, std::vector<float>)), this, SLOT(setHeartRateGraphHelper(std::vector<int>, std::vector<float>)));
   connect(this, SIGNAL(signalSetTemperatureValue(double)), this, SLOT(setTemperatureValueHelper(double)));
   connect(this, SIGNAL(signalUpdateTemperatureGraph(double)), this, SLOT(updateTemperatureGraphHelper(double)));
   connect(this, SIGNAL(signalSetBreathingRateValue(double)), this, SLOT(setBreathingRateValueHelper(double)));
@@ -424,9 +427,16 @@ void MainWindow::updateHeartRateGraphHelper(double newVal){
 }
 
 void MainWindow::setHeartRateGraph(std::vector<int> intKeyData, std::vector<float> floatValData){
+	emit signalSetHeartRateGraph(intKeyData, floatValData);
+}
+
+void MainWindow::setHeartRateGraphHelper(std::vector<int> intKeyData, std::vector<float> floatValData){
     //ui->temperatureVal->display(100*qSin(key / 1200));
-	boost::mutex::scoped_lock lock(guard);
+	guard.lock();
 	qDebug() << "setting heartrateGraph in view" << endl;
+
+	qDebug() << "time vector size: " << intKeyData.size() << endl;
+	qDebug() << "value vector size: " << floatValData.size() << endl;
 
 	std::vector<double> const doubleKeyData(intKeyData.begin(), intKeyData.end());
 	std::vector<double> const doubleValData(floatValData.begin(), floatValData.end());
