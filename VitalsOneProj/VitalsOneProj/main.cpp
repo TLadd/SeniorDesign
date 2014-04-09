@@ -27,7 +27,7 @@ void startModel(boost::asio::io_service *io, ViewAdapter *adap) {
 	GimbalHelper gh(cp, SP);
 
 
-	VitalsModel model(*io, SP, cp, 20, 2, 200);
+	VitalsModel model(*io, SP, cp, 20, 1, 200);
 	model.setAdapter(adap);
 
 	model.start();

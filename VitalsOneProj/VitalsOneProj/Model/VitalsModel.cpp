@@ -14,6 +14,7 @@
 VitalsModel::VitalsModel(boost::asio::io_service& io, Serial *SP, CameraParameters _camParams, int imInt, int tempInt, int thresh) 
 	: imageTimer(io, posix_time::milliseconds(imInt)), temperatureTimer(io, posix_time::seconds(tempInt)), imInterval(imInt), tempInterval(tempInt), temperature(SP), gimb(_camParams, SP), segmenter("adult.txt"), threshDist(thresh), heartRateData(160) {
 		dataCountHeart = 0;
+		dataCountBreath = 0;
 }
 
 
@@ -114,7 +115,7 @@ void VitalsModel::processFrame() {
 	}
 
 	// Apply a forward threshold as well
-	threshold(threshDepth, threshDepth, 100, 100000, THRESH_TOZERO);
+	//threshold(threshDepth, threshDepth, 100, 100000, THRESH_TOZERO);
 
 	// Segment the depth image
 	Mat classified = segmenter.segmentImage(threshDepth);
@@ -218,7 +219,7 @@ void VitalsModel::processBreathing(Rect& torso, Mat& threshDepth){
 
 	if(dataCountBreath == 20) {
 		double bpm;
-		vector<float> tdBreath = breathingData.filterBatchData(&bpm, 10, 25);
+		vector<float> tdBreath = breathingData.filterBatchData(&bpm, 10, 60);
 		dataCountBreath = 0;
 
 		
