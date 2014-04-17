@@ -12,7 +12,7 @@
 #define RIGHTLEG 6
 
 VitalsModel::VitalsModel(boost::asio::io_service& io, Serial *SP, CameraParameters _camParams, int imInt, int tempInt, int thresh) 
-	: imageTimer(io, posix_time::milliseconds(imInt)), temperatureTimer(io, posix_time::seconds(tempInt)), imInterval(imInt), tempInterval(tempInt), temperature(SP), gimb(_camParams, SP), segmenter("adult.txt"), threshDist(thresh), heartRateData(320), breathingData(320) {
+	: imageTimer(io, posix_time::milliseconds(imInt)), temperatureTimer(io, posix_time::seconds(tempInt)), imInterval(imInt), tempInterval(tempInt), temperature(SP), gimb(_camParams, SP), segmenter("adult.txt"), threshDist(thresh), heartRateData(320), breathingData(320), avgHeart(10), avgBreath(10) {
 		dataCountHeart = 0;
 		dataCountBreath = 0;
 }
@@ -92,7 +92,9 @@ void VitalsModel::processFrame() {
 
 		//view->setHeartRateGraph(heartRateData.getTimeVector(), tdHeart);
 		if(present){
-			view->setHeartRate(bpm);
+			avgHeart.insertElement(bpm);
+			double avgbpm = avgHeart.getAvg();
+			view->setHeartRate(avgbpm);
 		}
 		else{
 			view->setHeartRate(0);

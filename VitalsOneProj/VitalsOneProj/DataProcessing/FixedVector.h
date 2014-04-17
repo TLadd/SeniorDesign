@@ -29,6 +29,8 @@ public:
 
 	double firFilter(vector<double> weights);
 
+	double getAvg();
+
 
 private:
 	vector<double> vec;

@@ -100,5 +100,8 @@ private:
 	FixedVector heartRateData;
 	FixedVector breathingData;
 
+	FixedVector avgHeart;
+	FixedVector avgBreath;
+
 };
 

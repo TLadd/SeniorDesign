@@ -176,5 +176,14 @@ double FixedVector::firFilter(vector<double> weights) {
 
 
 
+double FixedVector::getAvg() {
+	double sum = 0;
 
+	for(double d : vec) {
+		sum = sum + d;
+	}
+
+	return sum / ((double)vec.size());
+
+}
 
