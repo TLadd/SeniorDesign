@@ -191,6 +191,8 @@ bool PGRCamera::setGain(float gain) {
 	return true;
 }
 
+
+
 bool PGRCamera::convertToCV(Image &img, cv::Mat &cvImg) {
 	//unsigned int rowBytes = (double) img.GetReceivedDataSize() / (double)img.GetRows();
 	unsigned int rowBytes = 0;
