@@ -222,6 +222,9 @@ void VitalsModel::processBreathing(Rect& torso, Mat& threshDepth){
 	if(dataCountBreath == 20) {
 		double bpm;
 		vector<float> tdBreath = breathingData.filterBatchData(&bpm, 10, 60);
+
+		
+
 		dataCountBreath = 0;
 
 		
@@ -229,7 +232,9 @@ void VitalsModel::processBreathing(Rect& torso, Mat& threshDepth){
 		qDebug() << "value vector size: " << tdBreath.size() << endl;
 		//view->setHeartRateGraph(breathingData.getTimeVector(), tdBreath);
 		if(present){
-			view->setBreathingRate(bpm);
+			avgBreath.insertElement(bpm);
+			double avgbpm = avgBreath.getAvg();
+			view->setBreathingRate(avgbpm);
 		}
 		else{
 			view->setBreathingRate(0);
