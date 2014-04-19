@@ -48,6 +48,7 @@ double averagePatch(Mat image, Rect roi, Mat mask) {
 Mat VitalsModel::thresholdDepthImage(Mat &depthImage) {
 	Mat threshDepth;
 	threshold(depthImage, threshDepth, threshDist, 100000, THRESH_TOZERO_INV);
+	threshold(threshDepth, threshDepth, 70, 100000, THRESH_TOZERO);
 	threshDepth.convertTo(threshDepth, CV_8U);
 	return threshDepth;
 }
@@ -69,6 +70,8 @@ void VitalsModel::processFrame() {
 	// Threshold the pgr heart image so it only includes the patch (these numbers probably need to be played with)
 	Mat threshHeart;
 	threshold(images.getPGR(), threshHeart, 117, 10, THRESH_TOZERO);
+	transpose(threshHeart,threshHeart);
+	flip(threshHeart, threshHeart, 0);
 	imshow("pgr", threshHeart);
 	double averageHeart = averagePatch(threshHeart, Rect(0, 0, threshHeart.cols, threshHeart.rows), threshHeart);
 	if(present){
@@ -109,7 +112,7 @@ void VitalsModel::processFrame() {
 
 	double presence = sum(threshDepth)[0];
 	qDebug() << "presence is: " << presence << endl;
-	if(presence > 100000){
+	if(presence > 1000000){
 		present = true;
 	}
 	else{

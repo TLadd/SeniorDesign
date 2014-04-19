@@ -66,13 +66,17 @@ double TemperatureHelper::getCoreTemp() {
 
 	double ambientTemp = tempHumid.getAmbientTemp();
 
+	humidity = 50;
+
+	ambientTemp = 20;
+
 	double dividingFactor = p00 + p10*dist + p01*humidity + p20*powf(dist,2) + p11*dist*humidity + p02*powf(humidity,2) + p30*powf(dist,3) + p21*powf(dist,2)*humidity + p12*dist*powf(humidity,2) + p03*powf(humidity,3) + p40*powf(dist,4) + p31*powf(dist,3)*humidity + p22*powf(dist,2)*powf(humidity,2) + p13*dist*powf(humidity,3) + p50*powf(dist,5) + p41*powf(dist,4)*humidity + p32*powf(dist,3)*powf(humidity,2) + p23*powf(dist,2)*powf(humidity,3);
 	
 	double objectTemp = surfaceTemp / dividingFactor;
 
 	double coreTemp = A*powf(objectTemp, 2) + (B + C*ambientTemp)*objectTemp + D*ambientTemp + E;
 
-	return coreTemp - 1.25;
+	return coreTemp;
 	
 }
 
